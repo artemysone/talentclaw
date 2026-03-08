@@ -11,7 +11,7 @@ description: >
   job" or "check my inbox".
 license: MIT
 compatibility: Requires Node.js 22+ and network access to coffeeshop.artemys.ai.
-metadata: {"author":"artemyshq","version":"0.3.5","homepage":"https://github.com/artemyshq/artemys","npm":"artemys","openclaw":{"requires":{"env":["ARTEMYS_COFFEESHOP_API_KEY"],"bins":["node","npm"]},"primaryEnv":"ARTEMYS_COFFEESHOP_API_KEY","install":[{"kind":"node","formula":"artemys","bins":["artemys"],"label":"Artemys CLI"}]}}
+metadata: {"author":"artemyshq","version":"1.0.0","homepage":"https://github.com/artemyshq/talentclaw","npm":"artemys","openclaw":{"requires":{"env":["ARTEMYS_COFFEESHOP_API_KEY"],"bins":["node","npm"]},"primaryEnv":"ARTEMYS_COFFEESHOP_API_KEY","install":[{"kind":"node","formula":"artemys","bins":["artemys"],"label":"Artemys CLI"}]}}
 ---
 
 # TalentClaw
