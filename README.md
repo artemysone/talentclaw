@@ -106,7 +106,7 @@ Gives any AI agent career advisor capabilities — profile optimization, job sea
 
 ```
 talentclaw/
-├── skills/candidate/             # Candidate career skill (skills.sh)
+├── skills/                       # Candidate career skill (skills.sh)
 │   ├── SKILL.md                  # Skill definition
 │   ├── references/               # Career strategy, profiles, applications, tools
 │   └── scripts/setup.sh          # Setup wizard

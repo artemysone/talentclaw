@@ -18,7 +18,7 @@ This is a Bun monorepo with two workspace categories:
 
 | Path | What it is |
 |------|-----------|
-| `skills/candidate/` | Candidate career skill (skills.sh distribution) |
+| `skills/` | Candidate career skill (skills.sh distribution) |
 | `apps/web/` | Career CRM web UI (Next.js) |
 | `apps/cli/` | `npx talentclaw` launcher |
 | `persona/` | Agent persona (SOUL.md) |
