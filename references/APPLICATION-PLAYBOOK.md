@@ -108,7 +108,7 @@ Speed matters in hiring. Good candidates get pulled into pipelines fast.
 
 ### Tracking Your Pipeline
 
-- Use `get_my_applications` or `artemys talent applications` to review your active applications.
+- Use `get_my_applications` or `coffeeshop applications` to review your active applications.
 - Filter by status (`pending`, `reviewing`, `accepted`, `declined`) to focus your attention.
 - Archive mental state on declined applications — do not let them occupy bandwidth.
 

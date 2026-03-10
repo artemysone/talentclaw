@@ -20,39 +20,39 @@ fi
 
 echo "[OK] Node.js $(node -v)"
 
-# 2. Install artemys CLI globally
-if command -v artemys &>/dev/null; then
-  CURRENT_VERSION=$(artemys version 2>/dev/null || echo "unknown")
-  echo "[OK] artemys CLI already installed (v${CURRENT_VERSION})"
-  echo "     To update: npm install -g artemys@latest"
+# 2. Install Coffee Shop CLI globally
+if command -v coffeeshop &>/dev/null; then
+  CURRENT_VERSION=$(coffeeshop version 2>/dev/null || echo "unknown")
+  echo "[OK] coffeeshop CLI already installed (v${CURRENT_VERSION})"
+  echo "     To update: npm install -g @artemyshq/coffeeshop@latest"
 else
-  echo "Installing artemys CLI globally..."
-  npm install -g artemys
-  echo "[OK] artemys CLI installed"
+  echo "Installing coffeeshop CLI globally..."
+  npm install -g @artemyshq/coffeeshop
+  echo "[OK] coffeeshop CLI installed"
 fi
 
 # 3. Initialize agent identity if not already done
-CONFIG_FILE="$HOME/.artemys/config.json"
+CONFIG_FILE="$HOME/.coffeeshop/config.json"
 if [ -f "$CONFIG_FILE" ]; then
-  echo "[OK] Agent identity already initialized (~/.artemys/config.json exists)"
+  echo "[OK] Agent identity already initialized (~/.coffeeshop/config.json exists)"
 else
   echo ""
-  echo "Initializing agent identity..."
+  echo "Registering agent identity..."
   echo "This will create your agent card and register with Coffee Shop."
   echo ""
-  artemys start
-  echo "[OK] Agent identity initialized"
+  coffeeshop register --display-name "$(whoami)"
+  echo "[OK] Agent identity registered"
 fi
 
 # 4. Run diagnostics
 echo ""
 echo "Running diagnostics..."
-artemys doctor || true
+coffeeshop doctor || true
 
 # 5. Verify MCP server can start
 echo ""
 echo "Verifying MCP server..."
-if timeout 5 artemys mcp-server --transport stdio </dev/null &>/dev/null; then
+if timeout 5 coffeeshop mcp-server </dev/null &>/dev/null; then
   echo "[OK] MCP server starts successfully"
 else
   # timeout exit code 124 means it ran but we killed it (expected for stdio)
@@ -69,20 +69,21 @@ echo "OPTION A: MCP Server (recommended)"
 echo "  Add to your MCP config:"
 echo '  {'
 echo '    "mcpServers": {'
-echo '      "artemys": {'
-echo '        "command": "artemys",'
-echo '        "args": ["mcp-server", "--persist"]'
+echo '      "coffeeshop": {'
+echo '        "command": "coffeeshop",'
+echo '        "args": ["mcp-server"]'
 echo '      }'
 echo '    }'
 echo '  }'
 echo "  Then use the 'onboard_candidate' prompt for guided setup."
 echo ""
 echo "OPTION B: CLI Commands"
-echo "  artemys whoami                   # Verify identity"
-echo "  artemys talent search --limit 20 # Search for jobs"
-echo "  artemys talent apply --job-id <id>"
-echo "  artemys talent applications      # Track applications"
-echo "  artemys talent status --unread-only"
+echo "  coffeeshop whoami                          # Verify identity"
+echo "  coffeeshop search --skills react --limit 20  # Search for jobs"
+echo "  coffeeshop apply --job-id <id>"
+echo "  coffeeshop applications                    # Track applications"
+echo "  coffeeshop inbox --unread-only"
 echo ""
-echo "Next: Parse your resume and create a profile for better matching."
-echo "  artemys parse-resume ./resume.pdf --provider anthropic"
+echo "Next: Build a profile for better matching."
+echo "  Create a JSON file with your profile data, then:"
+echo "  coffeeshop profile update --file profile.json"

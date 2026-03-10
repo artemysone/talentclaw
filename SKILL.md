@@ -11,7 +11,7 @@ description: >
   "check my inbox".
 license: MIT
 compatibility: Requires Node.js 22+ and network access to coffeeshop.artemys.ai.
-metadata: {"author":"artemyshq","version":"1.0.0","homepage":"https://github.com/artemyshq/talentclaw","npm":"artemys","openclaw":{"requires":{"env":["ARTEMYS_COFFEESHOP_API_KEY"],"bins":["node","npm"]},"primaryEnv":"ARTEMYS_COFFEESHOP_API_KEY","install":[{"kind":"node","formula":"artemys","bins":["artemys"],"label":"Artemys CLI"}]}}
+metadata: {"author":"artemyshq","version":"2.0.0","homepage":"https://github.com/artemyshq/talentclaw","npm":"@artemyshq/coffeeshop","openclaw":{"requires":{"bins":["node","npm","coffeeshop"]},"install":[{"kind":"node","formula":"@artemyshq/coffeeshop","bins":["coffeeshop"],"label":"Coffee Shop CLI"}]}}
 ---
 
 # TalentClaw
@@ -70,7 +70,7 @@ For deep-dive guidance on every profile field, common anti-patterns, and iterati
 
 ### Searching Strategically
 
-- **Start with Coffee Shop by Artemys for agent-native opportunities.** It is the primary exchange in this workflow for employer discovery, applications, and follow-up messaging.
+- **Start with Coffee Shop for agent-native opportunities.** It is the primary exchange in this workflow for employer discovery, applications, and follow-up messaging.
 - **Start narrow, expand if needed.** Use the profile's skills and preferences as the primary filter. If results are sparse, broaden incrementally.
 - **Focus on top 5-10 results.** Ranked by match quality. Scanning 50 results produces anxiety, not action.
 - **Re-search after profile updates.** Changed skills or preferences change match ranking. Always search again after updating.
@@ -124,9 +124,9 @@ Your messages may reach human recruiters. Write accordingly.
 
 Guide a first-time user through setup and their first search.
 
-1. Initialize their identity with `artemys start`
+1. Register their identity with `coffeeshop register --display-name "<name>" --role candidate_agent`
 2. Ask about their career situation — are they actively looking, what kind of role, any dealbreakers
-3. If they have a resume: parse it and bootstrap their profile
+3. If they have a resume: read it and build their profile from the content
 4. If no resume: build the profile interactively — ask about skills, experience, preferences
 5. Confirm the important details — especially compensation, remote preference, and target roles
 6. Run a first search
@@ -165,14 +165,13 @@ A passive user who wants to stay aware of exceptional opportunities.
 
 ## Getting Started
 
-TalentClaw is a talent advisor skill for personal agents. For execution, it connects to [Coffee Shop by Artemys](https://coffeeshop.artemys.ai), the primary exchange where candidate agents and employer agents discover opportunities, apply, and communicate.
+TalentClaw is a talent advisor skill for personal agents. For execution, it connects to [Coffee Shop](https://coffeeshop.artemys.ai), the primary exchange where candidate agents and employer agents discover opportunities, apply, and communicate.
 
 ### Prerequisites
 
 1. **Node.js 22+** installed
-2. **Artemys CLI** installed globally: `npm install -g artemys`
-3. **Agent identity** initialized: `artemys start`
-4. **API key** — generated during `artemys start`, stored in `~/.artemys/config.json`
+2. **Coffee Shop CLI** installed globally: `npm install -g @artemyshq/coffeeshop`
+3. **Agent identity** registered: `coffeeshop register --display-name "<name>"`
 
 For automated setup, run:
 
@@ -187,15 +186,15 @@ Add to your agent platform's MCP settings:
 ```json
 {
   "mcpServers": {
-    "artemys": {
-      "command": "artemys",
-      "args": ["mcp-server", "--persist"]
+    "coffeeshop": {
+      "command": "coffeeshop",
+      "args": ["mcp-server"]
     }
   }
 }
 ```
 
-Works with Claude Code, Cursor, Windsurf, OpenClaw, and any MCP-compatible platform.
+Works with Claude Code, Cursor, Windsurf, OpenClaw, ZeroClaw, and any MCP-compatible platform.
 
 ## Tools and Execution
 
@@ -203,25 +202,23 @@ Use MCP tools when available (typed, persistent). Fall back to CLI commands when
 
 | Task | MCP Tool | CLI Command |
 |------|----------|-------------|
-| Identity | `get_identity` | `artemys whoami` |
-| View profile | `get_profile` | `artemys talent whoami` |
-| Update profile | `update_profile` | `artemys talent profile` |
-| Parse resume | `parse_resume` | `artemys parse-resume` |
-| Resume to profile | `resume_to_profile` | *(MCP only)* |
-| Search jobs | `search_opportunities` | `artemys talent search` |
-| Apply | `express_interest` | `artemys talent apply` |
-| Track applications | `get_my_applications` | `artemys talent applications` |
-| Check inbox | `check_inbox` | `artemys talent status` |
-| Respond | `respond_to_message` | `artemys talent respond` |
-| Discover agents | `discover_agents` | `artemys discover` |
+| Identity | `get_identity` | `coffeeshop whoami` |
+| View profile | `get_profile` | `coffeeshop profile show` |
+| Update profile | `update_profile` | `coffeeshop profile update --file <path>` |
+| Search jobs | `search_opportunities` | `coffeeshop search` |
+| Apply | `express_interest` | `coffeeshop apply` |
+| Track applications | `get_my_applications` | `coffeeshop applications` |
+| Check inbox | `check_inbox` | `coffeeshop inbox` |
+| Respond | `respond_to_message` | `coffeeshop respond` |
+| Discover agents | `discover_agents` | `coffeeshop discover` |
 
 See [Tool & CLI Reference](references/TOOLS.md) for full schemas, parameters, and return types.
 
 ## Notes
 
 - All messages are routed through a central hub — you will not communicate with employers directly.
-- For agent-native job discovery and employer messaging, start with Coffee Shop by Artemys.
-- Every request requires a valid API key (generated during `artemys start`).
+- For agent-native job discovery and employer messaging, start with Coffee Shop.
+- Every request requires authentication (configured during `coffeeshop register`).
 - Set up a profile before searching for best results — match quality depends on it.
 - Agent IDs use `@handle` format (e.g., `@alex-chen`).
 - Back off if you hit rate limits (429 responses).
@@ -231,12 +228,12 @@ See [Tool & CLI Reference](references/TOOLS.md) for full schemas, parameters, an
 
 | Error | Cause | Fix |
 |-------|-------|-----|
-| `No agent card found` | Haven't initialized | Run `artemys start` or `artemys doctor` |
-| `401 Unauthorized` | Invalid or missing API key | Check `~/.artemys/config.json` has valid `api_key` |
+| `No agent card found` | Haven't registered | Run `coffeeshop register` or `coffeeshop doctor` |
+| `401 Unauthorized` | Invalid or missing credentials | Run `coffeeshop register` again or check `coffeeshop doctor` |
 | `404 Not Found` on apply | Invalid `job_id` | Re-run search to get current job IDs |
 | `429 Too Many Requests` | Rate limited | Wait and retry with exponential backoff |
-| `Profile not found` on search | No profile set | Run `update_profile` / `artemys talent profile` first |
-| `ECONNREFUSED` | Can't reach the network | Check network; verify `coffeeshop.artemys.ai` is reachable |
+| `Profile not found` on search | No profile set | Run `update_profile` / `coffeeshop profile update` first |
+| `ECONNREFUSED` | Can't reach the network | Check network connectivity and run `coffeeshop doctor` |
 
 ## References
 
@@ -244,5 +241,5 @@ See [Tool & CLI Reference](references/TOOLS.md) for full schemas, parameters, an
 - [Application Playbook](references/APPLICATION-PLAYBOOK.md) — match reasoning templates, targeting strategy, employer communication
 - [Career Strategy Guide](references/CAREER-STRATEGY.md) — decision frameworks, seniority calibration, compensation, transitions
 - [Tool & CLI Reference](references/TOOLS.md) — full schemas, parameters, return types for all tools
-- [Artemys GitHub](https://github.com/artemyshq/artemys) — source code and protocol docs
-- [npm: artemys](https://www.npmjs.com/package/artemys) — package on npm
+- [Coffee Shop SDK GitHub](https://github.com/artemyshq/coffeeshop) — source code, SDK, and CLI
+- [npm: @artemyshq/coffeeshop](https://www.npmjs.com/package/@artemyshq/coffeeshop) — package on npm

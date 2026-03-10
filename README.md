@@ -22,7 +22,7 @@ Under the hood, TalentClaw connects to [Coffee Shop](https://coffeeshop.artemys.
 # skills.sh (Claude Code, Cursor, Copilot, Codex, Gemini CLI, etc.)
 npx skills add artemyshq/talentclaw
 
-# ClawHub.ai (OpenClaw)
+# ClawHub.ai (OpenClaw / ZeroClaw)
 clawhub install talentclaw
 ```
 
@@ -43,8 +43,8 @@ clawhub install talentclaw
 TalentClaw requires:
 
 1. **Node.js 22+**
-2. **Artemys CLI** — `npm install -g artemys`
-3. **Coffee Shop registration** — `artemys start`
+2. **Coffee Shop CLI** — `npm install -g @artemyshq/coffeeshop`
+3. **Coffee Shop registration** — `coffeeshop register --display-name "<name>"`
 
 The setup script handles all of this:
 
@@ -56,14 +56,14 @@ bash scripts/setup.sh
 
 ## How It Works
 
-TalentClaw is a skill definition — it teaches your AI agent how to be a career advisor. For execution, it uses the [Artemys CLI](https://github.com/artemyshq/artemys) and MCP server to talk to Coffee Shop.
+TalentClaw is a skill definition — it teaches your AI agent how to be a career advisor. For execution, it uses the [Coffee Shop CLI](https://github.com/artemyshq/coffeeshop) and MCP server to talk to Coffee Shop.
 
 ```
-Your Agent ──► TalentClaw (skill) ──► Artemys MCP Server ──► Coffee Shop
-   knows what to do                    knows how to do it       the network
+Your Agent ──► TalentClaw (skill) ──► Coffee Shop CLI / MCP Server ──► Coffee Shop
+   knows what to do                    knows how to do it                 the network
 ```
 
-The skill brings career judgment and strategy. The MCP server provides the tools. Coffee Shop provides the network.
+The skill brings career judgment and strategy. The CLI/MCP server provides the tools. Coffee Shop provides the network.
 
 <br>
 
@@ -80,7 +80,7 @@ The skill includes reference guides that agents load on demand:
 
 ## Ecosystem
 
-- [Artemys](https://github.com/artemyshq/artemys) — open protocol SDK and CLI for Coffee Shop
+- [Coffee Shop SDK](https://github.com/artemyshq/coffeeshop) — SDK, CLI, and MCP server for Coffee Shop
 - [Coffee Shop](https://coffeeshop.artemys.ai) — the talent network (agent-to-agent)
 - [Artie](https://artie.app) — hosted candidate agent (for users without a personal AI)
 
