@@ -44,15 +44,15 @@ function AgentPreview() {
 
   return (
     <div className="w-full max-w-[480px]">
-      <div className="bg-surface-raised rounded-2xl overflow-hidden border border-border-default glow-accent">
+      <div className="bg-white rounded-2xl overflow-hidden border border-emerald-200/60 glow-accent">
         {/* Header */}
-        <div className="flex items-center gap-3 px-4 py-3 bg-surface-overlay border-b border-border-subtle">
-          <div className="w-9 h-9 rounded-full bg-accent flex items-center justify-center">
+        <div className="flex items-center gap-3 px-4 py-3 bg-surface-alt border-b border-black/5">
+          <div className="w-9 h-9 rounded-full bg-emerald-600 flex items-center justify-center">
             <Sparkles className="w-4 h-4 text-white" />
           </div>
           <div>
-            <div className="text-text-primary text-sm font-medium">TalentClaw Agent</div>
-            <div className="text-accent text-xs">active</div>
+            <div className="text-stone-800 text-sm font-medium">TalentClaw Agent</div>
+            <div className="text-emerald-600 text-xs">active</div>
           </div>
         </div>
 
@@ -67,18 +67,18 @@ function AgentPreview() {
               <div
                 className={`max-w-[85%] px-3 py-2 rounded-xl text-[0.82rem] leading-[1.55] ${
                   msg.from === "user"
-                    ? "bg-accent/20 text-text-primary rounded-br-sm border border-accent/30"
-                    : "bg-surface-overlay text-text-primary rounded-bl-sm border border-border-subtle"
+                    ? "bg-emerald-50 text-stone-800 rounded-br-sm border border-emerald-200/60"
+                    : "bg-surface-alt text-stone-800 rounded-bl-sm border border-black/5"
                 }`}
               >
                 <span
                   dangerouslySetInnerHTML={{
                     __html: msg.text
-                      .replace(/\*\*(.*?)\*\*/g, '<strong class="text-accent-hover">$1</strong>')
+                      .replace(/\*\*(.*?)\*\*/g, '<strong class="text-emerald-700">$1</strong>')
                       .replace(/\n/g, "<br />"),
                   }}
                 />
-                <span className="text-[0.6rem] text-text-muted ml-2 float-right mt-1">
+                <span className="text-[0.6rem] text-stone-400 ml-2 float-right mt-1">
                   {msg.time}
                 </span>
               </div>
@@ -87,11 +87,11 @@ function AgentPreview() {
 
           {visibleCount > 0 && visibleCount < messages.length && (
             <div className="flex justify-start">
-              <div className="bg-surface-overlay px-4 py-2.5 rounded-xl rounded-bl-sm flex gap-[5px] items-center border border-border-subtle">
+              <div className="bg-surface-alt px-4 py-2.5 rounded-xl rounded-bl-sm flex gap-[5px] items-center border border-black/5">
                 {[0, 0.2, 0.4].map((delay) => (
                   <div
                     key={delay}
-                    className="w-[6px] h-[6px] rounded-full bg-text-muted"
+                    className="w-[6px] h-[6px] rounded-full bg-stone-400"
                     style={{
                       animation: "typing-dot 1.2s ease-in-out infinite",
                       animationDelay: `${delay}s`,
@@ -109,25 +109,15 @@ function AgentPreview() {
 
 export function Hero() {
   return (
-    <section className="px-5 pt-24 pb-20 relative overflow-hidden">
-      {/* Background gradient orbs */}
-      <div className="absolute top-[-200px] left-[-100px] w-[600px] h-[600px] rounded-full bg-accent/5 blur-[120px] pointer-events-none" />
-      <div className="absolute bottom-[-200px] right-[-100px] w-[500px] h-[500px] rounded-full bg-violet/5 blur-[120px] pointer-events-none" />
-
-      <div className="max-w-[1200px] mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+    <section className="px-5 pt-20 pb-16 relative overflow-hidden">
+      <div className="max-w-[1152px] mx-auto grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center">
         {/* Left - copy */}
         <div className="flex flex-col items-start text-left">
-          <div className="reveal inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-accent-subtle border border-accent/20 mb-6">
-            <Sparkles className="w-3.5 h-3.5 text-accent" />
-            <span className="text-xs font-medium text-accent">AI-Powered Career Agent</span>
-          </div>
-
-          <h1 className="reveal reveal-delay-1 text-[clamp(2.2rem,5vw,3.8rem)] font-bold leading-[1.08] tracking-[-0.03em] max-w-[560px] mb-6">
-            Your career, <br />
-            <span className="gradient-text">on autopilot.</span>
+          <h1 className="reveal reveal-delay-1 font-prose text-[clamp(2.2rem,5vw,3.5rem)] font-bold leading-[1.12] tracking-[-0.03em] max-w-[540px] mb-5">
+            Your AI career agent.
           </h1>
 
-          <p className="reveal reveal-delay-2 text-text-secondary text-[clamp(1rem,2vw,1.15rem)] max-w-[480px] mb-8 leading-relaxed">
+          <p className="reveal reveal-delay-2 text-stone-600 text-[clamp(1rem,2vw,1.15rem)] max-w-[460px] mb-8">
             TalentClaw discovers jobs, manages your pipeline, and handles applications
             so you can focus on what matters -- making decisions, not doing busywork.
           </p>
@@ -135,14 +125,14 @@ export function Hero() {
           <div className="reveal reveal-delay-3 flex flex-col sm:flex-row gap-3">
             <a
               href="https://github.com/artemyshq/talentclaw#install"
-              className="inline-flex items-center justify-center gap-2 bg-accent text-white px-8 py-3.5 rounded-full font-semibold text-[0.95rem] hover:bg-accent-hover hover:-translate-y-0.5 hover:shadow-[0_8px_32px_rgba(99,102,241,0.3)] transition-all"
+              className="inline-flex items-center justify-center gap-2 bg-emerald-600 text-white px-8 py-3.5 rounded-full font-semibold text-[0.95rem] shadow-[0_4px_16px_rgba(0,0,0,0.1)] hover:bg-emerald-500 hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(5,150,105,0.2)] transition-all"
             >
               Get Started
               <ArrowRight className="w-4 h-4" />
             </a>
             <a
               href="#how-it-works"
-              className="inline-flex items-center justify-center gap-2 text-text-secondary px-6 py-3.5 rounded-full font-medium text-[0.95rem] hover:text-text-primary border border-border-default hover:border-border-subtle transition-all"
+              className="inline-flex items-center justify-center gap-2 text-stone-600 px-6 py-3.5 rounded-full font-medium text-[0.95rem] hover:text-stone-800 transition-colors"
             >
               See how it works
             </a>

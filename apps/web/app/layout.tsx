@@ -1,12 +1,5 @@
 import type { Metadata } from "next"
-import { Inter } from "next/font/google"
 import "./globals.css"
-
-const inter = Inter({
-  subsets: ["latin"],
-  display: "swap",
-  variable: "--font-sans",
-})
 
 export const metadata: Metadata = {
   title: "TalentClaw - Your AI Career Agent",
@@ -27,8 +20,8 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" className={inter.variable}>
-      <body className="bg-surface text-text-primary antialiased">
+    <html lang="en">
+      <body className="bg-surface text-stone-800 antialiased">
         {children}
       </body>
     </html>

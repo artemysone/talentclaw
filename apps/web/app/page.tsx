@@ -47,7 +47,7 @@ const faqs = [
 
 export default function LandingPage() {
   return (
-    <div className="min-h-screen bg-surface text-text-primary overflow-x-hidden leading-[1.65]">
+    <div className="min-h-screen bg-surface text-stone-800 overflow-x-hidden leading-[1.65]">
       <RevealObserver />
       <Nav />
 
@@ -55,80 +55,76 @@ export default function LandingPage() {
         <Hero />
 
         {/* How it works */}
-        <section id="how-it-works" className="py-24 px-5 relative">
-          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-accent/[0.02] to-transparent pointer-events-none" />
-          <div className="max-w-[960px] mx-auto relative">
-            <div className="text-center mb-16">
-              <h2 className="reveal text-[clamp(1.6rem,3.5vw,2.5rem)] font-bold tracking-[-0.02em] mb-4">
-                Three steps. Then your <span className="gradient-text">agent takes over</span>.
-              </h2>
-              <p className="reveal reveal-delay-1 text-text-secondary text-lg">
-                Set up in 2 minutes, then let TalentClaw work for you.
-              </p>
-            </div>
+        <section id="how-it-works" className="py-16 px-5 max-w-[900px] mx-auto">
+          <div className="text-center mb-12">
+            <h2 className="reveal font-prose text-[clamp(1.5rem,3vw,2.2rem)] font-bold tracking-[-0.02em] mb-3">
+              Three steps. Then your agent takes over.
+            </h2>
+            <p className="reveal reveal-delay-1 text-stone-600 text-[1rem]">
+              Set up in 2 minutes, then let TalentClaw work for you.
+            </p>
+          </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {steps.map((step, i) => (
-                <div
-                  key={step.num}
-                  className={`reveal ${i > 0 ? `reveal-delay-${i}` : ""} flex flex-col items-center text-center`}
-                >
-                  <div className="w-14 h-14 rounded-2xl flex items-center justify-center text-xl font-bold text-white mb-5 bg-gradient-to-br from-accent to-violet">
-                    {step.num}
-                  </div>
-                  <h3 className="text-[1.1rem] font-semibold mb-2 text-text-primary">
-                    {step.title}
-                  </h3>
-                  <p className="text-text-secondary text-[0.9rem] leading-relaxed">
-                    {step.desc}
-                  </p>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {steps.map((step, i) => (
+              <div
+                key={step.num}
+                className={`reveal ${i > 0 ? `reveal-delay-${i}` : ""} flex flex-col items-center text-center`}
+              >
+                <div className="w-12 h-12 rounded-full flex items-center justify-center font-prose text-lg font-bold text-white mb-4 bg-stone-800">
+                  {step.num}
                 </div>
-              ))}
-            </div>
+                <h3 className="font-prose text-[1.05rem] font-semibold mb-2">
+                  {step.title}
+                </h3>
+                <p className="text-stone-600 text-[0.88rem] leading-[1.6]">
+                  {step.desc}
+                </p>
+              </div>
+            ))}
           </div>
         </section>
 
         <Features />
-        {/* FAQ */}
-        <section id="faq" className="py-24 px-5">
-          <div className="max-w-[1200px] mx-auto">
-            <h2 className="reveal text-[clamp(1.6rem,3.5vw,2.5rem)] font-bold tracking-[-0.02em] mb-12 text-center">
-              Questions & answers
-            </h2>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-16 gap-y-8">
-              {faqs.map((faq, i) => (
-                <div
-                  key={faq.q}
-                  className={`reveal ${i % 2 === 1 ? "reveal-delay-1" : ""}`}
-                >
-                  <h3 className="text-[1rem] font-semibold mb-2 text-text-primary">
-                    {faq.q}
-                  </h3>
-                  <p className="text-text-secondary text-[0.9rem] leading-relaxed">
-                    {faq.a}
-                  </p>
-                </div>
-              ))}
-            </div>
+        {/* FAQ */}
+        <section id="faq" className="py-16 px-5 max-w-[1152px] mx-auto">
+          <h2 className="reveal font-prose text-[clamp(1.5rem,3vw,2.2rem)] font-bold tracking-[-0.02em] mb-8 text-center">
+            Questions & answers
+          </h2>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-16 gap-y-6">
+            {faqs.map((faq, i) => (
+              <div
+                key={faq.q}
+                className={`reveal ${i % 2 === 1 ? "reveal-delay-1" : ""}`}
+              >
+                <h3 className="font-prose text-[1rem] font-semibold mb-1.5">
+                  {faq.q}
+                </h3>
+                <p className="text-stone-600 text-[0.88rem] leading-[1.65]">
+                  {faq.a}
+                </p>
+              </div>
+            ))}
           </div>
         </section>
 
         {/* Final CTA */}
-        <section className="py-24 px-5 text-center relative">
-          <div className="absolute rounded-full blur-[100px] opacity-20 pointer-events-none w-[500px] h-[500px] bg-accent -bottom-[150px] left-[15%]" />
-          <div className="absolute rounded-full blur-[100px] opacity-15 pointer-events-none w-[400px] h-[400px] bg-violet -top-[100px] right-[10%]" />
+        <section className="py-16 px-5 text-center relative">
+          <div className="absolute rounded-[50%_40%_60%_50%/50%_60%_40%_50%] blur-[80px] opacity-20 pointer-events-none w-[400px] h-[400px] bg-emerald-300 -bottom-[100px] left-[20%]" />
+          <div className="absolute rounded-[50%_40%_60%_50%/50%_60%_40%_50%] blur-[80px] opacity-20 pointer-events-none w-[350px] h-[350px] bg-emerald-200 -top-[80px] right-[10%]" />
 
-          <h2 className="reveal text-[clamp(1.8rem,4vw,3rem)] font-bold tracking-[-0.02em] mb-5 relative z-[1]">
-            Stop grinding. <span className="gradient-text">Start deciding.</span>
+          <h2 className="reveal font-prose text-[clamp(1.8rem,4vw,2.8rem)] font-bold tracking-[-0.02em] mb-4 relative z-[1]">
+            Stop grinding. Start deciding.
           </h2>
-          <p className="reveal reveal-delay-1 text-text-secondary text-lg mb-10 max-w-[500px] mx-auto relative z-[1]">
+          <p className="reveal reveal-delay-1 text-stone-600 text-[1.05rem] mb-8 max-w-[480px] mx-auto relative z-[1]">
             Let TalentClaw handle the search, the applications, and the follow-ups.
             You show up when it matters.
           </p>
           <a
             href="https://github.com/artemyshq/talentclaw"
-            className="reveal reveal-delay-2 inline-flex items-center gap-2 bg-accent text-white px-8 py-4 rounded-full font-semibold text-[0.95rem] hover:bg-accent-hover hover:-translate-y-0.5 hover:shadow-[0_8px_32px_rgba(99,102,241,0.3)] transition-all relative z-[1]"
+            className="reveal reveal-delay-2 inline-flex items-center gap-2 bg-emerald-600 text-white px-8 py-3.5 rounded-full font-semibold text-[0.95rem] shadow-[0_4px_16px_rgba(0,0,0,0.1)] hover:bg-emerald-500 hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(5,150,105,0.2)] transition-all relative z-[1]"
           >
             Get Started on GitHub
           </a>
