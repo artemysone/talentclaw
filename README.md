@@ -1,28 +1,42 @@
-<div align="center">
+<h1 align="center">TalentClaw</h1>
 
-# TalentClaw
+<p align="center">
+  <strong>Your AI career agent — skill + product</strong><br>
+  Local-first career CRM with platform-agnostic agent skills, powered by <a href="https://coffeeshop.artemys.ai">Coffee Shop</a>.
+</p>
 
-**Your AI career agent — skill + product**
+<p align="center">
+  <a href="https://www.npmjs.com/package/talentclaw"><img src="https://img.shields.io/npm/v/talentclaw?style=for-the-badge&color=000" alt="npm version"></a>&nbsp;
+  <a href="https://github.com/artemyshq/talentclaw/stargazers"><img src="https://img.shields.io/github/stars/artemyshq/talentclaw?style=for-the-badge" alt="GitHub stars"></a>&nbsp;
+  <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge" alt="MIT License"></a>
+</p>
 
-[![license](https://img.shields.io/badge/license-MIT-000?style=flat-square)](LICENSE)
+<p align="center">
+  <a href="#install">Install</a> ·
+  <a href="#what-it-does">Features</a> ·
+  <a href="#architecture">Architecture</a> ·
+  <a href="#development">Development</a> ·
+  <a href="https://coffeeshop.artemys.ai">Coffee Shop</a> ·
+  <a href="https://skills.sh">Skills Store</a>
+</p>
 
-</div>
+---
 
-<br>
+TalentClaw is an AI career agent that combines a **local-first career CRM** with **platform-agnostic agent skills**. It helps individuals manage their job search pipeline, discover opportunities, and communicate with employers — all through the [Coffee Shop](https://coffeeshop.artemys.ai) agent-to-agent talent network.
 
-TalentClaw is an AI career agent that combines a local-first career CRM with platform-agnostic agent skills. It helps individuals manage their job search pipeline, discover opportunities, and communicate with employers — all powered by the [Coffee Shop](https://coffeeshop.artemys.ai) agent-to-agent talent network.
+---
 
-<br>
-
-## Install
+## 📦 Install
 
 ### Career CRM (full product)
+
+**Node 22+ required.**
 
 ```bash
 npx talentclaw
 ```
 
-Launches the career CRM at `localhost:3100` with a local DuckDB database, Kanban pipeline, job discovery, and career dashboard.
+Opens at `localhost:3100` with a local DuckDB database, Kanban pipeline, job discovery, and career dashboard.
 
 ### Candidate Skill (agent runtimes)
 
@@ -36,23 +50,43 @@ clawhub install talentclaw
 
 Gives any AI agent career advisor capabilities — profile optimization, job search, application strategy, and employer communication.
 
+---
 
-## Architecture
+## ✨ What It Does
+
+### Career CRM
+
+- 📋 **Kanban pipeline** — drag-and-drop stages: Discovered, Saved, Applied, Interviewing, Offer, Accepted/Rejected
+- 🔍 **Job discovery** — search Coffee Shop with filters for skills, location, remote, compensation
+- 📊 **Career dashboard** — application stats, activity feed, upcoming deadlines
+- 💾 **Local-first data** — DuckDB at `~/.talentclaw/data.db`, your data stays on your machine
+
+### Candidate Skill
+
+- 🧭 **Career strategy** — direction clarity, opportunity evaluation, seniority/compensation calibration
+- 👤 **Profile building** — optimize from scratch or from a resume
+- 🎯 **Job discovery** — smart search with match scoring
+- 📝 **Applications** — targeted application notes and pipeline management
+- 💬 **Employer messaging** — inbox, scheduling, follow-up
+
+---
+
+## 🏗️ Architecture
 
 ```
 ┌─────────────────────────────────────────────────────────┐
-│                    TalentClaw                           │
+│                      TalentClaw                         │
 │                                                         │
 │  ┌──────────────┐  ┌──────────┐  ┌───────────────────┐  │
-│  │ Career CRM   │  │ CLI      │  │ Agent Skills      │  │
-│  │ (Next.js)    │  │ Launcher │  │ Candidate Skill  │  │
+│  │  Career CRM  │  │   CLI    │  │   Agent Skills    │  │
+│  │  (Next.js)   │  │ Launcher │  │ Candidate Skill   │  │
 │  └──────┬───────┘  └────┬─────┘  └────────┬──────────┘  │
 │         │               │                 │              │
 │         └───────────┬───┘─────────────────┘              │
 │                     │                                    │
 │              ┌──────┴──────┐                             │
 │              │ Coffee Shop │                             │
-│              │    SDK      │                             │
+│              │     SDK     │                             │
 │              └──────┬──────┘                             │
 └─────────────────────┼───────────────────────────────────┘
                       │
@@ -62,62 +96,45 @@ Gives any AI agent career advisor capabilities — profile optimization, job sea
                └─────────────┘
 ```
 
-<br>
+---
 
-## Monorepo Structure
+## 📂 Monorepo Structure
 
 ```
 talentclaw/
 ├── skills/candidate/             # Candidate career skill (skills.sh)
-│   ├── SKILL.md                 # Skill definition
-│   ├── references/              # Career strategy, profiles, applications, tools
-│   └── scripts/setup.sh         # Setup wizard
+│   ├── SKILL.md                  # Skill definition
+│   ├── references/               # Career strategy, profiles, applications, tools
+│   └── scripts/setup.sh          # Setup wizard
 │
-├── apps/web/                    # Career CRM web UI (Next.js 15)
-│   ├── app/                     # Routes: landing, pipeline, jobs, dashboard
-│   ├── components/              # Kanban, dashboard, search, landing
-│   └── lib/                     # DuckDB, Coffee Shop SDK, Stripe
+├── apps/web/                     # Career CRM web UI (Next.js 15)
+│   ├── app/                      # Routes: landing, pipeline, jobs, dashboard
+│   ├── components/               # Kanban, dashboard, search, landing
+│   └── lib/                      # DuckDB, Coffee Shop SDK, Stripe
 │
-├── apps/cli/                    # CLI launcher (npx talentclaw)
-│   └── src/index.ts             # Init DB, start web, open browser
+├── apps/cli/                     # CLI launcher (npx talentclaw)
+│   └── src/index.ts              # Init DB, start web, open browser
 │
-├── skills/coffeeshop-employer/  # Employer hiring skill
-│   ├── SKILL.md                 # Skill definition
-│   ├── references/              # Job posting, candidate sourcing, tools
-│   └── scripts/setup.sh         # Setup wizard
+├── skills/coffeeshop-employer/   # Employer hiring skill
+│   ├── SKILL.md                  # Skill definition
+│   ├── references/               # Job posting, candidate sourcing, tools
+│   └── scripts/setup.sh          # Setup wizard
 │
-└── persona/                     # ZeroClaw persona
-    └── SOUL.md                  # TalentClaw agent identity
+└── persona/                      # ZeroClaw persona
+    └── SOUL.md                   # TalentClaw agent identity
 ```
 
-<br>
+---
 
-## What It Does
-
-### Career CRM
-- **Kanban pipeline** — drag-and-drop stages: Discovered, Saved, Applied, Interviewing, Offer, Accepted/Rejected
-- **Job discovery** — search Coffee Shop with filters for skills, location, remote, compensation
-- **Career dashboard** — application stats, activity feed, upcoming deadlines
-- **Local-first data** — DuckDB at `~/.talentclaw/data.db`, your data stays on your machine
-
-### Candidate Skill
-- **Career strategy** — direction clarity, opportunity evaluation, seniority/compensation calibration
-- **Profile building** — optimize from scratch or from a resume
-- **Job discovery** — smart search with match scoring
-- **Applications** — targeted application notes and pipeline management
-- **Employer messaging** — inbox, scheduling, follow-up
-
-<br>
-
-## Prerequisites
+## ⚙️ Prerequisites
 
 - **Node.js 22+**
 - **Coffee Shop CLI** — `npm install -g @artemyshq/coffeeshop`
 - **Coffee Shop account** — `coffeeshop register --display-name "<name>"`
 
-<br>
+---
 
-## Development
+## 🛠️ Development
 
 ```bash
 bun install              # install dependencies
@@ -125,15 +142,24 @@ bun run dev              # start web UI (dev mode)
 npx talentclaw           # full launcher with DB init
 ```
 
-<br>
+---
 
-## Ecosystem
+## 🌐 Ecosystem
 
-- [Coffee Shop SDK](https://github.com/artemyshq/coffeeshop) — SDK, CLI, and MCP server
-- [Coffee Shop](https://coffeeshop.artemys.ai) — the talent network (agent-to-agent)
+| Project | Description |
+|---------|-------------|
+| [Coffee Shop](https://coffeeshop.artemys.ai) | The agent-to-agent talent network |
+| [Coffee Shop SDK](https://github.com/artemyshq/coffeeshop) | SDK, CLI, and MCP server |
+| [Skills Store](https://skills.sh) | Platform-agnostic AI agent skills |
 
-<br>
+---
 
-## License
+## 📄 License
 
-MIT
+MIT Licensed. Fork it, extend it, make it yours.
+
+<p align="center">
+  <a href="https://star-history.com/?repos=artemyshq%2Ftalentclaw&type=date&legend=top-left">
+    <img src="https://api.star-history.com/image?repos=artemyshq/talentclaw&type=date&legend=top-left" alt="Star History" width="620" />
+  </a>
+</p>
