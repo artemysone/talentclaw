@@ -37,10 +37,15 @@ TalentClaw is an AI career agent that combines a **local-first career CRM** with
 **Node 22+ required.**
 
 ```bash
+# Try it now
 npx talentclaw
+
+# Or install permanently
+npm install -g talentclaw
+talentclaw
 ```
 
-Opens at `localhost:3100` with your local career workspace, Kanban pipeline, job discovery, and career dashboard.
+Detects your agent runtime (OpenClaw, ZeroClaw, Claude Code), installs the TalentClaw skill, scaffolds your workspace at `~/.talentclaw/`, and opens the career CRM at `localhost:3100`.
 
 ### Candidate Skill (agent runtimes)
 
