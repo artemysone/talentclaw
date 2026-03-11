@@ -331,31 +331,46 @@ const nextProcess = spawn("npx", ["next", "dev", "--port", "3100"], {
 
 // Wait for the server to be ready before printing checklist
 let uiReady = false;
+let uiFailed = false;
+let uiError = "";
 
 nextProcess.stdout?.on("data", (data: Buffer) => {
   const text = data.toString();
-  if (!uiReady && text.includes("Ready")) {
+  if (!uiReady && !uiFailed && text.includes("Ready")) {
     uiReady = true;
     printChecklist();
   }
 });
 
 nextProcess.stderr?.on("data", (data: Buffer) => {
-  // Suppress noisy Next.js dev output, but log real errors
   const text = data.toString();
-  if (text.includes("Error") || text.includes("error")) {
+  if (text.includes("EADDRINUSE")) {
+    uiFailed = true;
+    uiError = "port 3100 is already in use";
+    process.stderr.write(data);
+    printChecklist();
+  } else if (text.includes("Error") || text.includes("error")) {
     process.stderr.write(data);
   }
 });
 
+nextProcess.on("exit", (code) => {
+  if (code !== null && code !== 0 && !uiReady && !uiFailed) {
+    uiFailed = true;
+    uiError = uiError || `server exited with code ${code}`;
+    printChecklist();
+  }
+});
+
 nextProcess.on("error", (err) => {
-  console.error("Failed to start web UI:", err.message);
-  process.exit(1);
+  uiFailed = true;
+  uiError = err.message;
+  printChecklist();
 });
 
 // Fallback: print checklist after timeout if "Ready" never appears
 setTimeout(() => {
-  if (!uiReady) {
+  if (!uiReady && !uiFailed) {
     uiReady = true;
     printChecklist();
   }
@@ -364,7 +379,12 @@ setTimeout(() => {
 // ---------------------------------------------------------------------------
 // 9. Print bootstrap checklist
 // ---------------------------------------------------------------------------
+let checklistPrinted = false;
+
 function printChecklist() {
+  if (checklistPrinted) return;
+  checklistPrinted = true;
+
   console.log("\n\x1b[2m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\x1b[0m");
   console.log("\x1b[1mBootstrap checklist\x1b[0m\n");
 
@@ -375,25 +395,36 @@ function printChecklist() {
   if (runtime?.name === "OpenClaw" || runtime?.name === "ZeroClaw") {
     check("Gateway", gatewayReachable, gatewayReachable ? "reachable" : `start with: ${runtime.cmd} start`);
   }
-  check("Web UI", true, "http://localhost:3100");
+
+  const uiOk = uiReady && !uiFailed;
+  check("Web UI", uiOk, uiOk ? "http://localhost:3100" : uiError || "failed to start");
 
   console.log("\n\x1b[2m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\x1b[0m");
-  console.log(`\n\x1b[1mTalentClaw ready\x1b[0m — http://localhost:3100\n`);
 
-  // Open browser
-  const url = "http://localhost:3100";
-  const openCmd =
-    platform() === "darwin"
-      ? "open"
-      : platform() === "win32"
-        ? "start"
-        : "xdg-open";
+  if (uiOk) {
+    console.log(`\n\x1b[1mTalentClaw ready\x1b[0m — http://localhost:3100\n`);
 
-  exec(`${openCmd} ${url}`, (err) => {
-    if (err) {
-      console.log(`Open ${url} in your browser to get started.`);
+    // Open browser
+    const url = "http://localhost:3100";
+    const openCmd =
+      platform() === "darwin"
+        ? "open"
+        : platform() === "win32"
+          ? "start"
+          : "xdg-open";
+
+    exec(`${openCmd} ${url}`, (err) => {
+      if (err) {
+        console.log(`Open ${url} in your browser to get started.`);
+      }
+    });
+  } else {
+    console.log(`\n\x1b[33mWeb UI failed to start\x1b[0m — ${uiError}`);
+    if (uiError.includes("already in use")) {
+      console.log(`  Kill the existing process: \x1b[1mlsof -ti :3100 | xargs kill\x1b[0m`);
+      console.log(`  Then re-run: \x1b[1mnpx talentclaw\x1b[0m\n`);
     }
-  });
+  }
 }
 
 // ---------------------------------------------------------------------------
