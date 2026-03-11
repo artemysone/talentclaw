@@ -5,8 +5,5 @@
   "type": "module",
   "bin": {
     "talentclaw": "./src/index.ts"
-  },
-  "dependencies": {
-    "duckdb": "*"
   }
 }

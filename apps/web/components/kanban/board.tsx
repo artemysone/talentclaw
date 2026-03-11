@@ -15,7 +15,8 @@ import {
 import { arrayMove } from "@dnd-kit/sortable"
 import { KanbanColumn } from "./column"
 import { KanbanCard, type KanbanCardData } from "./card"
-import { PIPELINE_STAGES } from "@/lib/schema"
+import { PIPELINE_STAGES } from "@/lib/types"
+import { moveJobToStage } from "@/app/actions"
 
 interface KanbanBoardProps {
   initialData: Record<string, KanbanCardData[]>
@@ -110,7 +111,10 @@ export function KanbanBoard({ initialData }: KanbanBoardProps) {
       })
     }
 
-    // TODO: Persist stage change to DuckDB
+    // Persist stage change to filesystem
+    if (activeStage !== overStage) {
+      moveJobToStage(active.id as string, overStage)
+    }
   }
 
   return (

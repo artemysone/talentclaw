@@ -40,7 +40,7 @@ TalentClaw is an AI career agent that combines a **local-first career CRM** with
 npx talentclaw
 ```
 
-Opens at `localhost:3100` with a local DuckDB database, Kanban pipeline, job discovery, and career dashboard.
+Opens at `localhost:3100` with your local career workspace, Kanban pipeline, job discovery, and career dashboard.
 
 ### Candidate Skill (agent runtimes)
 
@@ -63,7 +63,7 @@ Gives any AI agent career advisor capabilities — profile optimization, job sea
 - 📋 **Kanban pipeline** — drag-and-drop stages: Discovered, Saved, Applied, Interviewing, Offer, Accepted/Rejected
 - 🔍 **Job discovery** — search Coffee Shop with filters for skills, location, remote, compensation
 - 📊 **Career dashboard** — application stats, activity feed, upcoming deadlines
-- 💾 **Local-first data** — DuckDB at `~/.talentclaw/data.db`, your data stays on your machine
+- 💾 **Local-first data** — markdown files at `~/.talentclaw/`, human-readable and git-friendly
 
 ### Candidate Skill
 
@@ -88,16 +88,16 @@ Gives any AI agent career advisor capabilities — profile optimization, job sea
 │         │               │                 │              │
 │         └───────────┬───┘─────────────────┘              │
 │                     │                                    │
+│            ┌────────┴────────┐                           │
+│            │ ~/.talentclaw/  │                           │
+│            │  (filesystem)   │                           │
+│            └────────┬────────┘                           │
+│                     │                                    │
 │              ┌──────┴──────┐                             │
 │              │ Coffee Shop │                             │
-│              │     SDK     │                             │
-│              └──────┬──────┘                             │
-└─────────────────────┼───────────────────────────────────┘
-                      │
-               ┌──────┴──────┐
-               │ Coffee Shop │
-               │  (network)  │
-               └─────────────┘
+│              │  (network)  │                             │
+│              └─────────────┘                             │
+└─────────────────────────────────────────────────────────┘
 ```
 
 ---
@@ -114,10 +114,10 @@ talentclaw/
 ├── apps/web/                     # Career CRM web UI (Next.js 15)
 │   ├── app/                      # Routes: landing, pipeline, jobs, dashboard
 │   ├── components/               # Kanban, dashboard, search, landing
-│   └── lib/                      # DuckDB, Coffee Shop SDK
+│   └── lib/                      # Filesystem data layer
 │
 ├── apps/cli/                     # CLI launcher (npx talentclaw)
-│   └── src/index.ts              # Init DB, start web, open browser
+│   └── src/index.ts              # Scaffold workspace, start web, open browser
 │
 ├── skills/coffeeshop-employer/   # Employer hiring skill
 │   ├── SKILL.md                  # Skill definition
@@ -143,7 +143,7 @@ talentclaw/
 ```bash
 bun install              # install dependencies
 bun run dev              # start web UI (dev mode)
-npx talentclaw           # full launcher with DB init
+npx talentclaw           # full launcher with workspace scaffold
 ```
 
 ---

@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import { existsSync, mkdirSync, readFileSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { homedir, platform } from "node:os";
 import { join, resolve, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -19,109 +19,104 @@ if (major < 22) {
 }
 
 // ---------------------------------------------------------------------------
-// 2. Ensure ~/.talentclaw/ exists
+// 2. Scaffold ~/.talentclaw/ directory structure
 // ---------------------------------------------------------------------------
-const dataDir = join(homedir(), ".talentclaw");
-if (!existsSync(dataDir)) {
-  mkdirSync(dataDir, { recursive: true });
-  console.log(`Created ${dataDir}`);
+const dataDir = process.env.TALENTCLAW_DIR || join(homedir(), ".talentclaw");
+const dirs = [
+  dataDir,
+  join(dataDir, "jobs"),
+  join(dataDir, "applications"),
+  join(dataDir, "companies"),
+  join(dataDir, "contacts"),
+  join(dataDir, "messages"),
+];
+
+let created = false;
+for (const dir of dirs) {
+  if (!existsSync(dir)) {
+    mkdirSync(dir, { recursive: true });
+    created = true;
+  }
+}
+if (created) {
+  console.log(`Created workspace at ${dataDir}`);
 }
 
 // ---------------------------------------------------------------------------
-// 3. Initialize DuckDB with career schema
+// 3. Create template files on first run
 // ---------------------------------------------------------------------------
-const dbPath = join(dataDir, "data.db");
+const configPath = join(dataDir, "config.yaml");
+if (!existsSync(configPath)) {
+  writeFileSync(
+    configPath,
+    `# TalentClaw Configuration
+# See: https://github.com/artemyshq/talentclaw
 
-// Dynamic import so the shebang + version check run first
-const duckdb = await import("duckdb");
-const db = new duckdb.Database(dbPath);
-const conn = db.connect();
+# Coffee Shop API credentials
+# coffeeshop_api_key: ""
+# coffeeshop_agent_id: ""
 
-const schema = `
-CREATE TABLE IF NOT EXISTS jobs (
-  id TEXT PRIMARY KEY,
-  title TEXT NOT NULL,
-  company TEXT,
-  url TEXT,
-  source TEXT DEFAULT 'manual',
-  status TEXT DEFAULT 'discovered',
-  compensation_min INTEGER,
-  compensation_max INTEGER,
-  remote BOOLEAN,
-  location TEXT,
-  skills TEXT,
-  notes TEXT,
-  coffeeshop_job_id TEXT,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
+# UI preferences
+# theme: system
+`,
+    "utf-8"
+  );
+  console.log("Created config.yaml");
+}
 
-CREATE TABLE IF NOT EXISTS applications (
-  id TEXT PRIMARY KEY,
-  job_id TEXT REFERENCES jobs(id),
-  status TEXT DEFAULT 'discovered',
-  applied_at TIMESTAMP,
-  coffeeshop_application_id TEXT,
-  match_reasoning TEXT,
-  next_step TEXT,
-  next_step_date TIMESTAMP,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
+const profilePath = join(dataDir, "profile.md");
+if (!existsSync(profilePath)) {
+  writeFileSync(
+    profilePath,
+    `---
+# Your career profile — edit this file to get started
+# display_name: Your Name
+# headline: "Your Role | Your Specialty"
+# skills: [TypeScript, React, Node.js]
+# experience_years: 5
+# preferred_roles: [Senior Engineer, Staff Engineer]
+# preferred_locations: [Remote]
+# remote_preference: remote_ok
+# salary_range: { min: 150000, max: 200000, currency: USD }
+# availability: active
+---
 
-CREATE TABLE IF NOT EXISTS companies (
-  id TEXT PRIMARY KEY,
-  name TEXT NOT NULL,
-  url TEXT,
-  size TEXT,
-  industry TEXT,
-  notes TEXT,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
+## Summary
 
-CREATE TABLE IF NOT EXISTS contacts (
-  id TEXT PRIMARY KEY,
-  company_id TEXT REFERENCES companies(id),
-  name TEXT NOT NULL,
-  title TEXT,
-  email TEXT,
-  linkedin TEXT,
-  notes TEXT,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
+Tell TalentClaw about your experience and what you're looking for.
 
-CREATE TABLE IF NOT EXISTS messages (
-  id TEXT PRIMARY KEY,
-  application_id TEXT REFERENCES applications(id),
-  sender TEXT,
-  content TEXT,
-  sent_at TIMESTAMP,
-  coffeeshop_message_id TEXT,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-`;
+## Notes
 
-await new Promise<void>((resolve, reject) => {
-  conn.exec(schema, (err: Error | null) => {
-    if (err) reject(err);
-    else resolve();
-  });
-});
+Add any notes about your job search here.
+`,
+    "utf-8"
+  );
+  console.log("Created profile.md — edit it to set up your career profile");
+}
 
-console.log(`Database ready at ${dbPath}`);
+// Create activity log if missing
+const activityPath = join(dataDir, "activity.log");
+if (!existsSync(activityPath)) {
+  writeFileSync(activityPath, "", "utf-8");
+}
+
+console.log(`Workspace ready at ${dataDir}`);
 
 // ---------------------------------------------------------------------------
-// 4. Check for Coffee Shop API key
+// 4. Check for Coffee Shop credentials
 // ---------------------------------------------------------------------------
 let apiKey: string | undefined = process.env.COFFEESHOP_API_KEY;
 
 if (!apiKey) {
-  const configPath = join(dataDir, "config.json");
-  if (existsSync(configPath)) {
-    try {
-      const config = JSON.parse(readFileSync(configPath, "utf-8"));
-      apiKey = config.apiKey;
-    } catch {
-      // Malformed config — ignore
+  // Try reading from config.yaml
+  try {
+    const configContent = readFileSync(configPath, "utf-8");
+    const match = configContent.match(/^coffeeshop_api_key:\s*["']?(.+?)["']?\s*$/m);
+    if (match && match[1]) {
+      apiKey = match[1];
     }
+  } catch {
+    // Config unreadable — ignore
   }
 }
 
@@ -133,7 +128,7 @@ if (apiKey) {
       "\nTo connect to the Coffee Shop network, either:" +
       "\n  1. Run: coffeeshop register" +
       "\n  2. Set the COFFEESHOP_API_KEY environment variable" +
-      "\n  3. Add { \"apiKey\": \"...\" } to ~/.talentclaw/config.json" +
+      "\n  3. Add coffeeshop_api_key to ~/.talentclaw/config.yaml" +
       "\n\nContinuing in offline mode...\n"
   );
 }
@@ -177,11 +172,10 @@ setTimeout(() => {
 }, 3000);
 
 // ---------------------------------------------------------------------------
-// 7. Graceful shutdown on SIGINT
+// 7. Graceful shutdown
 // ---------------------------------------------------------------------------
 process.on("SIGINT", () => {
   console.log("\nShutting down TalentClaw...");
   nextProcess.kill("SIGINT");
-  db.close();
   process.exit(0);
 });

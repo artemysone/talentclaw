@@ -11,7 +11,7 @@ This is a Bun monorepo with two workspace categories:
 
 - **Runtime:** Bun + Node.js 22+
 - **Web:** Next.js 15, React 19, Tailwind CSS v4
-- **Data:** DuckDB (local-first, `~/.talentclaw/data.db`)
+- **Data:** Filesystem (local-first, `~/.talentclaw/` markdown + YAML frontmatter)
 - **Network:** Coffee Shop SDK (`@artemyshq/coffeeshop`)
 
 ## Key Directories
@@ -28,7 +28,7 @@ This is a Bun monorepo with two workspace categories:
 - **TypeScript** for all code, **Zod** for runtime validation
 - **Tailwind v4** — use `@import "tailwindcss"` and `@theme` blocks, not `@tailwind` directives
 - **Server components** by default in Next.js; add `"use client"` only when needed
-- **DuckDB** — all schema changes must update both `apps/web/lib/schema.ts` and `apps/cli/src/index.ts`
+- **Filesystem data** — career data lives in `~/.talentclaw/` as markdown with YAML frontmatter. Schema types are in `apps/web/lib/types.ts`, filesystem I/O in `apps/web/lib/fs-data.ts`
 - **No secrets in repo** — use `.env` files (see `.env.example`)
 - **Skill files** — SKILL.md is the skill definition, references/ holds domain knowledge, scripts/setup.sh handles onboarding
 
@@ -37,12 +37,12 @@ This is a Bun monorepo with two workspace categories:
 ```bash
 bun install          # install all workspace dependencies
 bun run dev          # start web UI (localhost:3000)
-npx talentclaw       # full launcher (init DB + start web at :3100)
+npx talentclaw       # full launcher (scaffold workspace + start web at :3100)
 ```
 
 ## Coffee Shop SDK
 
-The web app wraps the SDK in `apps/web/lib/coffeeshop.ts`. Available methods:
+The agent uses CoffeeShop directly via MCP tools or CLI. The web UI reads the resulting files from `~/.talentclaw/`. Available SDK methods (used by the agent, not the web UI):
 - `searchJobs()` — search the network for job listings
 - `submitApplication()` — apply to a job
 - `getInbox()` — fetch incoming messages
@@ -52,10 +52,17 @@ The web app wraps the SDK in `apps/web/lib/coffeeshop.ts`. Available methods:
 
 Tests live next to the code they test (`__tests__/` directories or `.test.ts` files).
 
-## DuckDB Schema
+## Filesystem Schema
 
-Five tables: `jobs`, `applications`, `companies`, `contacts`, `messages`. Schema defined in:
-- `apps/web/lib/schema.ts` (TypeScript + SQL)
-- `apps/cli/src/index.ts` (SQL init)
+Career data lives in `~/.talentclaw/` as markdown files with YAML frontmatter. Directory structure:
 
-Keep these in sync when modifying the schema.
+- `profile.md` — user's career profile
+- `jobs/` — one `.md` file per opportunity (status field drives pipeline)
+- `applications/` — one `.md` file per application
+- `companies/` — company research notes
+- `contacts/` — people in network
+- `messages/` — conversation threads
+- `activity.log` — append-only JSONL activity feed
+- `config.yaml` — CoffeeShop keys, UI preferences
+
+Types defined in `apps/web/lib/types.ts`. Read/write functions in `apps/web/lib/fs-data.ts`.

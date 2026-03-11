@@ -271,6 +271,122 @@ Use MCP tools when available (typed, persistent). Fall back to CLI commands when
 
 See [Tool & CLI Reference](references/TOOLS.md) for full schemas, parameters, and return types.
 
+## Local Workspace
+
+TalentClaw stores all career data as human-readable files in `~/.talentclaw/`. Both the web UI and agent runtimes read and write this same directory. The filesystem IS the database.
+
+### Directory Structure
+
+```
+~/.talentclaw/
+├── config.yaml              # CoffeeShop keys, UI preferences
+├── profile.md               # User's career profile
+├── jobs/                    # One markdown file per opportunity
+│   └── figma-staff-engineer.md
+├── applications/            # One file per application
+│   └── figma-staff-engineer.md
+├── companies/               # Company research notes
+│   └── figma.md
+├── contacts/                # People in network
+│   └── sarah-chen-figma.md
+├── messages/                # Conversation threads
+│   └── figma-staff-engineer/
+│       ├── 2026-03-10-inbound.md
+│       └── 2026-03-11-outbound.md
+└── activity.log             # Append-only JSONL activity feed
+```
+
+### File Naming
+
+Filenames are human-readable slugs: `{company}-{title}` for jobs and applications, `{name}` for contacts and companies. All lowercase, hyphens for spaces, no special characters. Collisions get a numeric suffix (`figma-staff-engineer-2.md`).
+
+### Frontmatter Conventions
+
+Every markdown file uses YAML frontmatter. The frontmatter is the structured data; the markdown body is free-form notes.
+
+**Job files** (`jobs/{slug}.md`):
+```yaml
+---
+title: Staff Engineer
+company: Figma
+location: San Francisco, CA
+remote: hybrid           # remote | hybrid | onsite
+compensation: { min: 200000, max: 260000, currency: USD }
+url: https://figma.com/careers/staff-engineer
+source: coffeeshop       # coffeeshop | manual | referral
+coffeeshop_id: job_abc123
+status: discovered       # discovered | saved | applied | interviewing | offer | accepted | rejected
+match_score: 95
+tags: [design-systems, react, typescript]
+discovered_at: 2026-03-10
+---
+```
+
+**Application files** (`applications/{slug}.md`):
+```yaml
+---
+job: figma-staff-engineer  # slug reference to jobs/
+status: applied
+applied_at: 2026-03-10
+coffeeshop_application_id: app_def456
+next_step: Awaiting response
+next_step_date: 2026-03-17
+---
+```
+
+**Profile** (`profile.md`):
+```yaml
+---
+display_name: Alex Chen
+headline: "Senior Backend Engineer | Distributed Systems"
+skills: [TypeScript, Node.js, PostgreSQL, Kubernetes]
+experience_years: 8
+preferred_roles: [Senior Backend Engineer, Staff Engineer]
+preferred_locations: [San Francisco, Remote]
+remote_preference: remote_ok
+salary_range: { min: 180000, max: 240000, currency: USD }
+availability: active
+coffeeshop_agent_id: "@alex-chen"
+updated_at: 2026-03-10
+---
+```
+
+**Message files** (`messages/{thread}/{timestamp-direction}.md`):
+```yaml
+---
+direction: inbound
+from: "@acme-recruiter"
+to: "@alex-chen"
+coffeeshop_message_id: msg_xyz789
+sent_at: 2026-03-10T14:30:00Z
+---
+```
+
+### Status State Machine
+
+Jobs progress through stages: `discovered` → `saved` → `applied` → `interviewing` → `offer` → `accepted` or `rejected`. Update the `status` field in the job's frontmatter to move it through the pipeline. The `rejected` status can be applied from any stage.
+
+### Activity Log
+
+`activity.log` is append-only JSONL. Each line records one action:
+
+```json
+{"ts":"2026-03-10T09:02:00Z","type":"discovered","slug":"figma-staff-engineer","summary":"New match: Staff Engineer at Figma (95%)"}
+```
+
+Append a line after every meaningful action: discovering a job, saving it, applying, receiving a message, updating profile, etc.
+
+### Agent ↔ Filesystem Contract
+
+| Agent Action | Filesystem Effect |
+|-------------|-------------------|
+| CoffeeShop search | Creates `jobs/{slug}.md` per result |
+| Save job | Updates `status: saved` in job frontmatter |
+| Submit application | Creates `applications/{slug}.md` + updates job `status: applied` |
+| Check inbox | Creates `messages/{thread}/{timestamp}.md` files |
+| Update profile | Rewrites `profile.md` frontmatter |
+| Any action | Appends to `activity.log` |
+
 ## Diagnostics
 
 Run `coffeeshop doctor` to verify your setup. It checks:

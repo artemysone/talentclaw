@@ -1,97 +1,32 @@
-"use client"
-
-import { useState, useEffect } from "react"
 import Link from "next/link"
-import { Cog, ArrowLeft, Plus } from "lucide-react"
+import { Cog, Plus } from "lucide-react"
 import { KanbanBoard } from "@/components/kanban/board"
-import { PIPELINE_STAGES } from "@/lib/schema"
+import { PIPELINE_STAGES } from "@/lib/types"
+import { listJobs } from "@/lib/fs-data"
 import type { KanbanCardData } from "@/components/kanban/card"
 
-// Demo data for initial render
-const demoData: Record<string, KanbanCardData[]> = {
-  discovered: [
-    {
-      id: "d1",
-      title: "Staff Engineer",
-      company: "Figma",
-      appliedDate: null,
-      nextAction: "Review job posting",
-      matchScore: 95,
-    },
-    {
-      id: "d2",
-      title: "Senior Frontend Engineer",
-      company: "Linear",
-      appliedDate: null,
-      nextAction: "Check requirements",
-      matchScore: 87,
-    },
-    {
-      id: "d3",
-      title: "Product Engineer",
-      company: "Vercel",
-      appliedDate: null,
-      nextAction: null,
-      matchScore: 82,
-    },
-  ],
-  saved: [
-    {
-      id: "s1",
-      title: "Principal Engineer",
-      company: "Stripe",
-      appliedDate: null,
-      nextAction: "Tailor resume",
-      matchScore: 91,
-    },
-  ],
-  applied: [
-    {
-      id: "a1",
-      title: "Engineering Manager",
-      company: "Notion",
-      appliedDate: "Mar 5",
-      nextAction: "Awaiting response",
-      matchScore: 78,
-    },
-    {
-      id: "a2",
-      title: "Senior Software Engineer",
-      company: "Datadog",
-      appliedDate: "Mar 3",
-      nextAction: "Follow up in 5 days",
-      matchScore: 85,
-    },
-  ],
-  interviewing: [
-    {
-      id: "i1",
-      title: "Staff Frontend Engineer",
-      company: "Airbnb",
-      appliedDate: "Feb 28",
-      nextAction: "System design round - Mar 12",
-      matchScore: 88,
-    },
-  ],
-  offer: [],
-  accepted: [],
-  rejected: [],
-}
+export default async function PipelinePage() {
+  const jobs = await listJobs()
 
-export default function PipelinePage() {
-  const [data, setData] = useState<Record<string, KanbanCardData[]>>({})
-  const [loading, setLoading] = useState(true)
+  // Group jobs by status into KanbanCardData format
+  const data: Record<string, KanbanCardData[]> = {}
+  for (const stage of PIPELINE_STAGES) {
+    data[stage] = []
+  }
 
-  useEffect(() => {
-    // TODO: Load from DuckDB via API route
-    // For now, use demo data
-    const initial: Record<string, KanbanCardData[]> = {}
-    for (const stage of PIPELINE_STAGES) {
-      initial[stage] = demoData[stage] || []
+  for (const job of jobs) {
+    const stage = job.frontmatter.status
+    if (data[stage]) {
+      data[stage].push({
+        id: job.slug,
+        title: job.frontmatter.title,
+        company: job.frontmatter.company,
+        appliedDate: job.frontmatter.discovered_at || null,
+        nextAction: null,
+        matchScore: job.frontmatter.match_score ?? null,
+      })
     }
-    setData(initial)
-    setLoading(false)
-  }, [])
+  }
 
   return (
     <div className="min-h-screen bg-surface">
@@ -134,13 +69,7 @@ export default function PipelinePage() {
 
       {/* Board */}
       <main className="p-5 max-w-[1800px] mx-auto">
-        {loading ? (
-          <div className="flex items-center justify-center h-[60vh]">
-            <div className="text-text-muted text-sm">Loading pipeline...</div>
-          </div>
-        ) : (
-          <KanbanBoard initialData={data} />
-        )}
+        <KanbanBoard initialData={data} />
       </main>
     </div>
   )

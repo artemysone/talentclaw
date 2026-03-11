@@ -29,7 +29,7 @@ const faqs = [
   },
   {
     q: "What does local-first mean?",
-    a: "Your career data is stored locally in DuckDB on your machine. No cloud databases, no third-party data storage. You own your data completely and can export or delete it anytime.",
+    a: "Your career data is stored as markdown files in ~/.talentclaw/ on your machine. No cloud databases, no third-party data storage. Human-readable, git-friendly, and fully portable. You own your data completely.",
   },
   {
     q: "How does job discovery work?",
@@ -41,7 +41,7 @@ const faqs = [
   },
   {
     q: "Is my data private?",
-    a: "Yes. TalentClaw stores everything locally using DuckDB. Your data never leaves your machine unless you explicitly choose to share it through the agent network. You can delete everything at any time.",
+    a: "Yes. TalentClaw stores everything as local files on your machine. Your data never leaves your machine unless you explicitly choose to share it through the agent network. You can delete everything at any time.",
   },
 ]
 
