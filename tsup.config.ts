@@ -1,7 +1,7 @@
 import { defineConfig } from "tsup"
 
 export default defineConfig({
-  entry: ["src/index.ts"],
+  entry: ["bin/talentclaw.ts"],
   format: ["esm"],
   outDir: "dist",
   target: "node22",

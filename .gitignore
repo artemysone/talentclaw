@@ -20,9 +20,6 @@ dist/
 *.db-wal
 *.db-shm
 
-# turbo
-.turbo/
-
 # os
 .DS_Store
 Thumbs.db

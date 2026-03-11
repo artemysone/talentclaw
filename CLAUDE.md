@@ -2,10 +2,7 @@
 
 ## Project Structure
 
-This is a Bun monorepo with two workspace categories:
-
-- `apps/` — Applications (web UI, CLI)
-- `skills/` — Platform-agnostic agent skills
+Single-package Next.js project with a CLI launcher.
 
 ## Stack
 
@@ -18,9 +15,11 @@ This is a Bun monorepo with two workspace categories:
 
 | Path | What it is |
 |------|-----------|
-| `skills/` | Candidate career skill (skills.sh distribution) |
-| `apps/web/` | Career CRM web UI (Next.js) |
-| `apps/cli/` | `npx talentclaw` launcher |
+| `app/` | Next.js pages and routes |
+| `components/` | React components |
+| `lib/` | Data layer (types, filesystem I/O, utilities) |
+| `bin/` | CLI launcher (`talentclaw.ts`) |
+| `skills/` | Agent skill definition + reference docs |
 | `persona/` | Agent persona (SOUL.md) |
 
 ## Conventions
@@ -28,15 +27,16 @@ This is a Bun monorepo with two workspace categories:
 - **TypeScript** for all code, **Zod** for runtime validation
 - **Tailwind v4** — use `@import "tailwindcss"` and `@theme` blocks, not `@tailwind` directives
 - **Server components** by default in Next.js; add `"use client"` only when needed
-- **Filesystem data** — career data lives in `~/.talentclaw/` as markdown with YAML frontmatter. Schema types are in `apps/web/lib/types.ts`, filesystem I/O in `apps/web/lib/fs-data.ts`
+- **Filesystem data** — career data lives in `~/.talentclaw/` as markdown with YAML frontmatter. Schema types in `lib/types.ts`, filesystem I/O in `lib/fs-data.ts`
 - **No secrets in repo** — use `.env` files (see `.env.example`)
 - **Skill files** — SKILL.md is the skill definition, references/ holds domain knowledge, scripts/setup.sh handles onboarding
 
 ## Commands
 
 ```bash
-bun install          # install all workspace dependencies
+bun install          # install dependencies
 bun run dev          # start web UI (localhost:3000)
+bun run build:cli    # compile CLI launcher to dist/
 npx talentclaw       # full launcher (scaffold workspace + start web at :3100)
 ```
 
@@ -65,4 +65,4 @@ Career data lives in `~/.talentclaw/` as markdown files with YAML frontmatter. D
 - `activity.log` — append-only JSONL activity feed
 - `config.yaml` — CoffeeShop keys, UI preferences
 
-Types defined in `apps/web/lib/types.ts`. Read/write functions in `apps/web/lib/fs-data.ts`.
+Types defined in `lib/types.ts`. Read/write functions in `lib/fs-data.ts`.

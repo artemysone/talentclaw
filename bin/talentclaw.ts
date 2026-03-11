@@ -11,21 +11,8 @@ import { fileURLToPath } from "node:url";
 import { spawn, exec, execSync } from "node:child_process";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-
-// ---------------------------------------------------------------------------
-// Path resolution (works in both dev monorepo and published npm package)
-// ---------------------------------------------------------------------------
-function resolvePackagePath(devPath: string, publishedPath: string): string {
-  // Prefer dev (monorepo) path so local development uses apps/web directly
-  const dev = resolve(__dirname, devPath);
-  if (existsSync(dev)) return dev;
-  return resolve(__dirname, publishedPath);
-}
-
-// In dev: apps/cli/src/ → ../../../skills and ../../web
-// Published: dist/ → ../skills and ../web
-const skillSrcDir = resolvePackagePath("../../../skills", "../skills");
-const webDir = resolvePackagePath("../../web", "../web");
+const packageRoot = resolve(__dirname, "..");
+const skillSrcDir = join(packageRoot, "skills");
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -175,14 +162,6 @@ if (runtime && runtime.skillDir && existsSync(skillSrcDir)) {
   try {
     mkdirSync(runtime.skillDir, { recursive: true });
     cpSync(skillSrcDir, runtime.skillDir, { recursive: true });
-
-    // Don't copy the workspace package.json into the skill dir
-    const pkgInSkill = join(runtime.skillDir, "package.json");
-    if (existsSync(pkgInSkill)) {
-      const { unlinkSync } = await import("node:fs");
-      unlinkSync(pkgInSkill);
-    }
-
     skillInstalled = true;
     log("  ✓", `Skill installed into ${runtime.name} workspace`);
   } catch (err) {
@@ -325,7 +304,7 @@ if (runtime && (runtime.name === "OpenClaw" || runtime.name === "ZeroClaw")) {
 log("◆", "Starting web UI...");
 
 const nextProcess = spawn("npx", ["next", "dev", "--port", "3100"], {
-  cwd: webDir,
+  cwd: packageRoot,
   stdio: "pipe",
   shell: true,
 });
