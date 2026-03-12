@@ -1,4 +1,4 @@
-import { Cog } from "lucide-react"
+import { CrabLogo } from "@/components/crab-logo"
 import { SidebarNav } from "./sidebar-nav"
 import type { TreeNode } from "@/lib/types"
 
@@ -35,11 +35,9 @@ export function Sidebar({
     <>
       {/* Brand */}
       <div className="px-5 h-14 flex items-center gap-2.5 border-b border-border-sidebar shrink-0">
-        <div className="w-7 h-7 rounded-md bg-accent flex items-center justify-center">
-          <Cog className="w-3.5 h-3.5 text-white" />
-        </div>
+        <CrabLogo className="w-7 h-7 text-accent" />
         <span className="text-[15px] font-semibold tracking-tight text-text-primary">
-          TalentClaw
+          talentclaw
         </span>
       </div>
 

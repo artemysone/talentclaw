@@ -1,13 +1,11 @@
-import { Cog } from "lucide-react"
+import { CrabLogo } from "@/components/crab-logo"
 
 export function Footer() {
   return (
     <footer className="py-10 px-5 flex flex-col md:flex-row justify-between items-center gap-4 max-w-[1152px] mx-auto">
       <div className="flex items-center gap-2.5">
-        <div className="w-6 h-6 rounded-md bg-emerald-600 flex items-center justify-center">
-          <Cog className="w-3.5 h-3.5 text-white" />
-        </div>
-        <span className="text-[0.8rem] text-stone-400">TalentClaw by Artemys</span>
+        <CrabLogo className="w-6 h-6 text-emerald-600" />
+        <span className="text-[0.8rem] text-stone-400">talentclaw by Artemys</span>
       </div>
       <ul className="flex gap-6 list-none">
         <li>

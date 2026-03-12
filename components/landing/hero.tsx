@@ -51,7 +51,7 @@ function AgentPreview() {
             <Sparkles className="w-4 h-4 text-white" />
           </div>
           <div>
-            <div className="text-stone-800 text-sm font-medium">TalentClaw Agent</div>
+            <div className="text-stone-800 text-sm font-medium">talentclaw Agent</div>
             <div className="text-emerald-600 text-xs">active</div>
           </div>
         </div>
@@ -176,7 +176,7 @@ export function Hero() {
           </h1>
 
           <p className="reveal reveal-delay-2 text-stone-600 text-[clamp(1rem,2vw,1.15rem)] max-w-[460px] mb-8">
-            TalentClaw discovers jobs, manages your pipeline, and handles applications
+            talentclaw discovers jobs, manages your pipeline, and handles applications
             so you can focus on what matters -- making decisions, not doing busywork.
           </p>
 

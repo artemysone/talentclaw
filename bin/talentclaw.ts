@@ -39,7 +39,7 @@ function cmdVersion(cmd: string): string | null {
 const [major] = process.versions.node.split(".").map(Number);
 if (major < 22) {
   console.error(
-    `\nTalentClaw requires Node.js 22 or later (you have ${process.versions.node}).` +
+    `\ntalentclaw requires Node.js 22 or later (you have ${process.versions.node}).` +
       `\nInstall the latest LTS from https://nodejs.org or use a version manager like fnm / nvm.\n`,
   );
   process.exit(1);
@@ -54,7 +54,7 @@ if (subcommand === "search") {
   process.exit(0);
 }
 
-console.log("\n\x1b[1mTalentClaw\x1b[0m — your AI career agent\n");
+console.log("\n\x1b[1mtalentclaw\x1b[0m — your AI career agent\n");
 
 // ---------------------------------------------------------------------------
 // 2. Detect agent runtimes
@@ -173,12 +173,12 @@ if (hasCoffeeshop) {
 }
 
 // ---------------------------------------------------------------------------
-// 5. Install TalentClaw skill into runtime
+// 5. Install talentclaw skill into runtime
 // ---------------------------------------------------------------------------
 let skillInstalled = false;
 
 if (runtime && runtime.skillDir && existsSync(skillSrcDir)) {
-  log("◆", "Installing TalentClaw skill...");
+  log("◆", "Installing talentclaw skill...");
 
   try {
     mkdirSync(runtime.skillDir, { recursive: true });
@@ -227,7 +227,7 @@ const configPath = join(dataDir, "config.yaml");
 if (!existsSync(configPath)) {
   writeFileSync(
     configPath,
-    `# TalentClaw Configuration
+    `# talentclaw Configuration
 # See: https://github.com/artemyshq/talentclaw
 
 # Coffee Shop API credentials
@@ -396,7 +396,7 @@ function printChecklist() {
   console.log("\x1b[1mBootstrap checklist\x1b[0m\n");
 
   check("Agent runtime", !!runtime, runtime?.name || "none");
-  check("TalentClaw skill", skillInstalled);
+  check("talentclaw skill", skillInstalled);
   check("Workspace", existsSync(dataDir), dataDir);
   check("Coffee Shop CLI", hasCoffeeshop, hasCoffeeshop ? "installed" : "npm install -g coffeeshop");
   check("Coffee Shop account", hasApiKey, hasApiKey ? "connected" : "your agent will set this up");
@@ -410,7 +410,7 @@ function printChecklist() {
   console.log("\n\x1b[2m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\x1b[0m");
 
   if (uiOk) {
-    console.log(`\n\x1b[1mTalentClaw ready\x1b[0m — http://localhost:3100\n`);
+    console.log(`\n\x1b[1mtalentclaw ready\x1b[0m — http://localhost:3100\n`);
 
     // Open browser
     const url = "http://localhost:3100";
@@ -439,7 +439,7 @@ function printChecklist() {
 // 10. Graceful shutdown
 // ---------------------------------------------------------------------------
 process.on("SIGINT", () => {
-  console.log("\nShutting down TalentClaw...");
+  console.log("\nShutting down talentclaw...");
   nextProcess.kill("SIGINT");
   process.exit(0);
 });

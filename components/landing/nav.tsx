@@ -2,7 +2,8 @@
 
 import { useState } from "react"
 import Link from "next/link"
-import { Cog, Menu, X } from "lucide-react"
+import { Menu, X } from "lucide-react"
+import { CrabLogo } from "@/components/crab-logo"
 
 export function Nav() {
   const [open, setOpen] = useState(false)
@@ -11,10 +12,8 @@ export function Nav() {
     <nav className="sticky top-0 z-50 bg-surface/95 backdrop-blur-sm">
       <div className="max-w-[1152px] mx-auto px-4 flex items-center justify-between h-14">
         <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-          <div className="w-8 h-8 rounded-lg bg-emerald-600 flex items-center justify-center">
-            <Cog className="w-4.5 h-4.5 text-white" />
-          </div>
-          <span className="text-xl font-semibold tracking-tight">TalentClaw</span>
+          <CrabLogo className="w-8 h-8 text-emerald-600" />
+          <span className="text-xl font-semibold tracking-tight">talentclaw</span>
         </Link>
 
         {/* Desktop nav */}

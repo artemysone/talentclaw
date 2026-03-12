@@ -76,7 +76,7 @@ function parseArgs(argv: string[]) {
 }
 
 // ---------------------------------------------------------------------------
-// Map Coffee Shop remote_policy to TalentClaw remote field
+// Map Coffee Shop remote_policy to talentclaw remote field
 // ---------------------------------------------------------------------------
 function mapRemotePolicy(
   policy?: string

@@ -1,218 +1,24 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 440" width="400" height="440">
-  <defs>
-    <linearGradient id="bodyGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-      <stop offset="0%" style="stop-color:#E74C3C"/>
-      <stop offset="100%" style="stop-color:#C0392B"/>
-    </linearGradient>
-    <linearGradient id="clawGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#EF5350"/>
-      <stop offset="100%" style="stop-color:#B71C1C"/>
-    </linearGradient>
-    <linearGradient id="darkShell" x1="0%" y1="0%" x2="0%" y2="100%">
-      <stop offset="0%" style="stop-color:#C0392B"/>
-      <stop offset="100%" style="stop-color:#922B21"/>
-    </linearGradient>
-    <linearGradient id="paperGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-      <stop offset="0%" style="stop-color:#FFFFFF"/>
-      <stop offset="100%" style="stop-color:#F5F5F5"/>
-    </linearGradient>
-  </defs>
-
-  <!-- ========================================== -->
-  <!--   RESUME — single page, tearing sideways   -->
-  <!-- ========================================== -->
-
-  <!-- Left half of resume (pulled left by left claw) -->
-  <g transform="translate(58, 22) rotate(-6 60 55)">
-    <!-- Paper shadow -->
-    <rect x="4" y="4" width="68" height="90" rx="2" fill="#000" opacity="0.08"/>
-    <!-- Paper -->
-    <rect x="1" y="1" width="68" height="90" rx="2" fill="url(#paperGrad)" stroke="#DDD" stroke-width="0.8"/>
-    <!-- Torn right edge (jagged vertical) -->
-    <path d="M69 1 L66 8 L70 15 L65 22 L71 30 L66 37 L70 44 L65 52 L71 59 L66 66 L70 74 L66 81 L69 91"
-          fill="url(#paperGrad)" stroke="#CCC" stroke-width="0.5"/>
-    <!-- "Resume" title (left half gets "Res") -->
-    <text x="34" y="18" font-family="Georgia, serif" font-size="12" font-weight="bold" fill="#333" text-anchor="middle" opacity="0.75">Res</text>
-    <!-- Horizontal rule -->
-    <line x1="8" y1="24" x2="62" y2="24" stroke="#DDD" stroke-width="0.8"/>
-    <!-- Photo placeholder -->
-    <rect x="8" y="30" width="15" height="17" rx="2" fill="#E74C3C" opacity="0.2"/>
-    <circle cx="15" cy="35" r="4.5" fill="#E74C3C" opacity="0.25"/>
-    <path d="M9 44 Q15 40 22 44" fill="#E74C3C" opacity="0.2"/>
-    <!-- Name + subtitle next to photo -->
-    <rect x="28" y="31" width="30" height="4" rx="2" fill="#333" opacity="0.45"/>
-    <rect x="28" y="38" width="24" height="3" rx="1.5" fill="#666" opacity="0.3"/>
-    <!-- Section header -->
-    <rect x="8" y="54" width="20" height="3" rx="1.5" fill="#444" opacity="0.4"/>
-    <!-- Content lines -->
-    <rect x="8" y="62" width="52" height="2.5" rx="1" fill="#999" opacity="0.25"/>
-    <rect x="8" y="68" width="48" height="2.5" rx="1" fill="#999" opacity="0.25"/>
-    <rect x="8" y="74" width="54" height="2.5" rx="1" fill="#999" opacity="0.25"/>
-    <rect x="8" y="80" width="42" height="2.5" rx="1" fill="#999" opacity="0.25"/>
-  </g>
-
-  <!-- Right half of resume (pulled right by right claw) -->
-  <g transform="translate(248, 22) rotate(6 40 55)">
-    <!-- Paper shadow -->
-    <rect x="4" y="4" width="68" height="90" rx="2" fill="#000" opacity="0.08"/>
-    <!-- Paper -->
-    <rect x="1" y="1" width="68" height="90" rx="2" fill="url(#paperGrad)" stroke="#DDD" stroke-width="0.8"/>
-    <!-- Torn left edge (jagged vertical) -->
-    <path d="M1 1 L4 8 L0 15 L5 22 L-1 30 L4 37 L0 44 L5 52 L-1 59 L4 66 L0 74 L4 81 L1 91"
-          fill="url(#paperGrad)" stroke="#CCC" stroke-width="0.5"/>
-    <!-- "ume" continuation of title -->
-    <text x="10" y="18" font-family="Georgia, serif" font-size="12" font-weight="bold" fill="#333" text-anchor="start" opacity="0.75">ume</text>
-    <!-- Horizontal rule -->
-    <line x1="6" y1="24" x2="62" y2="24" stroke="#DDD" stroke-width="0.8"/>
-    <!-- Content lines -->
-    <rect x="8" y="31" width="20" height="3" rx="1.5" fill="#444" opacity="0.4"/>
-    <rect x="8" y="39" width="52" height="2.5" rx="1" fill="#999" opacity="0.25"/>
-    <rect x="8" y="45" width="48" height="2.5" rx="1" fill="#999" opacity="0.25"/>
-    <rect x="8" y="51" width="54" height="2.5" rx="1" fill="#999" opacity="0.25"/>
-    <!-- Section -->
-    <line x1="8" y1="59" x2="60" y2="59" stroke="#DDD" stroke-width="0.8"/>
-    <rect x="8" y="64" width="22" height="3" rx="1.5" fill="#444" opacity="0.4"/>
-    <rect x="8" y="72" width="50" height="2.5" rx="1" fill="#999" opacity="0.25"/>
-    <rect x="8" y="78" width="46" height="2.5" rx="1" fill="#999" opacity="0.25"/>
-    <rect x="8" y="84" width="52" height="2.5" rx="1" fill="#999" opacity="0.25"/>
-  </g>
-
-  <!-- Tear debris (paper bits flying from center) -->
-  <g fill="#F5F5F5" stroke="#DDD" stroke-width="0.4" opacity="0.6">
-    <rect x="194" y="35" width="5" height="4" rx="0.5" transform="rotate(30 196 37)"/>
-    <rect x="200" y="55" width="4" height="5" rx="0.5" transform="rotate(-25 202 57)"/>
-    <rect x="190" y="70" width="3" height="4" rx="0.5" transform="rotate(50 191 72)"/>
-    <rect x="206" y="45" width="4" height="3" rx="0.5" transform="rotate(-40 208 46)"/>
-    <rect x="196" y="85" width="3" height="3" rx="0.5" transform="rotate(15 197 86)"/>
-  </g>
-
-  <!-- Tear motion lines (horizontal, showing pull apart) -->
-  <g stroke="#FFD700" stroke-width="1.5" stroke-linecap="round" opacity="0.5">
-    <line x1="170" y1="50" x2="155" y2="48"/>
-    <line x1="172" y1="65" x2="158" y2="64"/>
-    <line x1="228" y1="50" x2="243" y2="48"/>
-    <line x1="226" y1="65" x2="240" y2="64"/>
-  </g>
-
-  <!-- ==================== -->
-  <!--       LOBSTER        -->
-  <!-- ==================== -->
-
-  <!-- === TAIL FAN === -->
-  <ellipse cx="200" cy="420" rx="22" ry="14" fill="#922B21"/>
-  <ellipse cx="175" cy="415" rx="20" ry="11" fill="#A93226" transform="rotate(15 175 415)"/>
-  <ellipse cx="155" cy="408" rx="18" ry="9" fill="#B03A2E" transform="rotate(30 155 408)"/>
-  <ellipse cx="225" cy="415" rx="20" ry="11" fill="#A93226" transform="rotate(-15 225 415)"/>
-  <ellipse cx="245" cy="408" rx="18" ry="9" fill="#B03A2E" transform="rotate(-30 245 408)"/>
-
-  <!-- === TAIL SEGMENTS === -->
-  <ellipse cx="200" cy="398" rx="26" ry="10" fill="#922B21"/>
-  <ellipse cx="200" cy="384" rx="29" ry="11" fill="#A93226"/>
-  <path d="M171 384 Q200 388 229 384" fill="none" stroke="#7B241C" stroke-width="1" opacity="0.5"/>
-  <ellipse cx="200" cy="368" rx="32" ry="12" fill="#B03A2E"/>
-  <path d="M168 368 Q200 372 232 368" fill="none" stroke="#7B241C" stroke-width="1" opacity="0.5"/>
-  <ellipse cx="200" cy="350" rx="35" ry="13" fill="url(#darkShell)"/>
-  <path d="M165 350 Q200 354 235 350" fill="none" stroke="#7B241C" stroke-width="1" opacity="0.5"/>
-
-  <!-- === ABDOMEN/THORAX === -->
-  <ellipse cx="200" cy="290" rx="52" ry="65" fill="url(#bodyGrad)"/>
-  <path d="M152 268 Q200 274 248 268" fill="none" stroke="#B03A2E" stroke-width="1.5" opacity="0.4"/>
-  <path d="M150 288 Q200 294 250 288" fill="none" stroke="#B03A2E" stroke-width="1.5" opacity="0.4"/>
-  <path d="M152 308 Q200 314 248 308" fill="none" stroke="#B03A2E" stroke-width="1.5" opacity="0.4"/>
-  <line x1="200" y1="235" x2="200" y2="340" stroke="#B03A2E" stroke-width="1" opacity="0.25"/>
-
-  <!-- === WALKING LEGS (4 pairs) === -->
-  <g stroke="#C0392B" stroke-width="4" stroke-linecap="round" fill="none">
-    <path d="M152 270 Q130 268 115 280 Q105 290 100 305"/>
-    <path d="M150 288 Q125 290 110 305 Q100 318 98 330"/>
-    <path d="M150 305 Q128 312 118 328 Q110 340 112 355"/>
-    <path d="M155 322 Q138 332 130 348 Q125 360 128 370"/>
-  </g>
-  <g fill="#E74C3C">
-    <circle cx="100" cy="305" r="3"/>
-    <circle cx="98" cy="330" r="3"/>
-    <circle cx="112" cy="355" r="3"/>
-    <circle cx="128" cy="370" r="3"/>
-  </g>
-  <g stroke="#C0392B" stroke-width="4" stroke-linecap="round" fill="none">
-    <path d="M248 270 Q270 268 285 280 Q295 290 300 305"/>
-    <path d="M250 288 Q275 290 290 305 Q300 318 302 330"/>
-    <path d="M250 305 Q272 312 282 328 Q290 340 288 355"/>
-    <path d="M245 322 Q262 332 270 348 Q275 360 272 370"/>
-  </g>
-  <g fill="#E74C3C">
-    <circle cx="300" cy="305" r="3"/>
-    <circle cx="302" cy="330" r="3"/>
-    <circle cx="288" cy="355" r="3"/>
-    <circle cx="272" cy="370" r="3"/>
-  </g>
-
-  <!-- === HEAD/CARAPACE === -->
-  <ellipse cx="200" cy="228" rx="44" ry="36" fill="url(#bodyGrad)"/>
-  <!-- Rostrum -->
-  <polygon points="200,188 192,210 208,210" fill="#C0392B"/>
-  <line x1="200" y1="190" x2="200" y2="210" stroke="#B03A2E" stroke-width="1" opacity="0.4"/>
-
-  <!-- === ANTENNAE === -->
-  <path d="M188 205 Q160 175 130 160 Q105 148 80 155" fill="none" stroke="#E74C3C" stroke-width="2.5" stroke-linecap="round"/>
-  <path d="M212 205 Q240 175 270 160 Q295 148 320 155" fill="none" stroke="#E74C3C" stroke-width="2.5" stroke-linecap="round"/>
-  <path d="M192 200 Q178 185 168 178" fill="none" stroke="#EF5350" stroke-width="2" stroke-linecap="round"/>
-  <path d="M208 200 Q222 185 232 178" fill="none" stroke="#EF5350" stroke-width="2" stroke-linecap="round"/>
-
-  <!-- === EYES === -->
-  <path d="M184 212 Q176 195 170 184" fill="none" stroke="#C0392B" stroke-width="6" stroke-linecap="round"/>
-  <path d="M216 212 Q224 195 230 184" fill="none" stroke="#C0392B" stroke-width="6" stroke-linecap="round"/>
-  <circle cx="168" cy="181" r="12" fill="white"/>
-  <circle cx="232" cy="181" r="12" fill="white"/>
-  <!-- Pupils looking up at the resume -->
-  <circle cx="166" cy="176" r="7" fill="#1a1a2e"/>
-  <circle cx="234" cy="176" r="7" fill="#1a1a2e"/>
-  <circle cx="164" cy="174" r="2.5" fill="white"/>
-  <circle cx="236" cy="174" r="2.5" fill="white"/>
-
-  <!-- Eyebrows (mischievous) -->
-  <path d="M156 168 Q164 162 176 166" fill="none" stroke="#922B21" stroke-width="3" stroke-linecap="round"/>
-  <path d="M244 168 Q236 162 224 166" fill="none" stroke="#922B21" stroke-width="3" stroke-linecap="round"/>
-
-  <!-- === MOUTH (big grin) === -->
-  <path d="M186 238 Q200 252 214 238" fill="none" stroke="#922B21" stroke-width="3" stroke-linecap="round"/>
-
-  <!-- === LEFT ARM + CLAW (reaching up-left) === -->
-  <path d="M150 248 Q118 215 95 175 Q82 148 78 120" fill="none" stroke="#C0392B" stroke-width="10" stroke-linecap="round"/>
-  <circle cx="95" cy="175" r="7" fill="#B03A2E"/>
-  <!-- Left claw wrist -->
-  <path d="M78 120 Q72 105 74 92" fill="none" stroke="url(#clawGrad)" stroke-width="10" stroke-linecap="round"/>
-  <!-- Left upper pincer -->
-  <path d="M74 92 Q65 72 58 58 Q54 48 48 52 Q44 56 52 68 Q60 78 68 88 Z" fill="url(#clawGrad)" stroke="#922B21" stroke-width="1.5"/>
-  <!-- Left lower pincer -->
-  <path d="M74 92 Q88 76 96 62 Q102 52 106 56 Q110 62 100 74 Q92 84 82 92 Z" fill="url(#clawGrad)" stroke="#922B21" stroke-width="1.5"/>
-  <!-- Claw serrations -->
-  <circle cx="55" cy="60" r="2" fill="#922B21" opacity="0.4"/>
-  <circle cx="62" cy="54" r="1.5" fill="#922B21" opacity="0.4"/>
-  <circle cx="94" cy="60" r="2" fill="#922B21" opacity="0.4"/>
-  <circle cx="88" cy="56" r="1.5" fill="#922B21" opacity="0.4"/>
-
-  <!-- === RIGHT ARM + CLAW (reaching up-right) === -->
-  <path d="M250 248 Q282 215 305 175 Q318 148 322 120" fill="none" stroke="#C0392B" stroke-width="10" stroke-linecap="round"/>
-  <circle cx="305" cy="175" r="7" fill="#B03A2E"/>
-  <!-- Right claw wrist -->
-  <path d="M322 120 Q328 105 326 92" fill="none" stroke="url(#clawGrad)" stroke-width="10" stroke-linecap="round"/>
-  <!-- Right upper pincer -->
-  <path d="M326 92 Q335 72 342 58 Q346 48 352 52 Q356 56 348 68 Q340 78 332 88 Z" fill="url(#clawGrad)" stroke="#922B21" stroke-width="1.5"/>
-  <!-- Right lower pincer -->
-  <path d="M326 92 Q312 76 304 62 Q298 52 294 56 Q290 62 300 74 Q308 84 318 92 Z" fill="url(#clawGrad)" stroke="#922B21" stroke-width="1.5"/>
-  <!-- Claw serrations -->
-  <circle cx="345" cy="60" r="2" fill="#922B21" opacity="0.4"/>
-  <circle cx="338" cy="54" r="1.5" fill="#922B21" opacity="0.4"/>
-  <circle cx="306" cy="60" r="2" fill="#922B21" opacity="0.4"/>
-  <circle cx="312" cy="56" r="1.5" fill="#922B21" opacity="0.4"/>
-
-  <!-- ==================== -->
-  <!--    SPARKLE EFFECTS   -->
-  <!-- ==================== -->
-  <g fill="#FFD700" opacity="0.7">
-    <polygon points="200,8 202,2 204,8 210,8 205,12 207,18 202,14 197,18 199,12 194,8"/>
-    <polygon points="48,82 50,77 52,82 57,82 53,85 54,90 50,87 46,90 47,85 43,82" transform="scale(0.75)"/>
-    <polygon points="370,80 372,75 374,80 379,80 375,83 376,88 372,85 368,88 369,83 365,80" transform="scale(0.75)"/>
-  </g>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 88 80" width="176" height="160">
+  <!-- Legs — 4, evenly spaced -->
+  <line x1="26" y1="56" x2="20" y2="74" stroke="#059669" stroke-width="2.5" stroke-linecap="round" />
+  <line x1="38" y1="58" x2="34" y2="76" stroke="#059669" stroke-width="2.5" stroke-linecap="round" />
+  <line x1="50" y1="58" x2="54" y2="76" stroke="#059669" stroke-width="2.5" stroke-linecap="round" />
+  <line x1="62" y1="56" x2="68" y2="74" stroke="#059669" stroke-width="2.5" stroke-linecap="round" />
+  <!-- Arms — angled, with small pincers -->
+  <line x1="10" y1="30" x2="2" y2="22" stroke="#059669" stroke-width="3.5" stroke-linecap="round" />
+  <line x1="78" y1="30" x2="86" y2="22" stroke="#059669" stroke-width="3.5" stroke-linecap="round" />
+  <!-- Pincers — tiny V -->
+  <line x1="2" y1="22" x2="0" y2="14" stroke="#059669" stroke-width="2.5" stroke-linecap="round" />
+  <line x1="2" y1="22" x2="8" y2="16" stroke="#059669" stroke-width="2.5" stroke-linecap="round" />
+  <line x1="86" y1="22" x2="88" y2="14" stroke="#059669" stroke-width="2.5" stroke-linecap="round" />
+  <line x1="86" y1="22" x2="80" y2="16" stroke="#059669" stroke-width="2.5" stroke-linecap="round" />
+  <!-- Body — wide pill / super-rounded rect -->
+  <rect x="10" y="14" width="68" height="46" rx="23" fill="#059669" />
+  <!-- Eyes — dark rounded rects -->
+  <rect x="28" y="26" width="10" height="9" rx="3" fill="white" />
+  <rect x="50" y="26" width="10" height="9" rx="3" fill="white" />
+  <rect x="30" y="27" width="7" height="7" rx="2" fill="#1a1a2e" />
+  <rect x="52" y="27" width="7" height="7" rx="2" fill="#1a1a2e" />
+  <!-- Mouth — horizontal dash -->
+  <line x1="36" y1="44" x2="52" y2="44" stroke="white" stroke-width="2.5" stroke-linecap="round" opacity="0.85" />
 </svg>

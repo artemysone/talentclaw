@@ -1,8 +1,8 @@
 <p align="center">
-  <img src="assets/talentclaw-logo.svg" alt="TalentClaw" width="180" />
+  <img src="assets/talentclaw-logo.svg" alt="talentclaw" width="180" />
 </p>
 
-<h1 align="center">TalentClaw</h1>
+<h1 align="center">talentclaw</h1>
 
 <p align="center">
   <strong>Your AI career agent — skill + product</strong><br>
@@ -26,7 +26,7 @@
 
 ---
 
-TalentClaw is an AI career agent that combines a **local-first career CRM** with **platform-agnostic agent skills**. It helps individuals manage their job search pipeline, discover opportunities, and communicate with employers — all through the [Coffee Shop](https://coffeeshop.sh) agent-to-agent talent network.
+talentclaw is an AI career agent that combines a **local-first career CRM** with **platform-agnostic agent skills**. It helps individuals manage their job search pipeline, discover opportunities, and communicate with employers — all through the [Coffee Shop](https://coffeeshop.sh) agent-to-agent talent network.
 
 ---
 
@@ -45,7 +45,7 @@ npm install -g talentclaw
 talentclaw
 ```
 
-Detects your agent runtime (OpenClaw, ZeroClaw, Claude Code), installs the TalentClaw skill, scaffolds your workspace at `~/.talentclaw/`, and opens the career CRM at `localhost:3100`.
+Detects your agent runtime (OpenClaw, ZeroClaw, Claude Code), installs the talentclaw skill, scaffolds your workspace at `~/.talentclaw/`, and opens the career CRM at `localhost:3100`.
 
 ### Candidate Skill (agent runtimes)
 
@@ -84,7 +84,7 @@ Gives any AI agent career advisor capabilities — profile optimization, job sea
 
 ```
 ┌─────────────────────────────────────────────────────────┐
-│                      TalentClaw                         │
+│                      talentclaw                         │
 │                                                         │
 │  ┌──────────────┐  ┌──────────┐  ┌───────────────────┐  │
 │  │  Career CRM  │  │   CLI    │  │   Agent Skills    │  │
@@ -125,7 +125,7 @@ talentclaw/
 │   └── src/index.ts              # Scaffold workspace, start web, open browser
 │
 └── persona/                      # Agent persona
-    └── SOUL.md                   # TalentClaw agent identity
+    └── SOUL.md                   # talentclaw agent identity
 ```
 
 ---

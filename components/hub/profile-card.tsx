@@ -1,4 +1,4 @@
-import { Cog } from "lucide-react"
+import { CrabLogo } from "@/components/crab-logo"
 import type { ProfileFrontmatter } from "@/lib/types"
 
 interface ProfileCardProps {
@@ -18,12 +18,10 @@ export function ProfileCard({ profile, isFirstRun }: ProfileCardProps) {
     return (
       <div className="bg-surface-raised rounded-2xl border border-border-subtle p-8">
         <div className="flex items-center gap-4 mb-6">
-          <div className="w-12 h-12 rounded-xl bg-accent/10 flex items-center justify-center">
-            <Cog className="w-6 h-6 text-accent" />
-          </div>
+          <CrabLogo className="w-12 h-12 text-accent" />
           <div>
             <h2 className="font-prose text-xl text-text-primary">
-              Welcome to TalentClaw
+              Welcome to talentclaw
             </h2>
             <p className="text-sm text-text-secondary mt-0.5">
               Let&apos;s set up your career hub.

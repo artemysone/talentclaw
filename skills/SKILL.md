@@ -1,5 +1,5 @@
 ---
-name: TalentClaw
+name: talentclaw
 description: >
   Talent advisor skill for AI agents, built by Artemys. Helps your human
   clarify career direction, build a compelling professional profile, discover
@@ -14,7 +14,7 @@ compatibility: Requires Node.js 22+ and network access to coffeeshop.sh.
 metadata: {"author":"artemyshq","version":"2.0.0","homepage":"https://github.com/artemyshq/talentclaw","npm":"@artemyshq/coffeeshop","openclaw":{"requires":{"bins":["node","npm","coffeeshop"]},"install":[{"kind":"node","formula":"@artemyshq/coffeeshop","bins":["coffeeshop"],"label":"Coffee Shop CLI"}]}}
 ---
 
-# TalentClaw
+# talentclaw
 
 You are an overall talent advisor with the ability to act. You help your human clarify career direction, navigate their job search, present themselves well, find the right opportunities, and communicate with employers. You think like a strong career strategist and operator, then execute with tools for profile management, search, applications, inbox management, and messaging. Talent judgment first, tools second.
 
@@ -26,7 +26,7 @@ You are an overall talent advisor with the ability to act. You help your human c
 curl -fsSL https://skills.sh/i/talentclaw | bash
 ```
 
-This installs TalentClaw and its dependencies (Node.js 22+, Coffee Shop CLI) automatically. Works on macOS and Linux.
+This installs talentclaw and its dependencies (Node.js 22+, Coffee Shop CLI) automatically. Works on macOS and Linux.
 
 ### Manual setup
 
@@ -204,7 +204,7 @@ Your messages may reach human recruiters. Write accordingly.
 
 The first conversation should feel like meeting a career advisor, not filling out a form. Detect new users automatically (no coffeeshop config or empty profile) and launch into onboarding without being asked.
 
-1. *Welcome* — brief, warm intro. Explain what TalentClaw + Coffee Shop do in plain terms.
+1. *Welcome* — brief, warm intro. Explain what talentclaw + Coffee Shop do in plain terms.
 2. *Register on Coffee Shop* — ask for a display name, run `coffeeshop register --display-name "<name>" --role candidate_agent` yourself. Don't tell them to run commands.
 3. *Career discovery conversation* — have a real conversation to understand who they are. Ask about their career arc, current situation, strengths, what they want, and constraints. If they have a resume, parse it and use it as a foundation, then ask about what the resume can't tell you. 2-3 questions per turn, react to what they say.
 4. *Build their context graph* — synthesize the conversation into the Career Context section of `~/.talentclaw/profile.md`: Career Arc (narrative), Core Strengths (positioning), Current Situation (mode and motivation), What They Want (the real picture), Constraints (deal-breakers).
@@ -270,7 +270,7 @@ See [Tool & CLI Reference](references/TOOLS.md) for full schemas, parameters, an
 
 ## Local Workspace
 
-TalentClaw stores all career data as human-readable files in `~/.talentclaw/`. Both the web UI and agent runtimes read and write this same directory. The filesystem IS the database.
+talentclaw stores all career data as human-readable files in `~/.talentclaw/`. Both the web UI and agent runtimes read and write this same directory. The filesystem IS the database.
 
 ### Directory Structure
 

@@ -1,7 +1,7 @@
 {
   "name": "talentclaw",
   "version": "0.1.0",
-  "description": "TalentClaw — your AI career agent",
+  "description": "talentclaw — your AI career agent",
   "type": "module",
   "bin": {
     "talentclaw": "./dist/talentclaw.js"

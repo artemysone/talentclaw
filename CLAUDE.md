@@ -1,4 +1,4 @@
-# TalentClaw — Contributor Conventions
+# talentclaw — Contributor Conventions
 
 ## Project Structure
 

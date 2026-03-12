@@ -24,7 +24,7 @@ export function SidebarNav({
   const navItems = [
     {
       href: "/dashboard",
-      label: "Hub",
+      label: "Career Hub",
       icon: <Home className="w-4 h-4" />,
       count: 0,
     },

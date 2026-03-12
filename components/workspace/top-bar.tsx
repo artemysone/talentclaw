@@ -6,7 +6,7 @@ import { Menu, Plus } from "lucide-react"
 import { useSidebar } from "./sidebar-wrapper"
 
 const pageNames: Record<string, string> = {
-  "/dashboard": "Hub",
+  "/dashboard": "Career Hub",
   "/pipeline": "Pipeline",
   "/jobs": "Jobs",
 }
@@ -47,8 +47,10 @@ function FileBreadcrumb({ pathname }: { pathname: string }) {
 export function TopBar() {
   const pathname = usePathname()
   const { toggle } = useSidebar()
-  const pageName = pageNames[pathname] || "Hub"
+  const pageName = pageNames[pathname] || "Career Hub"
   const isFilePath = pathname.startsWith("/file/")
+
+  if (pathname === "/dashboard") return null
 
   return (
     <header className="h-12 flex items-center justify-between px-5 border-b border-border-subtle bg-surface/80 backdrop-blur-sm shrink-0">

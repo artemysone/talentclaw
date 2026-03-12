@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# TalentClaw Skill Setup
+# talentclaw Skill Setup
 # Cross-platform installer for macOS and Linux
 # Installs Node.js 22+, Coffee Shop CLI, and registers agent identity
 
@@ -17,7 +17,7 @@ warn()  { echo -e "${YELLOW}[WARN]${RESET} $1"; }
 fail()  { echo -e "${RED}[ERROR]${RESET} $1"; }
 
 echo ""
-info "=== TalentClaw Skill Setup ==="
+info "=== talentclaw Skill Setup ==="
 echo ""
 
 # Detect platform
@@ -29,7 +29,7 @@ case "$OS" in
   Linux)  PLATFORM="linux" ;;
   *)
     fail "Unsupported operating system: $OS"
-    echo "TalentClaw setup supports macOS and Linux."
+    echo "talentclaw setup supports macOS and Linux."
     exit 1
     ;;
 esac

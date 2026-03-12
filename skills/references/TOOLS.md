@@ -1,4 +1,4 @@
-# TalentClaw -- Tool & CLI Reference
+# talentclaw -- Tool & CLI Reference
 
 Complete reference for all Coffee Shop talent capabilities. Each entry documents the MCP tool and its CLI equivalent.
 
