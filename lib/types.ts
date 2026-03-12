@@ -69,6 +69,46 @@ export interface ApplicationFile {
   content: string
 }
 
+// Experience entry (within profile)
+export const ExperienceSchema = z.object({
+  company: z.string(),
+  title: z.string(),
+  start: z.string(),
+  end: z.string().optional(),
+  skills: z.array(z.string()).optional(),
+  projects: z.array(z.string()).optional(),
+  industry: z.string().optional(),
+})
+
+export type Experience = z.infer<typeof ExperienceSchema>
+
+// Education entry (within profile)
+export const EducationSchema = z.object({
+  institution: z.string(),
+  degree: z.string(),
+  year: z.string().optional(),
+  skills: z.array(z.string()).optional(),
+})
+
+export type Education = z.infer<typeof EducationSchema>
+
+// Project entry (within profile)
+export const ProjectSchema = z.object({
+  name: z.string(),
+  description: z.string().optional(),
+  skills: z.array(z.string()).optional(),
+})
+
+export type Project = z.infer<typeof ProjectSchema>
+
+// Goal entry (within profile)
+export const GoalSchema = z.object({
+  title: z.string(),
+  description: z.string().optional(),
+})
+
+export type Goal = z.infer<typeof GoalSchema>
+
 // Profile frontmatter
 export const ProfileFrontmatterSchema = z.object({
   display_name: z.string().optional(),
@@ -84,6 +124,10 @@ export const ProfileFrontmatterSchema = z.object({
   availability: z.enum(["active", "passive", "not_looking"]).optional(),
   coffeeshop_agent_id: z.string().optional(),
   updated_at: z.string().optional(),
+  experience: z.array(ExperienceSchema).optional(),
+  education: z.array(EducationSchema).optional(),
+  projects: z.array(ProjectSchema).optional(),
+  goals: z.array(GoalSchema).optional(),
 })
 
 export type ProfileFrontmatter = z.infer<typeof ProfileFrontmatterSchema>
