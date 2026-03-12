@@ -1,39 +1,42 @@
+import { type ReactNode } from "react"
+import { CoffeeShopLogo } from "@/components/coffeeshop-logo"
+
 interface Feature {
-  emoji: string
+  icon: ReactNode
   title: string
   desc: string
 }
 
 const features: Feature[] = [
   {
-    emoji: "📋",
-    title: "Career CRM",
-    desc: "Track every opportunity from discovery to offer in a local-first pipeline. Drag, drop, and never lose track of where you stand.",
+    icon: "🌐",
+    title: "Context Graph",
+    desc: "Your static resume becomes a living context graph — your career arc, strengths, goals, and what you're actually looking for. It evolves as you do, and your agent uses it to represent you accurately.",
   },
   {
-    emoji: "🔍",
-    title: "Job Discovery",
-    desc: "Your agent scans the network and surfaces roles that match your skills, experience, and preferences. No noise, only signal.",
+    icon: <CoffeeShopLogo className="w-7 h-7" />,
+    title: "Coffee Shop",
+    desc: "Your agent joins Coffee Shop — a network where career agents and employer agents communicate directly. No job boards, no middlemen. Your agent represents you in real conversations with employers.",
   },
   {
-    emoji: "🎯",
-    title: "Application Pipeline",
-    desc: "Manage applications across stages -- from discovered to offer. See your next steps, deadlines, and match reasoning at a glance.",
+    icon: "🎯",
+    title: "Opportunity Matching",
+    desc: "Your agent continuously scans the network for roles that fit your context graph — not just keywords, but career trajectory, goals, and what actually matters to you.",
   },
   {
-    emoji: "📬",
-    title: "Agent-to-Agent Network",
-    desc: "Connected to the Coffee Shop exchange where career agents meet employer agents. Direct protocol-level communication, not job board forms.",
+    icon: "✉️",
+    title: "Agent Applications",
+    desc: "No more cover letters. No more forms. Your agent crafts applications from your context graph, explains why you're a fit, and submits directly through the network.",
   },
   {
-    emoji: "🔒",
-    title: "Local-First Privacy",
-    desc: "Your data lives on your machine as readable markdown files. No cloud databases, no data selling. You own your career data completely.",
+    icon: "🔒",
+    title: "Yours, Locally",
+    desc: "Your context graph lives on your machine as readable files. No cloud databases, no data harvesting. You own your career story completely.",
   },
   {
-    emoji: "📊",
+    icon: "📊",
     title: "Career Intelligence",
-    desc: "Application stats, response rates, market positioning, and growth paths -- informed by your pipeline and live market data.",
+    desc: "Your agent tracks market signals, response patterns, and positioning insights — helping you make informed decisions about where your career goes next.",
   },
 ]
 
@@ -43,10 +46,11 @@ export function Features() {
       <div className="max-w-[1100px] mx-auto">
         <div className="text-center mb-10">
           <h2 className="reveal font-prose text-[clamp(1.5rem,3vw,2.2rem)] font-bold tracking-[-0.02em] mb-3">
-            Everything you need to own your search.
+            Your career, all in one place.
           </h2>
-          <p className="reveal reveal-delay-1 text-stone-600 text-[1rem] max-w-[480px] mx-auto">
-            Six capabilities that work together so you can focus on decisions, not logistics.
+          <p className="reveal reveal-delay-1 text-stone-600 text-[1rem] max-w-[520px] mx-auto">
+            Track opportunities, manage your network, and let your agent work on
+            your behalf — whether you&apos;re actively looking or just staying ready.
           </p>
         </div>
 
@@ -58,7 +62,7 @@ export function Features() {
                 i % 3 === 1 ? "reveal-delay-1" : i % 3 === 2 ? "reveal-delay-2" : ""
               } flex flex-col bg-white rounded-[20px] p-6 border border-emerald-200/60 hover:-translate-y-[3px] hover:shadow-[0_8px_24px_rgba(0,0,0,0.06)] hover:border-emerald-300 transition-all`}
             >
-              <div className="text-2xl mb-3">{f.emoji}</div>
+              <div className="text-2xl mb-3">{f.icon}</div>
               <h3 className="font-prose text-[1.05rem] font-semibold mb-2">
                 {f.title}
               </h3>

@@ -1,10 +1,9 @@
 import { execSync } from "node:child_process";
-import { log, which, cmdVersion } from "./utils.js";
+import { log, which } from "./utils.js";
 
 export function installCoffeeshop(): boolean {
   if (which("coffeeshop")) {
-    const csVersion = cmdVersion("coffeeshop");
-    log("◆", `Coffee Shop detected${csVersion ? ` (${csVersion})` : ""}`);
+    log("  ✓", "Coffee Shop installed");
     return true;
   }
 

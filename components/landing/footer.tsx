@@ -20,7 +20,9 @@ export function Footer() {
         </li>
         <li>
           <a
-            href="https://github.com/artemyshq"
+            href="https://github.com/artemyshq/talentclaw"
+            target="_blank"
+            rel="noopener noreferrer"
             className="text-[0.8rem] text-stone-400 hover:text-stone-800 transition-colors"
           >
             GitHub

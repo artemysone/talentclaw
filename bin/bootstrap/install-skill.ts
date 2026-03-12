@@ -21,12 +21,7 @@ export function installSkill(
   }
 
   if (runtime?.name === "Claude Code") {
-    log("◆", "Claude Code detected — skill available via MCP");
-    log("  ℹ", "Add the Coffee Shop MCP server to ~/.claude/mcp_servers.json");
-    log(
-      "  ℹ",
-      'See: https://github.com/artemyshq/talentclaw#candidate-skill-agent-runtimes',
-    );
+    log("  ✓", "Claude Code detected — use the talentclaw skill in your agent");
     return true;
   }
 

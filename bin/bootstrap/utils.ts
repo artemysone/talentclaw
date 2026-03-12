@@ -11,7 +11,10 @@ export function check(label: string, ok: boolean, detail?: string): boolean {
 
 export function cmdVersion(cmd: string): string | null {
   try {
-    return execSync(`${cmd} --version`, { encoding: "utf-8" }).trim();
+    const output = execSync(`${cmd} --version`, { encoding: "utf-8", stdio: ["pipe", "pipe", "pipe"] }).trim();
+    // Only return if it looks like a version string (short, no multi-line help dumps)
+    if (output.length < 100 && !output.includes("\n")) return output;
+    return null;
   } catch {
     return null;
   }
