@@ -562,14 +562,6 @@ export default function CareerGraph({
       ctx.fillStyle = grad
       ctx.fill()
 
-      // Cluster label
-      const labelAlpha = isHighlighted ? 0.5 : 0.12
-      ctx.font = '600 9px "SF Mono", "Fira Code", monospace'
-      ctx.textAlign = 'center'
-      ctx.fillStyle = CLUSTER_COLORS[cl] || '#6b7280'
-      ctx.globalAlpha = labelAlpha
-      ctx.fillText(cl.toUpperCase(), sp.x, sp.y - poleR - 4)
-      ctx.globalAlpha = 1
     }
 
     // ── Edges ────────────────────────────────────────────────────────
