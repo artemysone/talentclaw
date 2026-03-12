@@ -1,8 +1,8 @@
 export interface GraphNode {
   id: string
   label: string
-  type: 'person' | 'company' | 'education' | 'role' | 'skill' | 'project' | 'goal' | 'industry'
-  cluster: 'center' | 'companies' | 'titles' | 'skills' | 'projects' | 'trajectory'
+  type: 'person' | 'company' | 'education' | 'role' | 'skill' | 'project' | 'goal' | 'industry' | 'contact'
+  cluster: 'center' | 'companies' | 'titles' | 'skills' | 'projects' | 'trajectory' | 'network'
   detail?: string
   size: number
 }
@@ -19,6 +19,7 @@ export const CLUSTER_COLORS: Record<string, string> = {
   skills: '#f59e0b',
   projects: '#ec4899',
   trajectory: '#10b981',
+  network: '#6366f1',
 }
 
 export const NODE_COLORS: Record<string, string> = {
@@ -30,6 +31,7 @@ export const NODE_COLORS: Record<string, string> = {
   education: '#3b82f6',
   goal: '#10b981',
   industry: '#10b981',
+  contact: '#6366f1',
 }
 
 export const CLUSTER_DESCRIPTIONS: Record<string, string> = {
@@ -38,4 +40,5 @@ export const CLUSTER_DESCRIPTIONS: Record<string, string> = {
   skills: "What you know",
   projects: "What you've built",
   trajectory: "Where you're headed",
+  network: "Who you know",
 }

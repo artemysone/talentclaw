@@ -2,8 +2,8 @@ import fs from "node:fs/promises"
 import path from "node:path"
 import matter from "gray-matter"
 import type { GraphNode, GraphEdge } from "@/components/graph/graph-types"
-import { CompanyFrontmatterSchema } from "./types"
-import type { CompanyFrontmatter, ProfileFrontmatter } from "./types"
+import { CompanyFrontmatterSchema, ContactFrontmatterSchema } from "./types"
+import type { CompanyFrontmatter, ContactFrontmatter, ProfileFrontmatter } from "./types"
 import { getProfile, listJobs, getDataDir } from "./fs-data"
 
 // ---------------------------------------------------------------------------
@@ -21,7 +21,7 @@ function normalize(s: string): string {
 
 /** Prefixed node ID. */
 function nodeId(
-  type: "skill" | "company" | "role" | "project" | "goal" | "edu" | "industry" | "person",
+  type: "skill" | "company" | "role" | "project" | "goal" | "edu" | "industry" | "person" | "contact",
   name: string,
 ): string {
   return `${type}-${normalize(name)}`
@@ -36,6 +36,7 @@ const BASE_SIZE: Record<string, number> = {
   education: 8,
   goal: 8,
   industry: 7,
+  contact: 7,
   person: 20,
 }
 
@@ -72,6 +73,38 @@ async function readCompanies(): Promise<CompanyEntry[]> {
 }
 
 // ---------------------------------------------------------------------------
+// Contact file reader
+// ---------------------------------------------------------------------------
+
+interface ContactEntry {
+  slug: string
+  frontmatter: ContactFrontmatter
+}
+
+async function readContacts(): Promise<ContactEntry[]> {
+  const dir = path.join(getDataDir(), "contacts")
+  try {
+    const files = await fs.readdir(dir)
+    const mdFiles = files.filter((f) => f.endsWith(".md"))
+    const results: ContactEntry[] = []
+    for (const file of mdFiles) {
+      const raw = await fs.readFile(path.join(dir, file), "utf-8")
+      const { data } = matter(raw)
+      const parsed = ContactFrontmatterSchema.safeParse(data)
+      if (parsed.success) {
+        results.push({
+          slug: file.replace(/\.md$/, ""),
+          frontmatter: parsed.data,
+        })
+      }
+    }
+    return results
+  } catch {
+    return []
+  }
+}
+
+// ---------------------------------------------------------------------------
 // Builder
 // ---------------------------------------------------------------------------
 
@@ -80,10 +113,11 @@ export async function buildCareerGraph(): Promise<{
   edges: GraphEdge[]
 }> {
   // ---- Load data ----------------------------------------------------------
-  const [profile, jobs, companies] = await Promise.all([
+  const [profile, jobs, companies, contacts] = await Promise.all([
     getProfile(),
     listJobs(),
     readCompanies(),
+    readContacts(),
   ])
 
   const fm: ProfileFrontmatter = profile.frontmatter
@@ -137,6 +171,14 @@ export async function buildCareerGraph(): Promise<{
     const id = nodeId("skill", skill)
     ensureNode(id, skill, "skill", "skills")
     addEdge(personId, id)
+  }
+
+  // ---- Preferred roles (aspirational — trajectory cluster) ----------------
+
+  for (const role of fm.preferred_roles ?? []) {
+    const roleId = nodeId("goal", `target-${role}`)
+    ensureNode(roleId, role, "goal", "trajectory", "Target role")
+    addEdge(personId, roleId)
   }
 
   // ---- Experience ---------------------------------------------------------
@@ -215,6 +257,26 @@ export async function buildCareerGraph(): Promise<{
     addEdge(personId, goalId)
   }
 
+  // ---- Contacts -----------------------------------------------------------
+
+  for (const contact of contacts) {
+    const cf = contact.frontmatter
+    const contactId = nodeId("contact", cf.name)
+    const detail = cf.title && cf.company
+      ? `${cf.title} at ${cf.company}`
+      : cf.title || cf.company || ""
+    ensureNode(contactId, cf.name, "contact", "network", detail)
+    addEdge(personId, contactId)
+
+    // Bridge to company node if it exists in the graph
+    if (cf.company) {
+      const compId = nodeId("company", cf.company)
+      if (nodeMap.has(compId)) {
+        addEdge(contactId, compId)
+      }
+    }
+  }
+
   // ---- Jobs ---------------------------------------------------------------
   // Jobs don't become nodes themselves, but their companies and tags merge
   // into the graph.
@@ -231,8 +293,8 @@ export async function buildCareerGraph(): Promise<{
     for (const tag of job.frontmatter.tags ?? []) {
       const skillId = nodeId("skill", tag)
       ensureNode(skillId, tag, "skill", "skills")
-      // Only add user -> skill edge if not already present
       addEdge(personId, skillId)
+      addEdge(compId, skillId) // company → skill bridge
     }
   }
 

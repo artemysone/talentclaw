@@ -199,7 +199,7 @@ export default function CareerGraph({
     const clusterAngles: Record<string, number> = {}
     const numClusters = activeClusterNames.length
     if (numClusters > 0) {
-      const clusterOrder = ['skills', 'companies', 'titles', 'projects', 'trajectory']
+      const clusterOrder = ['skills', 'companies', 'titles', 'projects', 'trajectory', 'network']
       const sorted = activeClusterNames.sort((a, b) => {
         const ai = clusterOrder.indexOf(a)
         const bi = clusterOrder.indexOf(b)
