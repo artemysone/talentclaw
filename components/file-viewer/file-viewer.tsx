@@ -48,12 +48,25 @@ function renderHeader(
 
 export function FileViewer({ filePath, frontmatter, content }: FileViewerProps) {
   const fileType = detectFileType(filePath)
-  const hasFrontmatter = Object.keys(frontmatter).length > 0
   const hasContent = content.trim().length > 0
+
+  let header: React.ReactNode = null
+  try {
+    const hasFrontmatter = Object.keys(frontmatter).length > 0
+    if (hasFrontmatter) {
+      header = renderHeader(fileType, frontmatter)
+    }
+  } catch {
+    header = (
+      <p className="text-sm text-secondary italic">
+        Could not display file metadata.
+      </p>
+    )
+  }
 
   return (
     <div className="space-y-6">
-      {hasFrontmatter && renderHeader(fileType, frontmatter)}
+      {header}
       {hasContent && <MarkdownBody content={content} />}
     </div>
   )

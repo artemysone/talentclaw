@@ -14,7 +14,8 @@
     "build": "next build",
     "build:cli": "tsup",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "test": "vitest run"
   },
   "files": [
     "dist",
@@ -43,6 +44,7 @@
     "zod": "^3.24.0"
   },
   "devDependencies": {
+    "@artemyshq/coffeeshop": "^0.1.2",
     "@tailwindcss/postcss": "^4.1.8",
     "@types/node": "^22.15.0",
     "@types/react": "^19.1.0",
@@ -50,6 +52,7 @@
     "postcss": "^8.5.4",
     "tailwindcss": "^4.1.8",
     "tsup": "^8.5.1",
-    "typescript": "^5.8.3"
+    "typescript": "^5.8.3",
+    "vitest": "^4.1.0"
   }
 }

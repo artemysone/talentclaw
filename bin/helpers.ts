@@ -17,6 +17,8 @@ export function which(cmd: string): string | null {
   }
 }
 
+// NOTE: Duplicated in lib/slugify.ts for the web app.
+// bin/ is bundled separately by tsup and can't import from lib/.
 export function slugify(company: string, title: string): string {
   return [company, title]
     .join("-")

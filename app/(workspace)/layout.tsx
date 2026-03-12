@@ -11,11 +11,23 @@ export default async function WorkspaceLayout({
 }: {
   children: React.ReactNode
 }) {
-  const [jobs, profile, { tree, fileCount }] = await Promise.all([
-    listJobs(),
-    getProfile(),
-    getWorkspaceTree(),
-  ])
+  let jobs: Awaited<ReturnType<typeof listJobs>> = []
+  let profile: Awaited<ReturnType<typeof getProfile>> = {
+    frontmatter: {},
+    content: "",
+  }
+  let tree: Awaited<ReturnType<typeof getWorkspaceTree>>["tree"] = []
+  let fileCount = 0
+
+  try {
+    ;[jobs, profile, { tree, fileCount }] = await Promise.all([
+      listJobs(),
+      getProfile(),
+      getWorkspaceTree(),
+    ])
+  } catch {
+    // Fall through with safe defaults so layout still renders
+  }
 
   const jobCount = jobs.length
 

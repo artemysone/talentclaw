@@ -10,42 +10,14 @@ import { join } from "node:path";
 import { execFileSync } from "node:child_process";
 import matter from "gray-matter";
 import { DATA_DIR, log, which, slugify } from "./helpers.js";
+import type { JobSearchResult } from "@artemyshq/coffeeshop";
 
 // ---------------------------------------------------------------------------
-// Coffee Shop response types (subset of JobResponse)
+// Coffee Shop CLI response shape
 // ---------------------------------------------------------------------------
-interface CoffeeShopMatch {
-  job: {
-    id: string;
-    title: string;
-    status?: string;
-    source?: string;
-    apply_url?: string;
-    requirements?: {
-      skills?: string[];
-      level?: string;
-      location?: string;
-      remote_policy?: string;
-    };
-    compensation?: {
-      min?: number;
-      max?: number;
-      currency?: string;
-    };
-    company_context?: {
-      company_name?: string;
-      department?: string;
-      company_size?: string;
-    };
-    preferences?: {
-      benefits?: string[];
-    };
-  };
-}
-
 interface CoffeeShopResponse {
   total: number;
-  matches: CoffeeShopMatch[];
+  matches: JobSearchResult[];
 }
 
 // ---------------------------------------------------------------------------
