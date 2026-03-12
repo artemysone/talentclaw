@@ -113,7 +113,9 @@ export function KanbanBoard({ initialData }: KanbanBoardProps) {
 
     // Persist stage change to filesystem
     if (activeStage !== overStage) {
-      moveJobToStage(active.id as string, overStage)
+      moveJobToStage(active.id as string, overStage).catch((err) =>
+        console.error("Failed to persist stage change:", err)
+      )
     }
   }
 

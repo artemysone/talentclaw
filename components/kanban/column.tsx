@@ -6,6 +6,7 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable"
 import { KanbanCard, type KanbanCardData } from "./card"
+import { STAGE_LABELS } from "@/lib/ui-utils"
 
 const stageColors: Record<string, string> = {
   discovered: "bg-slate-500",
@@ -15,16 +16,6 @@ const stageColors: Record<string, string> = {
   offer: "bg-emerald-500",
   accepted: "bg-green-500",
   rejected: "bg-red-500",
-}
-
-const stageLabels: Record<string, string> = {
-  discovered: "Discovered",
-  saved: "Saved",
-  applied: "Applied",
-  interviewing: "Interviewing",
-  offer: "Offer",
-  accepted: "Accepted",
-  rejected: "Rejected",
 }
 
 interface KanbanColumnProps {
@@ -46,7 +37,7 @@ export function KanbanColumn({ stage, cards }: KanbanColumnProps) {
       <div className="flex items-center gap-2.5 px-4 py-3 border-b border-border-subtle">
         <div className={`w-2.5 h-2.5 rounded-full ${stageColors[stage] || "bg-slate-500"}`} />
         <span className="text-sm font-medium text-text-primary">
-          {stageLabels[stage] || stage}
+          {STAGE_LABELS[stage] || stage}
         </span>
         <span className="text-xs text-text-muted ml-auto bg-surface-overlay px-2 py-0.5 rounded-full">
           {cards.length}

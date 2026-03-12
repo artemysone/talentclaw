@@ -1,3 +1,5 @@
+import { isSafeUrl } from "@/lib/ui-utils"
+
 interface ContactHeaderProps {
   frontmatter: Record<string, unknown>
 }
@@ -38,7 +40,7 @@ export function ContactHeader({ frontmatter }: ContactHeaderProps) {
               {email}
             </a>
           )}
-          {linkedin && (
+          {linkedin && isSafeUrl(linkedin) && (
             <a
               href={linkedin}
               target="_blank"

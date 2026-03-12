@@ -8,12 +8,10 @@ import {
   Wifi,
   Building2,
   Bookmark,
-  ExternalLink,
-  SlidersHorizontal,
 } from "lucide-react"
 import { SearchBar } from "@/components/query/search-bar"
-import { Filters } from "@/components/query/filters"
 import { saveJobToPipeline } from "@/app/actions"
+import { formatCompensation } from "@/lib/ui-utils"
 
 interface JobListing {
   id: string
@@ -30,21 +28,12 @@ interface JobListing {
   status: string
 }
 
-function formatComp(min: number | null, max: number | null): string {
-  if (!min && !max) return "Not listed"
-  const fmt = (n: number) => `$${Math.round(n / 1000)}k`
-  if (min && max) return `${fmt(min)} - ${fmt(max)}`
-  if (min) return `${fmt(min)}+`
-  return `Up to ${fmt(max!)}`
-}
-
 interface JobsListProps {
   jobs: JobListing[]
 }
 
 export function JobsList({ jobs }: JobsListProps) {
   const [searchQuery, setSearchQuery] = useState("")
-  const [showFilters, setShowFilters] = useState(false)
   const [savedJobs, setSavedJobs] = useState<Set<string>>(
     () => new Set(jobs.filter((j) => j.status !== "discovered").map((j) => j.id))
   )
@@ -74,23 +63,9 @@ export function JobsList({ jobs }: JobsListProps) {
 
   return (
     <>
-      {/* Search & Filters */}
+      {/* Search */}
       <div className="mb-8">
-        <div className="flex items-center gap-3 mb-4">
-          <SearchBar value={searchQuery} onChange={setSearchQuery} />
-          <button
-            onClick={() => setShowFilters(!showFilters)}
-            className={`flex items-center gap-1.5 px-4 py-2.5 rounded-xl border text-sm font-medium transition-colors cursor-pointer ${
-              showFilters
-                ? "border-accent/40 bg-accent-subtle text-accent"
-                : "border-border-default bg-surface-raised text-text-secondary hover:border-accent/30"
-            }`}
-          >
-            <SlidersHorizontal className="w-4 h-4" />
-            Filters
-          </button>
-        </div>
-        {showFilters && <Filters />}
+        <SearchBar value={searchQuery} onChange={setSearchQuery} />
       </div>
 
       {/* Results count */}
@@ -148,7 +123,7 @@ export function JobsList({ jobs }: JobsListProps) {
                   )}
                   <span className="flex items-center gap-1.5">
                     <DollarSign className="w-3.5 h-3.5" />
-                    {formatComp(job.compensationMin, job.compensationMax)}
+                    {formatCompensation({ min: job.compensationMin, max: job.compensationMax }) || "Not listed"}
                   </span>
                 </div>
 
@@ -178,12 +153,6 @@ export function JobsList({ jobs }: JobsListProps) {
                   title="Save to pipeline"
                 >
                   <Bookmark className="w-4 h-4" />
-                </button>
-                <button
-                  className="p-2 rounded-lg border border-border-default bg-surface-overlay text-text-muted hover:text-text-primary hover:border-border-default transition-colors cursor-pointer"
-                  title="View details"
-                >
-                  <ExternalLink className="w-4 h-4" />
                 </button>
               </div>
             </div>

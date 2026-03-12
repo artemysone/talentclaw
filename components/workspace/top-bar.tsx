@@ -2,7 +2,7 @@
 
 import { usePathname } from "next/navigation"
 import Link from "next/link"
-import { Menu, Plus } from "lucide-react"
+import { Menu } from "lucide-react"
 import { useSidebar } from "./sidebar-wrapper"
 
 const pageNames: Record<string, string> = {
@@ -67,15 +67,6 @@ export function TopBar() {
           <span className="text-sm font-medium text-text-primary">
             {pageName}
           </span>
-        )}
-      </div>
-
-      <div className="flex items-center gap-2">
-        {pathname === "/pipeline" && (
-          <button className="flex items-center gap-1.5 bg-accent text-white px-3 py-1.5 rounded-lg text-sm font-medium hover:bg-accent-hover transition-colors cursor-pointer">
-            <Plus className="w-3.5 h-3.5" />
-            Add Job
-          </button>
         )}
       </div>
     </header>

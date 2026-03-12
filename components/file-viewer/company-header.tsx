@@ -1,3 +1,5 @@
+import { isSafeUrl } from "@/lib/ui-utils"
+
 interface CompanyHeaderProps {
   frontmatter: Record<string, unknown>
 }
@@ -14,7 +16,7 @@ export function CompanyHeader({ frontmatter }: CompanyHeaderProps) {
         <h1 className="text-xl font-semibold text-text-primary leading-tight">
           {name || "Company"}
         </h1>
-        {url && (
+        {url && isSafeUrl(url) && (
           <a
             href={url}
             target="_blank"

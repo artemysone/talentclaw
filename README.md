@@ -107,25 +107,20 @@ Gives any AI agent career advisor capabilities — profile optimization, job sea
 
 ---
 
-## 📂 Monorepo Structure
+## 📂 Project Structure
 
 ```
 talentclaw/
-├── skills/                       # Candidate career skill (skills.sh)
-│   ├── SKILL.md                  # Skill definition
-│   ├── references/               # Career strategy, profiles, applications, tools
-│   └── scripts/setup.sh          # Setup wizard
-│
-├── apps/web/                     # Career Hub web UI (Next.js 15)
-│   ├── app/                      # Routes: landing, pipeline, jobs, dashboard
-│   ├── components/               # Kanban, dashboard, search, landing
-│   └── lib/                      # Filesystem data layer
-│
-├── apps/cli/                     # CLI launcher (npx talentclaw)
-│   └── src/index.ts              # Scaffold workspace, start web, open browser
-│
-└── persona/                      # Agent persona
-    └── SOUL.md                   # talentclaw agent identity
+├── app/                         # Next.js pages and routes
+│   └── (workspace)/             # Dashboard, pipeline, jobs, file viewer
+├── components/                  # React components (kanban, hub, file-viewer, etc.)
+├── lib/                         # Data layer (types, filesystem I/O, utilities)
+├── bin/                         # CLI launcher (talentclaw.ts, search.ts)
+├── skills/                      # Agent skill definition + reference docs
+│   ├── SKILL.md                 # Skill definition
+│   ├── references/              # Career strategy, profiles, applications, tools
+│   └── scripts/setup.sh         # Setup wizard
+└── persona/                     # Agent persona (SOUL.md)
 ```
 
 ---

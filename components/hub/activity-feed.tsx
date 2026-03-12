@@ -10,6 +10,7 @@ import {
   Activity,
 } from "lucide-react"
 import type { ActivityEntry } from "@/lib/types"
+import { formatRelativeTime } from "@/lib/ui-utils"
 
 const activityIcons: Record<string, React.ReactNode> = {
   discovered: <Search className="w-4 h-4" />,
@@ -29,17 +30,6 @@ const activityColors: Record<string, string> = {
   status_changed: "bg-slate-500/10 text-slate-400",
   interview: "bg-amber-500/10 text-amber-500",
   offer: "bg-green-500/10 text-green-500",
-}
-
-function timeAgo(ts: string): string {
-  const diff = Date.now() - new Date(ts).getTime()
-  const minutes = Math.floor(diff / 60000)
-  if (minutes < 60) return `${minutes}m ago`
-  const hours = Math.floor(minutes / 60)
-  if (hours < 24) return `${hours}h ago`
-  const days = Math.floor(hours / 24)
-  if (days === 1) return "Yesterday"
-  return `${days}d ago`
 }
 
 interface ActivityFeedProps {
@@ -89,7 +79,7 @@ export function ActivityFeed({ entries }: ActivityFeedProps) {
                 </div>
 
                 <span className="text-xs text-text-muted shrink-0 whitespace-nowrap">
-                  {timeAgo(entry.ts)}
+                  {formatRelativeTime(entry.ts)}
                 </span>
               </div>
             ))}

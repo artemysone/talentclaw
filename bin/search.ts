@@ -7,7 +7,7 @@ import {
   appendFileSync,
 } from "node:fs";
 import { join } from "node:path";
-import { execSync } from "node:child_process";
+import { execFileSync } from "node:child_process";
 import matter from "gray-matter";
 import { DATA_DIR, log, which, slugify } from "./helpers.js";
 
@@ -190,7 +190,7 @@ Without flags, searches using your profile preferences from ~/.talentclaw/profil
   // Execute search
   let output: string;
   try {
-    output = execSync(parts.join(" "), {
+    output = execFileSync(parts[0], parts.slice(1), {
       encoding: "utf-8",
       timeout: 30000,
     });

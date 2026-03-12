@@ -1,5 +1,6 @@
 import Link from "next/link"
 import { PIPELINE_STAGES } from "@/lib/types"
+import { STAGE_LABELS } from "@/lib/ui-utils"
 
 const stageColors: Record<string, string> = {
   discovered: "bg-slate-500/15 text-slate-600 border-slate-200",
@@ -9,16 +10,6 @@ const stageColors: Record<string, string> = {
   offer: "bg-emerald-500/10 text-emerald-600 border-emerald-200",
   accepted: "bg-green-500/10 text-green-600 border-green-200",
   rejected: "bg-red-500/10 text-red-500 border-red-200",
-}
-
-const stageLabels: Record<string, string> = {
-  discovered: "Discovered",
-  saved: "Saved",
-  applied: "Applied",
-  interviewing: "Interviewing",
-  offer: "Offer",
-  accepted: "Accepted",
-  rejected: "Rejected",
 }
 
 const FUNNEL_STAGES = PIPELINE_STAGES.filter((s) => s !== "rejected")
@@ -63,7 +54,7 @@ export function PipelineFunnel({ stageCounts }: PipelineFunnelProps) {
                       : "bg-surface-overlay text-text-muted border-border-subtle"
                   }`}
                 >
-                  {stageLabels[stage]} {count}
+                  {STAGE_LABELS[stage]} {count}
                 </Link>
               </div>
             )

@@ -1,8 +1,11 @@
 {
   "name": "talentclaw",
-  "version": "0.1.0",
+  "version": "2.1.0",
   "description": "talentclaw — your AI career agent",
   "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
   "bin": {
     "talentclaw": "./dist/talentclaw.js"
   },

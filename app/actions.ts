@@ -1,8 +1,10 @@
 "use server"
 
 import { updateJobStatus, appendActivity } from "@/lib/fs-data"
+import { PipelineStageSchema } from "@/lib/types"
 
 export async function moveJobToStage(slug: string, newStatus: string) {
+  PipelineStageSchema.parse(newStatus)
   await updateJobStatus(slug, newStatus)
   await appendActivity({
     type: "status_changed",

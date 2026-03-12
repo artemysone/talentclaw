@@ -26,6 +26,21 @@ async function ensureDir(dir: string): Promise<void> {
   await fs.mkdir(dir, { recursive: true })
 }
 
+// Validate slug and resolve a safe path within a subdirectory
+function safePath(subdir: string, slug: string): string {
+  if (slug.includes("..") || slug.includes("/") || slug.includes("\\")) {
+    throw new Error(`Invalid slug: ${slug}`)
+  }
+  const dir = path.join(getDataDir(), subdir)
+  const filePath = path.join(dir, `${slug}.md`)
+  const resolved = path.resolve(filePath)
+  const safePrefix = path.resolve(dir) + path.sep
+  if (!resolved.startsWith(safePrefix)) {
+    throw new Error(`Path escapes data directory: ${slug}`)
+  }
+  return resolved
+}
+
 // --- Jobs ---
 
 export async function listJobs(): Promise<JobFile[]> {
@@ -51,7 +66,7 @@ export async function listJobs(): Promise<JobFile[]> {
 }
 
 export async function getJob(slug: string): Promise<JobFile | null> {
-  const filePath = path.join(getDataDir(), "jobs", `${slug}.md`)
+  const filePath = safePath("jobs", slug)
   try {
     const content = await fs.readFile(filePath, "utf-8")
     const { data, content: body } = matter(content)
@@ -68,10 +83,10 @@ export async function createJob(
   frontmatter: Record<string, unknown>,
   content: string = "",
 ): Promise<void> {
-  const dir = path.join(getDataDir(), "jobs")
-  await ensureDir(dir)
-  const filePath = path.join(dir, `${slug}.md`)
-  const fileContent = matter.stringify(content, frontmatter)
+  const filePath = safePath("jobs", slug)
+  await ensureDir(path.dirname(filePath))
+  const validated = JobFrontmatterSchema.parse(frontmatter)
+  const fileContent = matter.stringify(content, validated)
   await fs.writeFile(filePath, fileContent, "utf-8")
 }
 
@@ -79,7 +94,7 @@ export async function updateJobStatus(
   slug: string,
   status: string,
 ): Promise<void> {
-  const filePath = path.join(getDataDir(), "jobs", `${slug}.md`)
+  const filePath = safePath("jobs", slug)
   const raw = await fs.readFile(filePath, "utf-8")
   const { data, content } = matter(raw)
   data.status = status
@@ -233,7 +248,8 @@ export async function readFileByPath(
   const fullPath = path.resolve(dataDir, filePath)
 
   // Security: ensure resolved path stays within data dir
-  if (!fullPath.startsWith(path.resolve(dataDir))) {
+  const safeDirPrefix = path.resolve(dataDir) + path.sep
+  if (!fullPath.startsWith(safeDirPrefix) && fullPath !== path.resolve(dataDir)) {
     return null
   }
 

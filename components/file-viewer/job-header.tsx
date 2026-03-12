@@ -1,5 +1,5 @@
 import type { PipelineStage } from "@/lib/types"
-import { formatDate, STATUS_COLORS } from "@/lib/ui-utils"
+import { formatDate, STATUS_COLORS, isSafeUrl, formatCompensation } from "@/lib/ui-utils"
 
 interface JobHeaderProps {
   frontmatter: Record<string, unknown>
@@ -9,22 +9,6 @@ const sourceLabels: Record<string, string> = {
   coffeeshop: "Coffee Shop",
   manual: "Manual",
   referral: "Referral",
-}
-
-function formatCompensation(comp: Record<string, unknown>): string | null {
-  const min = typeof comp.min === "number" ? comp.min : null
-  const max = typeof comp.max === "number" ? comp.max : null
-  if (min === null && max === null) return null
-
-  const fmt = (n: number) => {
-    if (n >= 1000) return `$${Math.round(n / 1000)}k`
-    return `$${n}`
-  }
-
-  if (min !== null && max !== null) return `${fmt(min)} \u2013 ${fmt(max)}`
-  if (min !== null) return `${fmt(min)}+`
-  if (max !== null) return `Up to ${fmt(max)}`
-  return null
 }
 
 function scoreColor(score: number): string {
@@ -124,7 +108,7 @@ export function JobHeader({ frontmatter }: JobHeaderProps) {
       )}
 
       {/* URL */}
-      {url && (
+      {url && isSafeUrl(url) && (
         <a
           href={url}
           target="_blank"
