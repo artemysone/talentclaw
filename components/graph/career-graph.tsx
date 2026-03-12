@@ -909,6 +909,11 @@ export default function CareerGraph({
     // Size canvas and fit view
     resizeCanvas()
 
+    // Safety: if container wasn't ready, retry next frame
+    if (sizeRef.current.w === 0 || sizeRef.current.h === 0) {
+      requestAnimationFrame(() => resizeCanvas())
+    }
+
     // Start animation
     animFrameRef.current = requestAnimationFrame(draw)
 
