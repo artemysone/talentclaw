@@ -1,7 +1,8 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { ArrowRight, Check, Copy, Sparkles } from "lucide-react"
+import { Check, Copy } from "lucide-react"
+import { CrabLogo } from "@/components/crab-logo"
 
 const messages = [
   {
@@ -46,23 +47,19 @@ function AgentPreview() {
     <div className="w-full max-w-[480px]">
       <div className="bg-white rounded-2xl overflow-hidden border border-emerald-200/60 glow-accent">
         {/* Header */}
-        <div className="flex items-center gap-3 px-4 py-3 bg-surface-alt border-b border-black/5">
-          <div className="w-9 h-9 rounded-full bg-emerald-600 flex items-center justify-center">
-            <Sparkles className="w-4 h-4 text-white" />
-          </div>
-          <div>
-            <div className="text-stone-800 text-sm font-medium">talentclaw Agent</div>
-            <div className="text-emerald-600 text-xs">active</div>
-          </div>
+        <div className="flex items-center px-4 py-3 bg-surface-alt border-b border-black/5">
+          <CrabLogo className="w-8 h-8 text-emerald-600" />
         </div>
 
         {/* Messages */}
-        <div className="p-4 space-y-2.5 min-h-[380px]">
-          {messages.slice(0, visibleCount).map((msg, i) => (
+        <div className="p-4 space-y-2.5">
+          {messages.map((msg, i) => (
             <div
               key={i}
-              className={`flex ${msg.from === "user" ? "justify-end" : "justify-start"}`}
-              style={{ animation: "chat-appear 0.35s cubic-bezier(0.16, 1, 0.3, 1)" }}
+              className={`flex ${msg.from === "user" ? "justify-end" : "justify-start"} ${
+                i < visibleCount ? "" : "invisible"
+              }`}
+              style={i < visibleCount ? { animation: "chat-appear 0.35s cubic-bezier(0.16, 1, 0.3, 1)" } : undefined}
             >
               <div
                 className={`max-w-[85%] px-3 py-2 rounded-xl text-[0.82rem] leading-[1.55] ${
@@ -84,23 +81,6 @@ function AgentPreview() {
               </div>
             </div>
           ))}
-
-          {visibleCount > 0 && visibleCount < messages.length && (
-            <div className="flex justify-start">
-              <div className="bg-surface-alt px-4 py-2.5 rounded-xl rounded-bl-sm flex gap-[5px] items-center border border-black/5">
-                {[0, 0.2, 0.4].map((delay) => (
-                  <div
-                    key={delay}
-                    className="w-[6px] h-[6px] rounded-full bg-stone-400"
-                    style={{
-                      animation: "typing-dot 1.2s ease-in-out infinite",
-                      animationDelay: `${delay}s`,
-                    }}
-                  />
-                ))}
-              </div>
-            </div>
-          )}
         </div>
       </div>
     </div>
@@ -111,6 +91,7 @@ const installMethods = [
   { label: "npx", command: "npx talentclaw" },
   { label: "bunx", command: "bunx talentclaw" },
   { label: "npm", command: "npm install -g talentclaw" },
+  { label: "curl", command: "curl -fsSL https://talentclaw.dev/install | sh" },
 ]
 
 function InstallCommand() {
@@ -124,7 +105,7 @@ function InstallCommand() {
   }
 
   return (
-    <div className="w-full max-w-[440px]">
+    <div className="w-full">
       <div className="rounded-xl border border-black/10 bg-white overflow-hidden">
         {/* Tabs */}
         <div className="flex border-b border-black/5 px-1 pt-1 gap-0.5">
@@ -172,31 +153,17 @@ export function Hero() {
         {/* Left - copy */}
         <div className="flex flex-col items-start text-left">
           <h1 className="reveal reveal-delay-1 font-prose text-[clamp(2.2rem,5vw,3.5rem)] font-bold leading-[1.12] tracking-[-0.03em] max-w-[540px] mb-5">
-            Your AI career agent.
+            Your AI-powered career hub.
           </h1>
 
           <p className="reveal reveal-delay-2 text-stone-600 text-[clamp(1rem,2vw,1.15rem)] max-w-[460px] mb-8">
-            talentclaw discovers jobs, manages your pipeline, and handles applications
-            so you can focus on what matters -- making decisions, not doing busywork.
+            TalentClaw is a local-first career hub powered by AI agents.
+            Track opportunities, manage your pipeline, and let your agent handle
+            applications — all from your machine.
+            Powered by OpenClaw, ZeroClaw & more.
           </p>
 
-          <div className="reveal reveal-delay-3 flex flex-col sm:flex-row gap-3">
-            <a
-              href="https://github.com/artemyshq/talentclaw#install"
-              className="inline-flex items-center justify-center gap-2 bg-emerald-600 text-white px-8 py-3.5 rounded-full font-semibold text-[0.95rem] shadow-[0_4px_16px_rgba(0,0,0,0.1)] hover:bg-emerald-500 hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(5,150,105,0.2)] transition-all"
-            >
-              Get Started
-              <ArrowRight className="w-4 h-4" />
-            </a>
-            <a
-              href="#how-it-works"
-              className="inline-flex items-center justify-center gap-2 text-stone-600 px-6 py-3.5 rounded-full font-medium text-[0.95rem] hover:text-stone-800 transition-colors"
-            >
-              See how it works
-            </a>
-          </div>
-
-          <div className="reveal reveal-delay-4 mt-6">
+          <div className="reveal reveal-delay-3 self-stretch">
             <InstallCommand />
           </div>
         </div>

@@ -1,17 +1,4 @@
-"use client"
-
-import {
-  Kanban,
-  Search,
-  GitBranch,
-  Network,
-  Shield,
-  BarChart3,
-} from "lucide-react"
-import type { LucideIcon } from "lucide-react"
-
 interface Feature {
-  icon: LucideIcon
   emoji: string
   title: string
   desc: string
@@ -19,37 +6,31 @@ interface Feature {
 
 const features: Feature[] = [
   {
-    icon: Kanban,
     emoji: "📋",
     title: "Career CRM",
     desc: "Track every opportunity from discovery to offer in a local-first pipeline. Drag, drop, and never lose track of where you stand.",
   },
   {
-    icon: Search,
     emoji: "🔍",
     title: "Job Discovery",
     desc: "Your agent scans the network and surfaces roles that match your skills, experience, and preferences. No noise, only signal.",
   },
   {
-    icon: GitBranch,
     emoji: "🎯",
     title: "Application Pipeline",
     desc: "Manage applications across stages -- from discovered to offer. See your next steps, deadlines, and match reasoning at a glance.",
   },
   {
-    icon: Network,
     emoji: "📬",
     title: "Agent-to-Agent Network",
     desc: "Connected to the Coffee Shop exchange where career agents meet employer agents. Direct protocol-level communication, not job board forms.",
   },
   {
-    icon: Shield,
     emoji: "🔒",
     title: "Local-First Privacy",
     desc: "Your data lives on your machine as readable markdown files. No cloud databases, no data selling. You own your career data completely.",
   },
   {
-    icon: BarChart3,
     emoji: "📊",
     title: "Career Intelligence",
     desc: "Application stats, response rates, market positioning, and growth paths -- informed by your pipeline and live market data.",
