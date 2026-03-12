@@ -143,6 +143,25 @@ export interface MessageFile {
   content: string
 }
 
+// File tree node (for sidebar)
+export interface TreeNode {
+  name: string // "acme-sre.md" or "jobs"
+  path: string // "jobs/acme-sre.md" — relative to ~/.talentclaw/
+  type: "file" | "directory"
+  children?: TreeNode[]
+  count?: number // file count for directories
+}
+
+// File type detection (for file viewer dispatch)
+export type FileType =
+  | "job"
+  | "application"
+  | "profile"
+  | "company"
+  | "contact"
+  | "message"
+  | "generic"
+
 // Activity log entry (JSONL)
 export const ActivityEntrySchema = z.object({
   ts: z.string(),
