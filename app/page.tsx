@@ -1,6 +1,7 @@
 import { headers } from "next/headers"
 import { redirect } from "next/navigation"
 import { Hero } from "@/components/landing/hero"
+import { HubShowcase } from "@/components/landing/hub-showcase"
 import { Features } from "@/components/landing/features"
 import { Footer } from "@/components/landing/footer"
 import { RevealObserver } from "@/components/landing/reveal-observer"
@@ -15,6 +16,7 @@ export default async function RootPage() {
     <>
       <RevealObserver />
       <Hero />
+      <HubShowcase />
       <Features />
       <Footer />
     </>
