@@ -1,6 +1,6 @@
 'use client'
 
-import { useRef, useEffect, useState, useCallback } from 'react'
+import { useRef, useEffect, useState, useCallback, useMemo } from 'react'
 import {
   forceSimulation,
   forceLink,
@@ -49,6 +49,15 @@ for (const [type, hex] of Object.entries(NODE_COLORS)) {
   }
 }
 
+const FILTER_CATEGORIES: { type: GraphNode['type']; label: string }[] = [
+  { type: 'company', label: 'Companies' },
+  { type: 'role', label: 'Roles' },
+  { type: 'skill', label: 'Skills' },
+  { type: 'project', label: 'Projects' },
+  { type: 'education', label: 'Education' },
+  { type: 'industry', label: 'Industries' },
+]
+
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
@@ -94,6 +103,7 @@ export default function CareerGraphCanvas({
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
   const [selected, setSelected] = useState<SimNode | null>(null)
+  const [activeFilter, setActiveFilter] = useState<GraphNode['type'] | null>(null)
 
   // Mutable refs for rendering state
   const simNodesRef = useRef<SimNode[]>([])
@@ -102,6 +112,7 @@ export default function CareerGraphCanvas({
   const camRef = useRef<Camera>({ x: 0, y: 0, zoom: 1, targetX: 0, targetY: 0, targetZoom: 1 })
   const hoveredRef = useRef<SimNode | null>(null)
   const selectedRef = useRef<SimNode | null>(null)
+  const activeFilterRef = useRef<GraphNode['type'] | null>(null)
   const simulationRef = useRef<ReturnType<typeof forceSimulation<SimNode>> | null>(null)
   const animFrameRef = useRef(0)
   const sizeRef = useRef({ w: 0, h: 0 })
@@ -113,6 +124,15 @@ export default function CareerGraphCanvas({
   const camStartRef = useRef({ x: 0, y: 0 })
 
   useEffect(() => { selectedRef.current = selected }, [selected])
+  useEffect(() => { activeFilterRef.current = activeFilter }, [activeFilter])
+
+  const categoryCounts = useMemo(() => {
+    const counts: Record<string, number> = {}
+    for (const n of nodes) {
+      if (n.type !== 'person') counts[n.type] = (counts[n.type] || 0) + 1
+    }
+    return counts
+  }, [nodes])
 
   // ---------------------------------------------------------------------------
   // Camera transforms
@@ -260,9 +280,21 @@ export default function CareerGraphCanvas({
       ctx!.fillStyle = '#FFFFFF'
       ctx!.fillRect(0, 0, W, H)
 
-      // Focus state
+      // Focus state — node hover/select takes priority, then category filter
       const focusNode = hoveredRef.current || selectedRef.current
-      const connSet = getConnectedSet(focusNode)
+      let connSet: Set<string> | null = null
+
+      if (focusNode) {
+        connSet = getConnectedSet(focusNode)
+      } else if (activeFilterRef.current) {
+        connSet = new Set<string>()
+        for (const node of simNodes) {
+          if (node.type === activeFilterRef.current) {
+            connSet.add(node.id)
+          }
+        }
+      }
+
       const hasFocus = !!connSet
 
       // Edges
@@ -493,6 +525,11 @@ export default function CareerGraphCanvas({
     setSelected(null)
   }, [])
 
+  const handleFilterClick = useCallback((type: GraphNode['type']) => {
+    setActiveFilter(prev => prev === type ? null : type)
+    setSelected(null)
+  }, [])
+
   // ---------------------------------------------------------------------------
   // Detail panel data
   // ---------------------------------------------------------------------------
@@ -518,6 +555,36 @@ export default function CareerGraphCanvas({
         onMouseUp={handleMouseUp}
         onMouseLeave={() => { hoveredRef.current = null; isDraggingRef.current = false }}
       />
+
+      {/* Category filters */}
+      <div className="absolute top-4 left-4 flex flex-wrap gap-1.5">
+        {FILTER_CATEGORIES.filter(c => categoryCounts[c.type]).map(({ type, label }) => {
+          const isActive = activeFilter === type
+          const color = NODE_COLORS[type]
+          const count = categoryCounts[type]
+          return (
+            <button
+              key={type}
+              onClick={() => handleFilterClick(type)}
+              className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-medium transition-all ${
+                isActive
+                  ? 'text-white shadow-sm'
+                  : 'bg-white/80 backdrop-blur-sm text-text-secondary hover:bg-white border border-border-subtle'
+              }`}
+              style={isActive ? { backgroundColor: color } : undefined}
+            >
+              {!isActive && (
+                <span
+                  className="w-1.5 h-1.5 rounded-full flex-shrink-0"
+                  style={{ backgroundColor: color }}
+                />
+              )}
+              {label}
+              <span className={isActive ? 'opacity-70' : 'text-text-muted'}>{count}</span>
+            </button>
+          )
+        })}
+      </div>
 
       {/* Zoom controls */}
       <div className="absolute bottom-6 right-6 flex flex-col gap-1">
