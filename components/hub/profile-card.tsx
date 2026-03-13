@@ -1,9 +1,25 @@
+import Link from "next/link"
 import { CrabLogo } from "@/components/crab-logo"
+import { PIPELINE_STAGES } from "@/lib/types"
+import { STAGE_LABELS } from "@/lib/ui-utils"
 import type { ProfileFrontmatter } from "@/lib/types"
+
+const stageColors: Record<string, string> = {
+  discovered: "bg-slate-500/15 text-slate-600 border-slate-200",
+  saved: "bg-blue-500/10 text-blue-600 border-blue-200",
+  applied: "bg-accent-subtle text-accent border-accent/20",
+  interviewing: "bg-violet-500/10 text-violet-600 border-violet-200",
+  offer: "bg-emerald-500/10 text-emerald-600 border-emerald-200",
+  accepted: "bg-green-500/10 text-green-600 border-green-200",
+  rejected: "bg-red-500/10 text-red-500 border-red-200",
+}
+
+const FUNNEL_STAGES = PIPELINE_STAGES.filter((s) => s !== "rejected")
 
 interface ProfileCardProps {
   profile: ProfileFrontmatter
   isFirstRun: boolean
+  stageCounts: Record<string, number>
 }
 
 function getGreeting(): string {
@@ -13,7 +29,7 @@ function getGreeting(): string {
   return "Good evening"
 }
 
-export function ProfileCard({ profile, isFirstRun }: ProfileCardProps) {
+export function ProfileCard({ profile, isFirstRun, stageCounts }: ProfileCardProps) {
   if (isFirstRun) {
     return (
       <div className="bg-surface-raised rounded-2xl border border-border-subtle p-8">
@@ -49,42 +65,58 @@ export function ProfileCard({ profile, isFirstRun }: ProfileCardProps) {
     )
   }
 
-  const sections = [
-    { label: "Name", filled: !!profile.display_name },
-    { label: "Headline", filled: !!profile.headline },
-    { label: "Skills", filled: (profile.skills?.length ?? 0) > 0 },
-    { label: "Experience", filled: !!profile.experience_years },
-    { label: "Preferences", filled: !!profile.remote_preference },
-    { label: "Salary", filled: !!profile.salary_range },
-  ]
-  const filledCount = sections.filter((s) => s.filled).length
+  const total = Object.values(stageCounts).reduce((a, b) => a + b, 0)
 
   return (
     <div className="bg-surface-raised rounded-2xl border border-border-subtle p-6">
-      <h2 className="font-prose text-xl text-text-primary">
-        {getGreeting()}, {profile.display_name}
-      </h2>
-      {profile.headline && (
-        <p className="text-sm text-text-secondary mt-1">{profile.headline}</p>
-      )}
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="font-prose text-xl text-text-primary">
+            {getGreeting()}, {profile.display_name}
+          </h2>
+          {profile.headline && (
+            <p className="text-sm text-text-secondary mt-1">{profile.headline}</p>
+          )}
+        </div>
+        <Link
+          href="/pipeline"
+          className="text-xs text-accent hover:text-accent-hover transition-colors shrink-0"
+        >
+          View board &rarr;
+        </Link>
+      </div>
+
+      {/* Pipeline funnel */}
       <div className="mt-4">
-        <div className="flex items-center justify-between text-xs text-text-muted mb-2">
-          <span>Profile completeness</span>
-          <span>
-            {filledCount}/{sections.length}
-          </span>
-        </div>
-        <div className="flex gap-1">
-          {sections.map((s) => (
-            <div
-              key={s.label}
-              className={`h-1.5 flex-1 rounded-full ${
-                s.filled ? "bg-accent" : "bg-border-default"
-              }`}
-              title={s.label}
-            />
-          ))}
-        </div>
+        {total === 0 ? (
+          <p className="text-sm text-text-muted py-2">
+            No jobs in your pipeline yet.
+          </p>
+        ) : (
+          <div className="flex items-center gap-1.5 overflow-x-auto pb-1">
+            {FUNNEL_STAGES.map((stage, i) => {
+              const count = stageCounts[stage] || 0
+              return (
+                <div key={stage} className="flex items-center gap-1.5 shrink-0">
+                  {i > 0 && (
+                    <div className="text-text-muted/40 text-xs">&rarr;</div>
+                  )}
+                  <Link
+                    href="/pipeline"
+                    className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-colors hover:opacity-80 ${
+                      count > 0
+                        ? stageColors[stage]
+                        : "bg-surface-overlay text-text-muted border-border-subtle"
+                    }`}
+                  >
+                    {STAGE_LABELS[stage]} {count}
+                  </Link>
+                </div>
+              )
+            })}
+          </div>
+        )}
+
       </div>
     </div>
   )

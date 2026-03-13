@@ -38,8 +38,8 @@ interface ActivityFeedProps {
 
 export function ActivityFeed({ entries }: ActivityFeedProps) {
   return (
-    <div className="bg-surface-raised rounded-2xl border border-border-subtle p-6">
-      <div className="flex items-center gap-3 mb-5">
+    <div className="bg-surface-raised rounded-2xl border border-border-subtle p-6 h-[350px] flex flex-col">
+      <div className="flex items-center gap-3 mb-5 shrink-0">
         <h3 className="text-sm font-semibold text-text-primary">
           Recent Activity
         </h3>
@@ -50,7 +50,7 @@ export function ActivityFeed({ entries }: ActivityFeedProps) {
 
       {entries.length > 0 ? (
         <>
-          <div className="space-y-1">
+          <div className="space-y-1 overflow-y-auto min-h-0">
             {entries.map((entry, i) => (
               <div
                 key={`${entry.ts}-${i}`}

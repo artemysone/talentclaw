@@ -3,23 +3,21 @@ import {
   listApplications,
   getActivityLog,
   getProfile,
-  getWorkspaceStats,
 } from "@/lib/fs-data"
+import { buildCareerGraph } from "@/lib/graph-data"
 import { PIPELINE_STAGES } from "@/lib/types"
 import { ProfileCard } from "@/components/hub/profile-card"
-import { PipelineFunnel } from "@/components/hub/pipeline-funnel"
 import { ActivityFeed } from "@/components/hub/activity-feed"
 import { UpcomingActions } from "@/components/hub/upcoming-actions"
-import { JobDiscovery } from "@/components/hub/job-discovery"
-import { WorkspaceStatus } from "@/components/hub/workspace-status"
+import CareerGraphWrapper from "@/components/graph/career-graph-wrapper"
 
 export default async function DashboardPage() {
-  const [jobs, applications, activityLog, profile, stats] = await Promise.all([
+  const [jobs, applications, activityLog, profile, graph] = await Promise.all([
     listJobs(),
     listApplications(),
     getActivityLog(10),
     getProfile(),
-    getWorkspaceStats(),
+    buildCareerGraph(),
   ])
 
   const isFirstRun =
@@ -60,20 +58,19 @@ export default async function DashboardPage() {
           <ProfileCard
             profile={profile.frontmatter}
             isFirstRun={isFirstRun}
+            stageCounts={stageCounts}
           />
-          <PipelineFunnel stageCounts={stageCounts} />
-          <ActivityFeed entries={activityLog} />
+          {graph.nodes.length > 1 && (
+            <div className="bg-surface-raised rounded-2xl border border-border-subtle overflow-hidden h-[480px]">
+              <CareerGraphWrapper nodes={graph.nodes} edges={graph.edges} />
+            </div>
+          )}
         </div>
 
         {/* Right column */}
         <div className="lg:col-span-2 space-y-6">
           <UpcomingActions actions={upcomingActions} />
-          <JobDiscovery jobs={jobs} />
-          <WorkspaceStatus
-            fileCount={stats.fileCount}
-            lastModified={stats.lastModified}
-            dataDir={stats.dataDir}
-          />
+          <ActivityFeed entries={activityLog} />
         </div>
       </div>
     </div>

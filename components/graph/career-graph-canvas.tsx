@@ -71,12 +71,12 @@ function computeFit(simNodes: SimNode[], w: number, h: number) {
     if (n.y + n.size + pad > maxY) maxY = n.y + n.size + pad
   })
   if (!isFinite(minX)) return null
-  const screenPad = 80
+  const screenPad = 40
   const fitZoom = Math.min((w - screenPad * 2) / (maxX - minX), (h - screenPad * 2) / (maxY - minY))
   return {
     cx: (minX + maxX) / 2,
     cy: (minY + maxY) / 2,
-    zoom: Math.max(0.6, Math.min(1.2, fitZoom)),
+    zoom: Math.max(0.3, Math.min(1.2, fitZoom)),
   }
 }
 
@@ -182,15 +182,15 @@ export default function CareerGraphCanvas({
         .distance(d => {
           const s = nodeMap.get(typeof d.source === 'string' ? d.source : d.source.id)
           const t = nodeMap.get(typeof d.target === 'string' ? d.target : d.target.id)
-          if (s && t && (s.type === 'person' || t.type === 'person')) return 180
-          return 100
+          if (s && t && (s.type === 'person' || t.type === 'person')) return 120
+          return 70
         })
-        .strength(0.3))
+        .strength(0.4))
       .force('charge', forceManyBody<SimNode>()
-        .strength(d => d.type === 'person' ? -1000 : -300)
-        .distanceMax(900))
-      .force('collision', forceCollide<SimNode>().radius(d => d.size * 2.5 + 22).strength(0.9))
-      .force('center', forceCenter(0, 0).strength(0.008))
+        .strength(d => d.type === 'person' ? -600 : -200)
+        .distanceMax(500))
+      .force('collision', forceCollide<SimNode>().radius(d => d.size * 2 + 16).strength(0.9))
+      .force('center', forceCenter(0, 0).strength(0.02))
       .alphaDecay(0.01)
       .velocityDecay(0.38)
       .stop()
@@ -257,7 +257,7 @@ export default function CareerGraphCanvas({
       })
 
       // Background
-      ctx!.fillStyle = '#FAFDFB'
+      ctx!.fillStyle = '#FFFFFF'
       ctx!.fillRect(0, 0, W, H)
 
       // Focus state
@@ -517,7 +517,6 @@ export default function CareerGraphCanvas({
         onMouseDown={handleMouseDown}
         onMouseUp={handleMouseUp}
         onMouseLeave={() => { hoveredRef.current = null; isDraggingRef.current = false }}
-        onWheel={handleWheel}
       />
 
       {/* Zoom controls */}

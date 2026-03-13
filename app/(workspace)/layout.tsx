@@ -4,7 +4,7 @@ import {
 } from "@/components/workspace/sidebar-wrapper"
 import { Sidebar } from "@/components/workspace/sidebar"
 import { TopBar } from "@/components/workspace/top-bar"
-import { listJobs, getProfile, getWorkspaceTree } from "@/lib/fs-data"
+import { listJobs, getWorkspaceTree } from "@/lib/fs-data"
 
 export default async function WorkspaceLayout({
   children,
@@ -12,17 +12,11 @@ export default async function WorkspaceLayout({
   children: React.ReactNode
 }) {
   let jobs: Awaited<ReturnType<typeof listJobs>> = []
-  let profile: Awaited<ReturnType<typeof getProfile>> = {
-    frontmatter: {},
-    content: "",
-  }
   let tree: Awaited<ReturnType<typeof getWorkspaceTree>>["tree"] = []
-  let fileCount = 0
 
   try {
-    ;[jobs, profile, { tree, fileCount }] = await Promise.all([
+    ;[jobs, { tree }] = await Promise.all([
       listJobs(),
-      getProfile(),
       getWorkspaceTree(),
     ])
   } catch {
@@ -40,15 +34,9 @@ export default async function WorkspaceLayout({
       <div className="flex h-screen overflow-hidden bg-surface">
         <SidebarShell>
           <Sidebar
-            profile={{
-              display_name: profile.frontmatter.display_name,
-              headline: profile.frontmatter.headline,
-              availability: profile.frontmatter.availability,
-            }}
             jobCount={jobCount}
             activeCount={activeCount}
             tree={tree}
-            fileCount={fileCount}
           />
         </SidebarShell>
         <div className="flex-1 flex flex-col min-w-0">
