@@ -50,7 +50,7 @@ export function TopBar() {
   const pageName = pageNames[pathname] || "Career Hub"
   const isFilePath = pathname.startsWith("/file/")
 
-  if (pathname === "/dashboard" || pathname === "/graph" || pathname === "/jobs" || pathname === "/pipeline") return null
+  if (pathname === "/dashboard" || pathname === "/jobs" || pathname === "/pipeline") return null
 
   return (
     <header className="h-12 flex items-center justify-between px-5 border-b border-border-subtle bg-surface/80 backdrop-blur-sm shrink-0">
