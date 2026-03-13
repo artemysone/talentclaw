@@ -29,7 +29,7 @@ export function KanbanColumn({ stage, cards }: KanbanColumnProps) {
   return (
     <div
       ref={setNodeRef}
-      className={`flex flex-col min-w-[280px] w-[280px] bg-surface-raised rounded-2xl border transition-colors ${
+      className={`flex flex-col min-w-[280px] w-[280px] 2xl:w-[320px] 2xl:min-w-[320px] bg-surface-raised rounded-2xl border transition-colors ${
         isOver ? "border-accent/40" : "border-border-subtle"
       }`}
     >

@@ -127,7 +127,7 @@ export function KanbanBoard({ initialData }: KanbanBoardProps) {
       onDragOver={handleDragOver}
       onDragEnd={handleDragEnd}
     >
-      <div className="flex gap-4 overflow-x-auto pb-4 px-1">
+      <div className="flex gap-4 2xl:gap-5 overflow-x-auto pb-4 px-1">
         {PIPELINE_STAGES.map((stage) => (
           <KanbanColumn
             key={stage}

@@ -51,24 +51,24 @@ export default async function DashboardPage() {
     .slice(0, 5)
 
   return (
-    <div className="p-6 max-w-[1200px] mx-auto">
-      <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
+    <div className="p-6 max-w-6xl xl:max-w-[1400px] 2xl:max-w-[1600px] mx-auto">
+      <div className="grid grid-cols-1 lg:grid-cols-5 xl:grid-cols-7 gap-6">
         {/* Left column */}
-        <div className="lg:col-span-3 space-y-6">
+        <div className="lg:col-span-3 xl:col-span-4 space-y-6">
           <ProfileCard
             profile={profile.frontmatter}
             isFirstRun={isFirstRun}
             stageCounts={stageCounts}
           />
           {graph.nodes.length > 1 && (
-            <div className="bg-surface-raised rounded-2xl border border-border-subtle overflow-hidden h-[480px]">
+            <div className="bg-surface-raised rounded-2xl border border-border-subtle overflow-hidden h-[480px] xl:h-[560px] 2xl:h-[640px]">
               <CareerGraphWrapper nodes={graph.nodes} edges={graph.edges} />
             </div>
           )}
         </div>
 
         {/* Right column */}
-        <div className="lg:col-span-2 space-y-6">
+        <div className="lg:col-span-2 xl:col-span-3 space-y-6">
           <UpcomingActions actions={upcomingActions} />
           <ActivityFeed entries={activityLog} />
         </div>

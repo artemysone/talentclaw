@@ -24,7 +24,7 @@ export default async function FilePage({ params }: FilePageProps) {
   }
 
   return (
-    <div className="p-6 max-w-4xl">
+    <div className="p-6 max-w-4xl xl:max-w-5xl">
       <FileViewer
         filePath={relativePath}
         frontmatter={file.frontmatter}

@@ -38,7 +38,7 @@ interface ActivityFeedProps {
 
 export function ActivityFeed({ entries }: ActivityFeedProps) {
   return (
-    <div className="bg-surface-raised rounded-2xl border border-border-subtle p-6 h-[350px] flex flex-col">
+    <div className="bg-surface-raised rounded-2xl border border-border-subtle p-6 h-[350px] xl:h-[420px] 2xl:h-[480px] flex flex-col">
       <div className="flex items-center gap-3 mb-5 shrink-0">
         <h3 className="text-sm font-semibold text-text-primary">
           Recent Activity

@@ -20,7 +20,7 @@ export default async function JobsPage() {
   }))
 
   return (
-    <div className="max-w-[1200px] mx-auto px-5 py-8">
+    <div className="max-w-6xl xl:max-w-[1400px] 2xl:max-w-[1600px] mx-auto px-5 py-8">
       <JobsList jobs={jobListings} />
     </div>
   )
