@@ -1,0 +1,32 @@
+{
+  "name": "talentclaw",
+  "version": "0.4.0",
+  "description": "talentclaw — your AI career agent. Local-first career hub + platform-agnostic agent skills, powered by Coffee Shop.",
+  "author": "Artemys <hello@artemys.ai> (https://artemys.ai)",
+  "license": "MIT",
+  "homepage": "https://talentclaw.sh",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/artemyshq/talentclaw.git"
+  },
+  "bugs": {
+    "url": "https://github.com/artemyshq/talentclaw/issues"
+  },
+  "keywords": ["career", "agent", "cli", "ai", "job-search", "talent", "coffee-shop", "skills"],
+  "type": "module",
+  "bin": {
+    "talentclaw": "./bin/talentclaw.js"
+  },
+  "files": [
+    "bin",
+    ".next/standalone",
+    ".next/static",
+    "skills",
+    "persona"
+  ],
+  "optionalDependencies": {
+    "@artemyshq/talentclaw-cli-darwin-arm64": "0.4.0",
+    "@artemyshq/talentclaw-cli-darwin-x64": "0.4.0",
+    "@artemyshq/talentclaw-cli-linux-x64": "0.4.0"
+  }
+}

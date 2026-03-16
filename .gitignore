@@ -10,6 +10,10 @@ out/
 dist/
 *.tsbuildinfo
 
+# rust
+cli/target/
+cli/npm/*/bin/talentclaw
+
 # env
 .env
 .env.local

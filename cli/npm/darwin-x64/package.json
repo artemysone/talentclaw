@@ -1,0 +1,13 @@
+{
+  "name": "@artemyshq/talentclaw-cli-darwin-x64",
+  "version": "0.4.0",
+  "description": "TalentClaw native CLI binary for macOS x64",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/artemyshq/talentclaw.git"
+  },
+  "os": ["darwin"],
+  "cpu": ["x64"],
+  "files": ["bin/talentclaw"]
+}
