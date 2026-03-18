@@ -40,6 +40,16 @@ export async function writeMockProfile(
   await fs.writeFile(filePath, matter.stringify(content, frontmatter), "utf-8")
 }
 
+export async function writeMockApplication(
+  dir: string,
+  slug: string,
+  frontmatter: Record<string, unknown>,
+  content = "",
+): Promise<void> {
+  const filePath = path.join(dir, "applications", `${slug}.md`)
+  await fs.writeFile(filePath, matter.stringify(content, frontmatter), "utf-8")
+}
+
 export async function writeMockThread(
   dir: string,
   threadId: string,

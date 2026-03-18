@@ -5,7 +5,7 @@ import {
   formatRelativeTime,
   isSafeUrl,
 } from "@/lib/ui-utils"
-import { matchScoreClass } from "@/lib/match-scoring"
+import { matchScoreClass } from "@/lib/ui-utils"
 
 describe("formatDate", () => {
   it("formats an ISO date string correctly", () => {
@@ -102,25 +102,21 @@ describe("formatRelativeTime", () => {
 })
 
 describe("matchScoreClass", () => {
-  it("returns green class for excellent scores (90-100)", () => {
-    expect(matchScoreClass(90)).toBe("text-green-600")
-    expect(matchScoreClass(100)).toBe("text-green-600")
-    expect(matchScoreClass(95)).toBe("text-green-600")
+  it("returns emerald class for excellent scores (90-100)", () => {
+    expect(matchScoreClass(90)).toBe("bg-emerald-500/10 text-emerald-400")
+    expect(matchScoreClass(100)).toBe("bg-emerald-500/10 text-emerald-400")
+    expect(matchScoreClass(95)).toBe("bg-emerald-500/10 text-emerald-400")
   })
 
-  it("returns blue class for good scores (70-89)", () => {
-    expect(matchScoreClass(70)).toBe("text-blue-600")
-    expect(matchScoreClass(89)).toBe("text-blue-600")
+  it("returns accent class for good scores (75-89)", () => {
+    expect(matchScoreClass(75)).toBe("bg-accent-subtle text-accent")
+    expect(matchScoreClass(89)).toBe("bg-accent-subtle text-accent")
   })
 
-  it("returns yellow class for fair scores (50-69)", () => {
-    expect(matchScoreClass(50)).toBe("text-yellow-600")
-    expect(matchScoreClass(69)).toBe("text-yellow-600")
-  })
-
-  it("returns red class for poor scores (0-49)", () => {
-    expect(matchScoreClass(0)).toBe("text-red-600")
-    expect(matchScoreClass(49)).toBe("text-red-600")
+  it("returns amber class for lower scores (0-74)", () => {
+    expect(matchScoreClass(50)).toBe("bg-amber-500/10 text-amber-400")
+    expect(matchScoreClass(74)).toBe("bg-amber-500/10 text-amber-400")
+    expect(matchScoreClass(0)).toBe("bg-amber-500/10 text-amber-400")
   })
 })
 

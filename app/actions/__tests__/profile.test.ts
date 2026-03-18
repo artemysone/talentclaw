@@ -62,7 +62,7 @@ describe("updateProfile (server action)", () => {
       availability: "invalid_value", // not one of the valid enum values
     })
     expect(result.error).toBeDefined()
-    expect(result.error).toContain("Invalid profile data")
+    expect(result.error).toContain("Validation failed")
   })
 
   it("creates profile if it does not exist", async () => {

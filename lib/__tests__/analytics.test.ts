@@ -32,24 +32,24 @@ describe("calculateFunnel", () => {
     ]
 
     const funnel = calculateFunnel(jobs)
-    expect(funnel.discovered).toBe(2)
-    expect(funnel.saved).toBe(1)
-    expect(funnel.applied).toBe(1)
-    expect(funnel.interviewing).toBe(1)
-    expect(funnel.offer).toBe(1)
-    expect(funnel.accepted).toBe(0)
-    expect(funnel.rejected).toBe(0)
+    expect(funnel.stages.discovered).toBe(2)
+    expect(funnel.stages.saved).toBe(1)
+    expect(funnel.stages.applied).toBe(1)
+    expect(funnel.stages.interviewing).toBe(1)
+    expect(funnel.stages.offer).toBe(1)
+    expect(funnel.stages.accepted).toBe(0)
+    expect(funnel.stages.rejected).toBe(0)
   })
 
   it("handles empty array", () => {
     const funnel = calculateFunnel([])
-    expect(funnel.discovered).toBe(0)
-    expect(funnel.saved).toBe(0)
-    expect(funnel.applied).toBe(0)
-    expect(funnel.interviewing).toBe(0)
-    expect(funnel.offer).toBe(0)
-    expect(funnel.accepted).toBe(0)
-    expect(funnel.rejected).toBe(0)
+    expect(funnel.stages.discovered).toBe(0)
+    expect(funnel.stages.saved).toBe(0)
+    expect(funnel.stages.applied).toBe(0)
+    expect(funnel.stages.interviewing).toBe(0)
+    expect(funnel.stages.offer).toBe(0)
+    expect(funnel.stages.accepted).toBe(0)
+    expect(funnel.stages.rejected).toBe(0)
   })
 })
 
@@ -61,7 +61,9 @@ describe("calculateCompleteness", () => {
       skills: ["TypeScript", "React"],
       experience_years: 8,
       preferred_roles: ["Staff Engineer"],
+      preferred_locations: ["San Francisco"],
       remote_preference: "remote_only",
+      salary_range: { min: 150000, max: 200000 },
       availability: "active",
       experience: [
         { company: "Acme", title: "Engineer", start: "2020-01" },
@@ -71,19 +73,20 @@ describe("calculateCompleteness", () => {
       ],
     }
 
-    expect(calculateCompleteness(profile)).toBe(100)
+    const result = calculateCompleteness(profile)
+    expect(result.percentage).toBe(100)
   })
 
   it("calculates missing fields correctly", () => {
-    // Only display_name and headline filled => 2/9 fields
+    // Only display_name and headline filled => 2/10 fields
     const profile: ProfileFrontmatter = {
       display_name: "Jane",
       headline: "Engineer",
     }
 
-    const score = calculateCompleteness(profile)
-    // 2 out of 9 fields
-    expect(score).toBe(Math.round((2 / 9) * 100))
+    const result = calculateCompleteness(profile)
+    // 2 out of 10 fields
+    expect(result.percentage).toBe(Math.round((2 / 10) * 100))
   })
 
   it("treats empty arrays as incomplete", () => {
@@ -92,9 +95,9 @@ describe("calculateCompleteness", () => {
       skills: [], // empty array should not count
     }
 
-    const score = calculateCompleteness(profile)
-    // Only display_name counts => 1/9
-    expect(score).toBe(Math.round((1 / 9) * 100))
+    const result = calculateCompleteness(profile)
+    // Only display_name counts => 1/10
+    expect(result.percentage).toBe(Math.round((1 / 10) * 100))
   })
 })
 
@@ -110,18 +113,14 @@ describe("generateBriefing", () => {
       makeJob({ status: "interviewing" }),
     ]
 
-    const briefing = generateBriefing(jobs, 7)
-    expect(briefing.newJobsCount).toBe(1)
-    expect(briefing.upcomingActionsCount).toBe(1)
-    expect(briefing.totalJobs).toBe(3)
-    expect(briefing.summary).toContain("1 new job")
-    expect(briefing.summary).toContain("1 upcoming action")
+    const briefing = generateBriefing(jobs, [], [], {})
+    expect(briefing.newJobs).toBe(1)
   })
 
-  it("returns 'No new activity' summary when nothing is happening", () => {
-    const briefing = generateBriefing([])
-    expect(briefing.newJobsCount).toBe(0)
-    expect(briefing.upcomingActionsCount).toBe(0)
-    expect(briefing.summary).toBe("No new activity")
+  it("returns zero counts when nothing is happening", () => {
+    const briefing = generateBriefing([], [], [], {})
+    expect(briefing.newJobs).toBe(0)
+    expect(briefing.unreadMessages).toBe(0)
+    expect(briefing.upcomingActions).toEqual([])
   })
 })

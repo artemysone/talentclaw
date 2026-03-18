@@ -11,7 +11,7 @@ vi.mock("next/cache", () => ({
   revalidatePath: vi.fn(),
 }))
 
-import { replyToMessage, markThreadReadAction } from "@/app/actions/messages"
+import { replyToMessage, markThreadRead } from "@/app/actions/messages"
 
 let tmpDir: string
 
@@ -27,19 +27,13 @@ describe("replyToMessage", () => {
   it("creates a message file in the thread", async () => {
     await writeMockThread(tmpDir, "thread-1", {
       subject: "Hello",
-      participants: ["alice", "bob"],
+      participant: "bob",
       last_active: "2026-03-01T00:00:00Z",
       unread: false,
-    })
+    }, [])
 
-    const result = await replyToMessage(
-      "thread-1",
-      "alice",
-      "bob",
-      "Thanks for reaching out!",
-    )
+    const result = await replyToMessage("thread-1", "Thanks for reaching out!")
     expect(result.error).toBeUndefined()
-    expect(result.filename).toBe("001.md")
 
     const thread = await getThread("thread-1")
     expect(thread!.messages).toHaveLength(1)
@@ -51,12 +45,12 @@ describe("replyToMessage", () => {
     const originalDate = "2026-01-01T00:00:00Z"
     await writeMockThread(tmpDir, "thread-2", {
       subject: "Follow-up",
-      participants: ["alice"],
+      participant: "alice",
       last_active: originalDate,
       unread: false,
-    })
+    }, [])
 
-    await replyToMessage("thread-2", "alice", "bob", "Ping!")
+    await replyToMessage("thread-2", "Ping!")
 
     const threads = await listThreads()
     const updated = threads.find((t) => t.slug === "thread-2")
@@ -67,16 +61,16 @@ describe("replyToMessage", () => {
   })
 })
 
-describe("markThreadReadAction", () => {
+describe("markThreadRead", () => {
   it("sets unread to false", async () => {
     await writeMockThread(tmpDir, "unread-thread", {
       subject: "New message",
-      participants: ["alice"],
+      participant: "alice",
       last_active: "2026-03-15T00:00:00Z",
       unread: true,
-    })
+    }, [])
 
-    const result = await markThreadReadAction("unread-thread")
+    const result = await markThreadRead("unread-thread")
     expect(result.error).toBeUndefined()
 
     const threads = await listThreads()
@@ -85,7 +79,7 @@ describe("markThreadReadAction", () => {
   })
 
   it("returns error for non-existent thread", async () => {
-    const result = await markThreadReadAction("no-such-thread")
+    const result = await markThreadRead("no-such-thread")
     expect(result.error).toBeDefined()
     expect(result.error).toContain("Failed to mark thread as read")
   })

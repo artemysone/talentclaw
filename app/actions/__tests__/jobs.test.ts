@@ -77,13 +77,14 @@ describe("saveJobToPipeline", () => {
 
 describe("createJobAction", () => {
   it("valid data creates a job file", async () => {
-    const result = await createJobAction("new-role", {
+    const result = await createJobAction({
       title: "Backend Developer",
       company: "TechCo",
     })
     expect(result.error).toBeUndefined()
 
-    const job = await getJob("new-role")
+    // Slug is auto-generated as "techco-backend-developer"
+    const job = await getJob("techco-backend-developer")
     expect(job).not.toBeNull()
     expect(job!.frontmatter.title).toBe("Backend Developer")
     expect(job!.frontmatter.company).toBe("TechCo")
@@ -91,12 +92,12 @@ describe("createJobAction", () => {
   })
 
   it("invalid data returns error", async () => {
-    const result = await createJobAction("bad-job", {
-      // missing required fields
+    const result = await createJobAction({
+      // missing required fields (title and company)
       url: "https://example.com",
     })
     expect(result.error).toBeDefined()
-    expect(result.error).toContain("Invalid job data")
+    expect(result.error).toContain("Validation failed")
   })
 })
 
