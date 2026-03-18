@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "coffeeshop": {
+      "command": "coffeeshop",
+      "args": ["mcp-server"]
+    }
+  }
+}

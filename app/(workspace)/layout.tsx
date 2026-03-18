@@ -4,6 +4,7 @@ import {
 } from "@/components/workspace/sidebar-wrapper"
 import { Sidebar } from "@/components/workspace/sidebar"
 import { TopBar } from "@/components/workspace/top-bar"
+import { ChatShell } from "@/components/chat/chat-shell"
 import { listJobs, getWorkspaceTree, getCoffeeShopStatus } from "@/lib/fs-data"
 import type { CoffeeShopStatus } from "@/lib/fs-data"
 
@@ -34,20 +35,22 @@ export default async function WorkspaceLayout({
 
   return (
     <SidebarProvider>
-      <div className="flex h-screen overflow-hidden bg-surface">
-        <SidebarShell>
-          <Sidebar
-            jobCount={jobCount}
-            activeCount={activeCount}
-            tree={tree}
-            coffeeShopStatus={coffeeShopStatus}
-          />
-        </SidebarShell>
-        <div className="flex-1 flex flex-col min-w-0">
-          <TopBar />
-          <main className="flex-1 flex flex-col min-h-0 overflow-y-auto">{children}</main>
+      <ChatShell>
+        <div className="flex h-screen overflow-hidden bg-surface">
+          <SidebarShell>
+            <Sidebar
+              jobCount={jobCount}
+              activeCount={activeCount}
+              tree={tree}
+              coffeeShopStatus={coffeeShopStatus}
+            />
+          </SidebarShell>
+          <div className="flex-1 flex flex-col min-w-0">
+            <TopBar />
+            <main className="flex-1 flex flex-col min-h-0 overflow-y-auto">{children}</main>
+          </div>
         </div>
-      </div>
+      </ChatShell>
     </SidebarProvider>
   )
 }
