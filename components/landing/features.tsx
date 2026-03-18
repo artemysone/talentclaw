@@ -48,7 +48,7 @@ export function Features() {
           <h2 className="reveal font-prose text-[clamp(1.5rem,3vw,2.2rem)] font-bold tracking-[-0.02em] mb-3">
             Your career, all in one place.
           </h2>
-          <p className="reveal reveal-delay-1 text-stone-600 text-[1rem] max-w-[520px] mx-auto">
+          <p className="reveal reveal-delay-1 text-text-secondary text-[1rem] max-w-[520px] mx-auto">
             Track opportunities, manage your network, and let your agent work on
             your behalf — whether you&apos;re actively looking or just staying ready.
           </p>
@@ -60,13 +60,13 @@ export function Features() {
               key={f.title}
               className={`reveal ${
                 i % 3 === 1 ? "reveal-delay-1" : i % 3 === 2 ? "reveal-delay-2" : ""
-              } flex flex-col bg-white rounded-[20px] p-6 border border-emerald-200/60 hover:-translate-y-[3px] hover:shadow-[0_8px_24px_rgba(0,0,0,0.06)] hover:border-emerald-300 transition-all`}
+              } flex flex-col bg-surface-raised rounded-[20px] p-6 border border-border-default hover:-translate-y-[3px] hover:shadow-[0_8px_24px_rgba(0,0,0,0.06)] hover:border-accent/30 transition-all`}
             >
               <div className="text-2xl mb-3">{f.icon}</div>
               <h3 className="font-prose text-[1.05rem] font-semibold mb-2">
                 {f.title}
               </h3>
-              <p className="text-stone-600 text-[0.88rem] leading-[1.6]">
+              <p className="text-text-secondary text-[0.88rem] leading-[1.6]">
                 {f.desc}
               </p>
             </div>

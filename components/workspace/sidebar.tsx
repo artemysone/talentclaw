@@ -1,6 +1,7 @@
 import { CrabLogo } from "@/components/crab-logo"
 import { CoffeeShopLogo } from "@/components/coffeeshop-logo"
 import { SidebarNav } from "./sidebar-nav"
+import { ThemeToggle } from "./theme-toggle"
 import type { TreeNode } from "@/lib/types"
 import type { CoffeeShopStatus } from "@/lib/fs-data"
 
@@ -57,6 +58,14 @@ export function Sidebar({
             </div>
           )}
         </div>
+      </div>
+
+      {/* Theme toggle */}
+      <div className="shrink-0 border-t border-border-sidebar px-4 py-3 flex items-center justify-between">
+        <span className="text-[11px] font-medium uppercase tracking-wider text-text-muted">
+          Theme
+        </span>
+        <ThemeToggle />
       </div>
     </>
   )

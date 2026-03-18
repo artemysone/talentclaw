@@ -14,14 +14,26 @@ export const metadata: Metadata = {
   },
 }
 
+const themeScript = `
+(function() {
+  var t = localStorage.getItem('talentclaw-theme');
+  if (t === 'dark' || (!t && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+    document.documentElement.classList.add('dark');
+  } else if (t === 'light') {
+    document.documentElement.classList.add('light');
+  }
+})()
+`
+
 export default function RootLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <head>
+        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link
           rel="preconnect"
@@ -33,7 +45,7 @@ export default function RootLayout({
           rel="stylesheet"
         />
       </head>
-      <body className="bg-surface text-stone-800 antialiased">
+      <body className="bg-surface text-text-primary antialiased">
         {children}
       </body>
     </html>

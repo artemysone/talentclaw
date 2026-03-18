@@ -133,3 +133,83 @@ html {
     transition-duration: 0.01ms !important;
   }
 }
+
+/* Dark mode — explicit class toggle */
+.dark {
+  --color-surface: #0f0f0f;
+  --color-surface-raised: #1a1a1a;
+  --color-surface-overlay: #222222;
+  --color-surface-sidebar: #141414;
+  --color-surface-alt: #222222;
+  --color-border-subtle: rgba(255, 255, 255, 0.06);
+  --color-border-default: rgba(255, 255, 255, 0.1);
+  --color-border-sidebar: rgba(255, 255, 255, 0.08);
+  --color-text-primary: #e7e5e4;
+  --color-text-secondary: #a8a29e;
+  --color-text-muted: #78716c;
+  --color-accent: #34d399;
+  --color-accent-hover: #6ee7b7;
+  --color-accent-subtle: rgba(52, 211, 153, 0.1);
+  --color-accent-glow: rgba(52, 211, 153, 0.15);
+  --color-warning: #fbbf24;
+  --color-danger: #fca5a5;
+  color-scheme: dark;
+}
+
+.dark ::selection {
+  background: rgba(52, 211, 153, 0.25);
+  color: #e7e5e4;
+}
+
+.dark .gradient-text {
+  background: linear-gradient(135deg, #34d399 0%, #6ee7b7 50%, #a7f3d0 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.dark .glow-accent {
+  box-shadow: 0 4px 24px rgba(52, 211, 153, 0.12),
+              0 0 0 1px rgba(52, 211, 153, 0.15);
+}
+
+/* Dark mode — system preference (auto) */
+@media (prefers-color-scheme: dark) {
+  html:not(.light) {
+    --color-surface: #0f0f0f;
+    --color-surface-raised: #1a1a1a;
+    --color-surface-overlay: #222222;
+    --color-surface-sidebar: #141414;
+    --color-surface-alt: #222222;
+    --color-border-subtle: rgba(255, 255, 255, 0.06);
+    --color-border-default: rgba(255, 255, 255, 0.1);
+    --color-border-sidebar: rgba(255, 255, 255, 0.08);
+    --color-text-primary: #e7e5e4;
+    --color-text-secondary: #a8a29e;
+    --color-text-muted: #78716c;
+    --color-accent: #34d399;
+    --color-accent-hover: #6ee7b7;
+    --color-accent-subtle: rgba(52, 211, 153, 0.1);
+    --color-accent-glow: rgba(52, 211, 153, 0.15);
+    --color-warning: #fbbf24;
+    --color-danger: #fca5a5;
+    color-scheme: dark;
+  }
+
+  html:not(.light) ::selection {
+    background: rgba(52, 211, 153, 0.25);
+    color: #e7e5e4;
+  }
+
+  html:not(.light) .gradient-text {
+    background: linear-gradient(135deg, #34d399 0%, #6ee7b7 50%, #a7f3d0 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  html:not(.light) .glow-accent {
+    box-shadow: 0 4px 24px rgba(52, 211, 153, 0.12),
+                0 0 0 1px rgba(52, 211, 153, 0.15);
+  }
+}
