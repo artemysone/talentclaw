@@ -3,23 +3,21 @@ import {
   listApplications,
   getActivityLog,
   getProfile,
-  getCoffeeShopStatus,
 } from "@/lib/fs-data"
 import { buildTimelineData } from "@/lib/timeline-data"
 import { PIPELINE_STAGES } from "@/lib/types"
 import { ProfileCard } from "@/components/hub/profile-card"
-import { CoffeeShopCard } from "@/components/hub/coffeeshop-card"
+
 import { ActivityFeed } from "@/components/hub/activity-feed"
 import { UpcomingActions } from "@/components/hub/upcoming-actions"
 import CareerGraphWrapper from "@/components/graph/career-graph-wrapper"
 
 export default async function DashboardPage() {
-  const [jobs, applications, activityLog, profile, coffeeShopStatus] = await Promise.all([
+  const [jobs, applications, activityLog, profile] = await Promise.all([
     listJobs(),
     listApplications(),
     getActivityLog(10),
     getProfile(),
-    getCoffeeShopStatus(),
   ])
 
   const isFirstRun =
@@ -76,8 +74,7 @@ export default async function DashboardPage() {
       )}
 
       {/* Info cards grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <CoffeeShopCard status={coffeeShopStatus} />
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <UpcomingActions actions={upcomingActions} />
         <ActivityFeed entries={activityLog} />
       </div>

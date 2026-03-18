@@ -1,4 +1,4 @@
-import { KanbanBoard } from "@/components/kanban/board"
+import { PipelineBoard } from "@/components/pipeline/pipeline-board"
 import { PIPELINE_STAGES } from "@/lib/types"
 import { listJobs } from "@/lib/fs-data"
 import type { KanbanCardData } from "@/components/kanban/card"
@@ -26,7 +26,7 @@ export default async function PipelinePage() {
   }
 
   return (
-    <div className="p-5">
+    <div className="p-5 max-w-6xl xl:max-w-[1400px] mx-auto">
       {jobs.length === 0 ? (
         <div className="text-center py-24">
           <p className="text-text-secondary text-sm">
@@ -41,7 +41,7 @@ export default async function PipelinePage() {
           </p>
         </div>
       ) : (
-        <KanbanBoard initialData={data} />
+        <PipelineBoard initialData={data} />
       )}
     </div>
   )

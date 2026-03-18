@@ -82,3 +82,22 @@ export const STAGE_LABELS: Record<string, string> = {
   accepted: "Accepted",
   rejected: "Rejected",
 }
+
+// Stage visual theme — single source of truth for dot + border colors
+// Uses full Tailwind class strings (required for Tailwind v4 content scanning)
+export const STAGE_THEME: Record<string, { dot: string; border: string }> = {
+  discovered: { dot: "bg-slate-500", border: "border-l-slate-500" },
+  saved: { dot: "bg-blue-500", border: "border-l-blue-500" },
+  applied: { dot: "bg-accent", border: "border-l-accent" },
+  interviewing: { dot: "bg-violet-500", border: "border-l-violet-500" },
+  offer: { dot: "bg-emerald-500", border: "border-l-emerald-500" },
+  accepted: { dot: "bg-green-500", border: "border-l-green-500" },
+  rejected: { dot: "bg-red-500", border: "border-l-red-500" },
+}
+
+// Match score badge color classes
+export function matchScoreClass(score: number): string {
+  if (score >= 90) return "bg-emerald-500/10 text-emerald-400"
+  if (score >= 75) return "bg-accent-subtle text-accent"
+  return "bg-amber-500/10 text-amber-400"
+}

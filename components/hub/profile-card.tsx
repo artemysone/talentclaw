@@ -82,7 +82,7 @@ export function ProfileCard({ profile, isFirstRun, stageCounts }: ProfileCardPro
           href="/pipeline"
           className="text-xs text-accent hover:text-accent-hover transition-colors shrink-0"
         >
-          View board &rarr;
+          View pipeline &rarr;
         </Link>
       </div>
 
