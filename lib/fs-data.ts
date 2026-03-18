@@ -15,6 +15,7 @@ import type {
   ActivityEntry,
   TreeNode,
 } from "./types"
+import { getCached, setCache, invalidateCache } from "./cache"
 
 // Base directory
 export function getDataDir(): string {
@@ -179,6 +180,10 @@ export async function appendActivity(
 // --- Workspace Tree ---
 
 export async function getWorkspaceTree(): Promise<{ tree: TreeNode[]; fileCount: number }> {
+  const cacheKey = "workspace-tree"
+  const cached = getCached<{ tree: TreeNode[]; fileCount: number }>(cacheKey)
+  if (cached) return cached
+
   const dataDir = getDataDir()
 
   async function buildTree(dir: string, relativeTo: string): Promise<TreeNode[]> {
@@ -216,7 +221,13 @@ export async function getWorkspaceTree(): Promise<{ tree: TreeNode[]; fileCount:
   }
 
   const tree = await buildTree(dataDir, dataDir)
-  return { tree, fileCount: countFiles(tree) }
+  const result = { tree, fileCount: countFiles(tree) }
+  setCache(cacheKey, result, 30000) // 30 second TTL
+  return result
+}
+
+export function invalidateWorkspaceCache(): void {
+  invalidateCache("workspace-tree")
 }
 
 function countFiles(nodes: TreeNode[]): number {

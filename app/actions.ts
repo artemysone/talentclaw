@@ -1,6 +1,6 @@
 "use server"
 
-import { updateJobStatus, appendActivity } from "@/lib/fs-data"
+import { updateJobStatus, appendActivity, invalidateWorkspaceCache } from "@/lib/fs-data"
 import { PipelineStageSchema } from "@/lib/types"
 
 export async function moveJobToStage(
@@ -19,6 +19,7 @@ export async function moveJobToStage(
       slug,
       summary: `Moved ${slug} to ${parsed.data}`,
     })
+    invalidateWorkspaceCache()
     return {}
   } catch (err) {
     return { error: `Failed to update job: ${err instanceof Error ? err.message : "unknown error"}` }
@@ -35,6 +36,7 @@ export async function saveJobToPipeline(
       slug,
       summary: `Saved ${slug} to pipeline`,
     })
+    invalidateWorkspaceCache()
     return {}
   } catch (err) {
     return { error: `Failed to save job: ${err instanceof Error ? err.message : "unknown error"}` }
