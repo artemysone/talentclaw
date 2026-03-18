@@ -6,11 +6,15 @@ import {
   getCoffeeShopStatus,
 } from "@/lib/fs-data"
 import { buildCareerGraph } from "@/lib/graph-data"
+import { calculateFunnel, generateBriefing, calculateCompleteness } from "@/lib/analytics"
 import { PIPELINE_STAGES } from "@/lib/types"
 import { ProfileCard } from "@/components/hub/profile-card"
 import { CoffeeShopCard } from "@/components/hub/coffeeshop-card"
 import { ActivityFeed } from "@/components/hub/activity-feed"
 import { UpcomingActions } from "@/components/hub/upcoming-actions"
+import { MorningBriefing } from "@/components/hub/morning-briefing"
+import { PipelineFunnelChart } from "@/components/hub/pipeline-funnel-chart"
+import { CompletenessMeter } from "@/components/hub/completeness-meter"
 import CareerGraphWrapper from "@/components/graph/career-graph-wrapper"
 
 export default async function DashboardPage() {
@@ -53,28 +57,49 @@ export default async function DashboardPage() {
     .sort((a, b) => a.date.localeCompare(b.date))
     .slice(0, 5)
 
-  return (
-    <div className="p-6 max-w-6xl xl:max-w-[1400px] 2xl:max-w-[1600px] mx-auto">
-      <div className="grid grid-cols-1 lg:grid-cols-5 xl:grid-cols-7 gap-6">
-        {/* Left column */}
-        <div className="lg:col-span-3 xl:col-span-4 space-y-6">
-          <ProfileCard
-            profile={profile.frontmatter}
-            isFirstRun={isFirstRun}
-            stageCounts={stageCounts}
-          />
-          {graph.nodes.length > 1 && (
-            <div className="bg-surface-raised rounded-2xl border border-border-subtle overflow-hidden h-[480px] xl:h-[560px] 2xl:h-[640px]">
-              <CareerGraphWrapper nodes={graph.nodes} edges={graph.edges} />
-            </div>
-          )}
-        </div>
+  // Analytics
+  const funnel = calculateFunnel(jobs)
+  const briefing = generateBriefing(jobs, applications, activityLog)
+  const completeness = calculateCompleteness(profile)
 
-        {/* Right column */}
-        <div className="lg:col-span-2 xl:col-span-3 space-y-6">
+  return (
+    <div className="p-6 max-w-6xl xl:max-w-[1400px] 2xl:max-w-[1600px] mx-auto space-y-6">
+      {/* Row 1: Profile card — full width */}
+      <ProfileCard
+        profile={profile.frontmatter}
+        isFirstRun={isFirstRun}
+        stageCounts={stageCounts}
+      />
+
+      {/* Row 2: Morning Briefing + Completeness Meter (or Coffee Shop) */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <MorningBriefing briefing={briefing} />
+        {completeness.percentage < 100 ? (
+          <CompletenessMeter completeness={completeness} />
+        ) : (
           <CoffeeShopCard status={coffeeShopStatus} />
+        )}
+      </div>
+
+      {/* Row 3: Pipeline Funnel Chart — full width */}
+      <PipelineFunnelChart funnel={funnel} />
+
+      {/* Row 4: Career Timeline — full width (if data exists) */}
+      {graph.nodes.length > 1 && (
+        <div className="bg-surface-raised rounded-2xl border border-border-subtle overflow-hidden h-[480px] xl:h-[560px] 2xl:h-[640px]">
+          <CareerGraphWrapper nodes={graph.nodes} edges={graph.edges} />
+        </div>
+      )}
+
+      {/* Row 5: Activity Feed + Upcoming Actions */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <ActivityFeed entries={activityLog} />
+        <div className="space-y-6">
           <UpcomingActions actions={upcomingActions} />
-          <ActivityFeed entries={activityLog} />
+          {/* Show Coffee Shop card here if completeness is 100% (shown in row 2 otherwise) */}
+          {completeness.percentage >= 100 && (
+            <CoffeeShopCard status={coffeeShopStatus} />
+          )}
         </div>
       </div>
     </div>
