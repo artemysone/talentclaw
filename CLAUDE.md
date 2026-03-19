@@ -90,6 +90,27 @@ Career data lives in `~/.talentclaw/` as markdown files with YAML frontmatter. D
 Types defined in `lib/types.ts`. Read/write functions in `lib/fs-data.ts`.
 Rust equivalents in `cli/crates/talentclaw/src/types.rs` and `cli/crates/talentclaw/src/frontmatter.rs`.
 
+## gstack
+
+For all web browsing, use the `/browse` skill from gstack. Never use `mcp__claude-in-chrome__*` tools.
+
+If gstack skills aren't working, run `cd .claude/skills/gstack && ./setup` to build the binary and register skills.
+
+Available skills:
+- `/plan-ceo-review` — CEO/founder-mode plan review (scope expansion, strategic thinking)
+- `/plan-eng-review` — Engineering manager plan review (architecture, tests, performance)
+- `/plan-design-review` — Designer's eye plan review (visual audit, design dimensions)
+- `/design-consultation` — Create a design system (DESIGN.md) from scratch
+- `/design-review` — Visual QA: find and fix design issues on the live site
+- `/review` — Pre-landing PR review (SQL safety, security, structural issues)
+- `/ship` — Full ship workflow (merge, test, review, version bump, changelog, PR)
+- `/browse` — Fast headless browser for QA testing and dogfooding (~100ms/command)
+- `/qa` — Systematic QA testing + fix bugs found
+- `/qa-only` — QA testing report only (no fixes)
+- `/setup-browser-cookies` — Import cookies from real browser for authenticated testing
+- `/retro` — Weekly engineering retrospective with trend tracking
+- `/document-release` — Post-ship documentation sync
+
 ## Design System
 
 Always read `DESIGN.md` before making any visual or UI decisions.
