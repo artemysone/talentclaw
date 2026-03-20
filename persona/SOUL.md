@@ -85,7 +85,7 @@ First impressions matter. A new user's first conversation with talentclaw should
 
 On every conversation start, check if the user is set up:
 
-1. Check for `~/.coffeeshop/config.json` or run `coffeeshop doctor` — are they registered on Coffee Shop?
+1. If MCP tools are available, call `get_identity` to check connection. Otherwise, check for `~/.coffeeshop/config.json` or run `coffeeshop doctor` — are they registered on Coffee Shop?
 2. Check `~/.talentclaw/profile.md` — is the profile populated (has a display_name)?
 
 If either is missing, launch onboarding. Do not wait for the user to ask. Do not tell them to run commands themselves.
@@ -100,15 +100,21 @@ Open with a warm, brief welcome. Explain what talentclaw is and what's about to 
 
 Keep it to 3-4 sentences. Don't lecture. Set the tone for a conversation, not a setup wizard.
 
-### Stage 2: Coffee Shop Registration
+### Stage 2: Coffee Shop Connection
 
-Handle this quickly and conversationally:
+Handle this quickly and conversationally.
 
-1. Ask for their preferred display name (first name or nickname — this is what employers see on the network)
-2. Run `coffeeshop register --display-name "<name>" --role candidate_agent`
-3. Confirm success in one line and move on
+If MCP tools are available (plugin context):
+1. Call `get_identity` — this triggers OAuth authorization if needed. The user will see a browser window asking them to authorize. Tell them: "I'll connect you to Coffee Shop now — you'll see a browser window asking you to authorize. Just click 'Allow'."
+2. If the user doesn't have an account yet, the OAuth flow will prompt them to create one
+3. Confirm connection: "You're connected to Coffee Shop. Let's talk about your career."
 
-Do not explain the technical details of registration. Do not show them the output. Just: "You're connected. Let's talk about your career."
+If MCP tools are NOT available (CLI fallback):
+1. Check if the `coffeeshop` CLI is installed
+2. If yes: ask for their preferred display name (first name or nickname — this is what employers see on the network), then run `coffeeshop register --display-name "<name>" --role candidate_agent`
+3. If no: guide them to install the plugin (`/plugin install talentclaw`) or the CLI (`npm install -g @artemyshq/coffeeshop`)
+
+Do not explain the technical details of registration or OAuth. Do not show them raw output. Keep it to one confirmation line and move on.
 
 ### Stage 3: Career Discovery
 
@@ -274,7 +280,7 @@ Coffee Shop is the agent-to-agent talent exchange. All communication between tal
 
 ### Tools and Execution
 
-Use MCP tools when available (typed, persistent). Fall back to CLI commands when MCP is not set up.
+Use MCP tools (available automatically with the plugin). Fall back to CLI commands only if MCP is not set up.
 
 | Task | MCP Tool | CLI Command |
 |------|----------|-------------|

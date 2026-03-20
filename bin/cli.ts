@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import { execFileSync, execSync, spawn } from "node:child_process";
+import { execFileSync, execSync, spawn, spawnSync } from "node:child_process";
 import {
   existsSync,
   mkdirSync,
@@ -39,6 +39,21 @@ function which(cmd: string): boolean {
 function check(label: string, ok: boolean, detail: string): void {
   const icon = ok ? "\x1b[32m[ok]\x1b[0m" : "\x1b[33m[!!]\x1b[0m";
   console.log(detail ? `  ${icon} ${label} — ${detail}` : `  ${icon} ${label}`);
+}
+
+function promptYesNo(question: string): boolean {
+  if (!process.stdin.isTTY) return false;
+  process.stdout.write(`  ${question} [Y/n] `);
+  try {
+    const result = spawnSync("bash", ["-c", "read -r ans && echo \"$ans\""], {
+      stdio: ["inherit", "pipe", "inherit"],
+      timeout: 30000,
+    });
+    const answer = result.stdout?.toString().trim().toLowerCase();
+    return answer === "" || answer === "y" || answer === "yes";
+  } catch {
+    return false;
+  }
 }
 
 // ---------------------------------------------------------------------------
@@ -99,15 +114,47 @@ interface DepStatus {
   hasClaude: boolean;
 }
 
-function checkDeps(): DepStatus {
-  const hasCoffeeshop = which("coffeeshop");
+function checkDeps(autoInstall = false): DepStatus {
+  let hasCoffeeshop = which("coffeeshop");
   if (!hasCoffeeshop) {
-    console.log("! Coffee Shop CLI not found — install with: npm install -g @artemyshq/coffeeshop");
+    if (autoInstall) {
+      const shouldInstall = promptYesNo(
+        "Coffee Shop CLI not found. Install it? (npm install -g @artemyshq/coffeeshop)"
+      );
+      if (shouldInstall) {
+        try {
+          execSync("npm install -g @artemyshq/coffeeshop", { stdio: "inherit" });
+          hasCoffeeshop = which("coffeeshop");
+        } catch {
+          console.log("  Failed to install. Install manually: npm install -g @artemyshq/coffeeshop");
+        }
+      }
+    } else {
+      console.log("! Coffee Shop CLI not found — install with: npm install -g @artemyshq/coffeeshop");
+    }
   }
 
-  const hasAgentBrowser = which("agent-browser");
+  let hasAgentBrowser = which("agent-browser");
   if (!hasAgentBrowser) {
-    console.log("! agent-browser not found — install with: npm install -g agent-browser");
+    if (autoInstall) {
+      const shouldInstall = promptYesNo(
+        "agent-browser lets TalentClaw apply to jobs on sites like Greenhouse and LinkedIn. Install it? (npm install -g agent-browser)"
+      );
+      if (shouldInstall) {
+        try {
+          execSync("npm install -g agent-browser", { stdio: "inherit" });
+          hasAgentBrowser = which("agent-browser");
+          if (hasAgentBrowser) {
+            console.log("  Setting up browser...");
+            execSync("agent-browser install", { stdio: "inherit" });
+          }
+        } catch {
+          console.log("  Failed to install. Install manually: npm install -g agent-browser");
+        }
+      }
+    } else {
+      console.log("! agent-browser not found — install with: npm install -g agent-browser");
+    }
   }
 
   const hasApiKey = !!process.env.ANTHROPIC_API_KEY;
@@ -217,7 +264,10 @@ function setup(): void {
   scaffold();
   console.log("  Workspace scaffolded: " + dataDir());
 
-  // 2. Register Coffee Shop MCP server
+  // 2. Check deps with auto-install (before MCP registration so coffeeshop is available)
+  const deps = checkDeps(true);
+
+  // 3. Register Coffee Shop MCP server
   const claudeDir = join(homedir(), ".claude");
   const mcpPath = join(claudeDir, "mcp_servers.json");
 
@@ -236,7 +286,7 @@ function setup(): void {
   writeFileSync(mcpPath, JSON.stringify(mcpConfig, null, 2) + "\n", "utf-8");
   console.log("  Coffee Shop MCP registered: " + mcpPath);
 
-  // 3. Symlink skill
+  // 4. Symlink skill
   const skillSource = join(packageRoot(), "skills");
   const skillTarget = join(claudeDir, "skills", "talentclaw");
 
@@ -251,9 +301,6 @@ function setup(): void {
   } else {
     console.log("  Skill already linked: " + skillTarget);
   }
-
-  // 4. Check deps
-  const deps = checkDeps();
 
   // 5. Print summary
   printChecklist(deps);

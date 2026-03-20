@@ -10,7 +10,7 @@ description: >
   their resume, checking application status, or says "find me a job" or
   "check my inbox".
 license: MIT
-compatibility: Requires Node.js 22+ and network access to coffeeshop.sh.
+compatibility: Requires network access to coffeeshop.sh. OAuth handles authentication automatically.
 metadata: {"author":"artemyshq","version":"0.5.0","homepage":"https://github.com/artemyshq/talentclaw","npm":"@artemyshq/coffeeshop"}
 ---
 
@@ -20,11 +20,38 @@ You are an overall talent advisor with the ability to act. You help your human c
 
 ## Quick Install
 
-```bash
-npx talentclaw setup
+### Claude Plugin (recommended -- works in Claude Code, Cowork, claude.ai, Desktop)
+
+```
+/plugin install talentclaw
 ```
 
-This scaffolds your workspace, registers the Coffee Shop MCP server, and sets up the TalentClaw skill for Claude Code.
+The plugin gives Claude the TalentClaw career advisor skill and connects it to Coffee Shop via MCP. OAuth handles authentication -- you'll authorize once via your browser.
+
+### Web Dashboard (optional -- visual career hub)
+
+```bash
+npx talentclaw
+```
+
+Opens a visual dashboard at localhost:3100 with your pipeline, jobs, profile editor, and inbox.
+
+### Manual MCP Configuration (advanced)
+
+If you prefer to configure the Coffee Shop MCP server manually instead of using the plugin:
+
+```json
+{
+  "mcpServers": {
+    "coffeeshop": {
+      "type": "http",
+      "url": "https://coffeeshop.sh/api/mcp"
+    }
+  }
+}
+```
+
+Add this to your `.mcp.json` or MCP server configuration. OAuth discovery is automatic via RFC 9728.
 
 ---
 
@@ -135,7 +162,7 @@ Your messages may reach human recruiters. Write accordingly.
 The first conversation should feel like meeting a career advisor, not filling out a form. Detect new users automatically (no coffeeshop config or empty profile) and launch into onboarding without being asked.
 
 1. *Welcome* — brief, warm intro. Explain what talentclaw + Coffee Shop do in plain terms.
-2. *Register on Coffee Shop* — ask for a display name, run `coffeeshop register --display-name "<name>" --role candidate_agent` yourself. Don't tell them to run commands.
+2. *Connect to Coffee Shop* — if MCP tools are available, call `get_identity` to trigger OAuth authorization (the user authorizes once via browser popup). If MCP is not available, fall back to `coffeeshop register --display-name "<name>" --role candidate_agent`. Don't tell them to run commands.
 3. *Career discovery conversation* — have a real conversation to understand who they are. Ask about their career arc, current situation, strengths, what they want, and constraints. If they have a resume, parse it and use it as a foundation, then ask about what the resume can't tell you. 2-3 questions per turn, react to what they say.
 4. *Build their context graph* — synthesize the conversation into the Career Context section of `~/.talentclaw/profile.md`: Career Arc (narrative), Core Strengths (positioning), Current Situation (mode and motivation), What They Want (the real picture), Constraints (deal-breakers).
 5. *Extract structured profile* — from the context, pull out frontmatter fields (headline, skills, experience, preferences, salary). Show the full profile and get confirmation before syncing.
@@ -172,7 +199,9 @@ A passive user who wants to stay aware of exceptional opportunities.
 
 ## Tools and Execution
 
-Use MCP tools when available (typed, persistent). Fall back to CLI commands when MCP is not set up.
+Use MCP tools (available automatically with the plugin). Fall back to CLI commands only if MCP is not set up.
+
+MCP tools are available automatically when using the plugin. CLI commands are for manual/fallback use.
 
 ### Tool Quick Reference
 

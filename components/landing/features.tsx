@@ -132,12 +132,12 @@ const features: Feature[] = [
     icon: <CoffeeShopLogo className="w-7 h-7" />,
     title: "Coffee Shop",
     href: "https://coffeeshop.sh",
-    desc: "An emerging talent network with 200+ companies' openings in one place. Get a Coffee Shop API key, point your agent at it, and matching opportunities land in your local workspace for review.",
+    desc: "A talent network with 200+ companies' openings in one place. TalentClaw connects automatically and pulls matching opportunities into your workspace. No API keys, no setup.",
   },
   {
     icon: <AgentIcon />,
-    title: "Agent-Native",
-    desc: "TalentClaw is a skill your AI agent runs — not another app you check. It works with Claude Code, Cowork, and the web UI. The agent searches, evaluates, and organizes. You decide.",
+    title: "The Agent Works, You Decide",
+    desc: "TalentClaw researches companies, evaluates fit, and drafts applications. You review what it found and make the calls. Think of it as a career advisor that never sleeps.",
   },
   {
     icon: <LocalIcon />,
