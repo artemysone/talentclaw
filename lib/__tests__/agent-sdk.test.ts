@@ -206,22 +206,25 @@ describe("config", () => {
     vi.unstubAllEnvs()
   })
 
-  it("isAgentConfigured returns true when ANTHROPIC_API_KEY is set", async () => {
-    vi.stubEnv("ANTHROPIC_API_KEY", "sk-test-123")
+  it("isAgentConfigured returns true (SDK uses Claude Code subscription auth)", async () => {
     const { isAgentConfigured } = await import("../agent/config")
     expect(isAgentConfigured()).toBe(true)
   })
 
-  it("isAgentConfigured returns false when ANTHROPIC_API_KEY is missing", async () => {
-    vi.stubEnv("ANTHROPIC_API_KEY", "")
-    const { isAgentConfigured } = await import("../agent/config")
-    expect(isAgentConfigured()).toBe(false)
+  it("getAgentConfig returns config with API key when set", async () => {
+    vi.stubEnv("ANTHROPIC_API_KEY", "sk-test-123")
+    const { getAgentConfig } = await import("../agent/config")
+    const config = getAgentConfig()
+    expect(config.apiKey).toBe("sk-test-123")
+    expect(config.model).toBe("claude-sonnet-4-6")
   })
 
-  it("getAgentConfig throws when API key is missing", async () => {
+  it("getAgentConfig returns config without API key (uses subscription auth)", async () => {
     vi.stubEnv("ANTHROPIC_API_KEY", "")
     const { getAgentConfig } = await import("../agent/config")
-    expect(() => getAgentConfig()).toThrow("ANTHROPIC_API_KEY")
+    const config = getAgentConfig()
+    expect(config.apiKey).toBeFalsy()
+    expect(config.model).toBe("claude-sonnet-4-6")
   })
 })
 

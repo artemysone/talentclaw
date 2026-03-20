@@ -1,5 +1,6 @@
 // Core agent wrapper around the Claude Agent SDK.
-// Replaces gateway-client.ts — calls Anthropic API directly via query().
+// The SDK spawns a Claude Code process that uses whatever auth is configured —
+// subscription (Pro/Max via `claude login`) or API key (ANTHROPIC_API_KEY).
 
 import fs from "node:fs/promises"
 import { homedir } from "node:os"

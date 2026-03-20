@@ -42,7 +42,7 @@ export type ActiveRunInfo = {
 // --- Agent config ---
 
 export type AgentConfig = {
-  apiKey: string
+  apiKey?: string
   model: string
 }
 

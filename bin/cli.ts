@@ -96,6 +96,7 @@ interface DepStatus {
   hasCoffeeshop: boolean;
   hasAgentBrowser: boolean;
   hasApiKey: boolean;
+  hasClaude: boolean;
 }
 
 function checkDeps(): DepStatus {
@@ -110,11 +111,9 @@ function checkDeps(): DepStatus {
   }
 
   const hasApiKey = !!process.env.ANTHROPIC_API_KEY;
-  if (!hasApiKey) {
-    console.log("! ANTHROPIC_API_KEY not set — required for agent chat");
-  }
+  const hasClaude = which("claude");
 
-  return { hasCoffeeshop, hasAgentBrowser, hasApiKey };
+  return { hasCoffeeshop, hasAgentBrowser, hasApiKey, hasClaude };
 }
 
 // ---------------------------------------------------------------------------
@@ -126,7 +125,7 @@ function printChecklist(deps: DepStatus, webUrl?: string, webError?: string): vo
   check("Workspace", true, dataDir());
   check("Coffee Shop CLI", deps.hasCoffeeshop, deps.hasCoffeeshop ? "installed" : "npm install -g @artemyshq/coffeeshop");
   check("agent-browser", deps.hasAgentBrowser, deps.hasAgentBrowser ? "installed" : "npm install -g agent-browser");
-  check("Anthropic API key", deps.hasApiKey, deps.hasApiKey ? "set" : "set ANTHROPIC_API_KEY");
+  check("Auth", deps.hasApiKey || deps.hasClaude, deps.hasApiKey ? "API key" : deps.hasClaude ? "Claude subscription" : "run: claude login");
 
   if (webError) {
     check("Web UI", false, webError);
