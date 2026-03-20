@@ -1,8 +1,8 @@
 "use client"
 
 import { createContext, useContext, useState, useCallback, type ReactNode } from "react"
-import { useChat } from "@/lib/openclaw/use-chat"
-import type { ChatMessage } from "@/lib/openclaw/types"
+import { useChat } from "@/lib/agent/use-chat"
+import type { ChatMessage } from "@/lib/agent/types"
 
 type ChatContextValue = {
   isOpen: boolean

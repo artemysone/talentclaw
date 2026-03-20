@@ -1,7 +1,7 @@
 export const runtime = "nodejs"
 
 import crypto from "node:crypto"
-import { startRun, isOpenClawConfigured, checkGatewayReachable, DuplicateRunError, buildSseResponse } from "@/lib/openclaw"
+import { startRun, isAgentConfigured, DuplicateRunError, buildSseResponse } from "@/lib/agent"
 
 export async function POST(req: Request) {
   let body: { message?: unknown; sessionId?: unknown }
@@ -21,15 +21,9 @@ export async function POST(req: Request) {
     ? rawSessionId
     : crypto.randomUUID()
 
-  // Check gateway availability before attempting the run
-  const configured = await isOpenClawConfigured()
-  if (!configured) {
-    return Response.json({ error: "OpenClaw is not configured" }, { status: 503 })
-  }
-
-  const reachable = await checkGatewayReachable()
-  if (!reachable) {
-    return Response.json({ error: "OpenClaw gateway is not reachable" }, { status: 503 })
+  // Check agent availability before attempting the run
+  if (!isAgentConfigured()) {
+    return Response.json({ error: "Agent is not configured (ANTHROPIC_API_KEY missing)" }, { status: 503 })
   }
 
   // Start the agent run
@@ -44,6 +38,7 @@ export async function POST(req: Request) {
   }
 
   return buildSseResponse(sessionId, {
+    replay: true,
     prelude: [{ type: "session", sessionId }],
   })
 }

@@ -1,6 +1,6 @@
 export const runtime = "nodejs"
 
-import { getActiveRun, buildSseResponse } from "@/lib/openclaw"
+import { getActiveRun, buildSseResponse } from "@/lib/agent"
 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url)

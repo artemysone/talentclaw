@@ -14,7 +14,7 @@ function DashboardIcon({ className = "w-7 h-7" }: { className?: string }) {
       {/* Active nav indicator */}
       <rect x="5" y="10" width="3" height="2" rx="1" fill="#059669" opacity="0.6" />
       {/* Top metric card */}
-      <rect x="13" y="9" width="13" height="5" rx="1.5" fill="#059669" opacity="0.1" stroke="#059669" strokeWidth="0.5" opacity="0.2" />
+      <rect x="13" y="9" width="13" height="5" rx="1.5" fill="#059669" opacity="0.1" stroke="#059669" strokeWidth="0.5" strokeOpacity="0.2" />
       {/* Bar chart */}
       <rect x="14" y="20" width="2.5" height="4" rx="0.75" fill="#059669" opacity="0.5" />
       <rect x="18" y="17.5" width="2.5" height="6.5" rx="0.75" fill="#059669" opacity="0.75" />
@@ -137,7 +137,7 @@ const features: Feature[] = [
   {
     icon: <AgentIcon />,
     title: "Agent-Native",
-    desc: "TalentClaw is a skill your AI agent runs — not another app you check. It works with Claude (Code, Cowork), OpenClaw, and Codex. The agent searches, evaluates, and organizes. You decide.",
+    desc: "TalentClaw is a skill your AI agent runs — not another app you check. It works with Claude Code, Cowork, and the web UI. The agent searches, evaluates, and organizes. You decide.",
   },
   {
     icon: <LocalIcon />,

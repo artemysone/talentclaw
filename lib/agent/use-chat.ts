@@ -10,7 +10,7 @@ export function useChat() {
   const [error, setError] = useState<string | null>(null)
   const sessionIdRef = useRef<string | null>(null)
 
-  // Check gateway availability on mount
+  // Check agent availability on mount
   useEffect(() => {
     let cancelled = false
     fetch("/api/chat/status")
@@ -28,7 +28,8 @@ export function useChat() {
 
   const sendMessage = useCallback(
     async (text: string) => {
-      if (isStreaming || !text.trim()) return
+      const trimmed = text.trim()
+      if (isStreaming || !trimmed) return
 
       setError(null)
       setIsStreaming(true)
@@ -36,7 +37,7 @@ export function useChat() {
       const userMsg: ChatMessage = {
         id: crypto.randomUUID(),
         role: "user",
-        content: text.trim(),
+        content: trimmed,
         createdAt: Date.now(),
       }
       const assistantMsg: ChatMessage = {
@@ -55,7 +56,7 @@ export function useChat() {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            message: text.trim(),
+            message: trimmed,
             sessionId: sessionIdRef.current,
           }),
         })
@@ -157,7 +158,7 @@ export function useChat() {
         const msg = err instanceof Error ? err.message : "Something went wrong"
         setError(msg)
         setIsStreaming(false)
-        // Gateway may be down — mark as unavailable so UI hides chat
+        // Agent may be down — mark as unavailable so UI hides chat
         setIsAvailable(false)
         // Remove the empty assistant message on hard failure
         setMessages((prev) => {

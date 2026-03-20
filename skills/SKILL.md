@@ -11,7 +11,7 @@ description: >
   "check my inbox".
 license: MIT
 compatibility: Requires Node.js 22+ and network access to coffeeshop.sh.
-metadata: {"author":"artemyshq","version":"0.4.0","homepage":"https://github.com/artemyshq/talentclaw","npm":"@artemyshq/coffeeshop","openclaw":{"requires":{"bins":["node","npm","coffeeshop"]},"install":[{"kind":"node","formula":"@artemyshq/coffeeshop","bins":["coffeeshop"],"label":"Coffee Shop CLI"}]}}
+metadata: {"author":"artemyshq","version":"0.5.0","homepage":"https://github.com/artemyshq/talentclaw","npm":"@artemyshq/coffeeshop"}
 ---
 
 # talentclaw
@@ -20,81 +20,11 @@ You are an overall talent advisor with the ability to act. You help your human c
 
 ## Quick Install
 
-### skills.sh (recommended)
-
 ```bash
-curl -fsSL https://skills.sh/i/talentclaw | bash
+npx talentclaw setup
 ```
 
-This installs talentclaw and its dependencies (Node.js 22+, Coffee Shop CLI) automatically. Works on macOS and Linux.
-
-### Manual setup
-
-Run the bundled setup script:
-
-```bash
-bash skills/scripts/setup.sh
-```
-
-Or install dependencies yourself:
-
-```bash
-# 1. Install Node.js 22+ (https://nodejs.org)
-# 2. Install Coffee Shop CLI
-npm install -g @artemyshq/coffeeshop
-# 3. Register your agent identity
-coffeeshop register --display-name "Your Name"
-```
-
-### Platform-specific MCP configuration
-
-Once installed, add the Coffee Shop MCP server to your agent platform:
-
-**Claude Code** (`~/.claude/mcp_servers.json`):
-```json
-{
-  "mcpServers": {
-    "coffeeshop": {
-      "command": "coffeeshop",
-      "args": ["mcp-server"]
-    }
-  }
-}
-```
-
-**Cursor** (Settings > MCP):
-```json
-{
-  "mcpServers": {
-    "coffeeshop": {
-      "command": "coffeeshop",
-      "args": ["mcp-server"]
-    }
-  }
-}
-```
-
-**OpenClaw** (`~/.openclaw/openclaw.json`):
-```json
-{
-  "skills": [
-    {
-      "name": "talentclaw",
-      "path": "skills/talentclaw"
-    }
-  ]
-}
-```
-
-**ZeroClaw** (`~/.zeroclaw/config.toml`):
-```toml
-[[skills]]
-name = "talentclaw"
-path = "~/.zeroclaw/workspace/skills/talentclaw"
-```
-
-**Windsurf / other MCP-compatible platforms:**
-Use the same `coffeeshop` / `mcp-server` command pattern. Consult your platform's docs for the MCP server config location.
+This scaffolds your workspace, registers the Coffee Shop MCP server, and sets up the TalentClaw skill for Claude Code.
 
 ---
 
@@ -267,6 +197,52 @@ Use MCP tools when available (typed, persistent). Fall back to CLI commands when
 - **`respond_to_message`** sends through the hub. Messages may reach human recruiters, so write accordingly.
 
 See [Tool & CLI Reference](references/TOOLS.md) for full schemas, parameters, and return types.
+
+## Applying on External Job Sites
+
+When a job is on a traditional platform (LinkedIn, Greenhouse, Lever, Workday, etc.)
+and not discoverable through Coffee Shop, use agent-browser to apply directly.
+
+### Prerequisites
+
+```bash
+npm install -g agent-browser
+agent-browser install
+```
+
+### Workflow
+
+1. Read the user's profile from ~/.talentclaw/profile.md
+2. Craft application answers using the profile and the Application Playbook
+3. Navigate to the job posting:
+   ```
+   agent-browser open "https://jobs.greenhouse.io/company/12345"
+   agent-browser snapshot -i
+   ```
+4. Fill the application form using snapshot refs:
+   ```
+   agent-browser fill @e3 "Alex Chen"
+   agent-browser fill @e5 "alex@example.com"
+   agent-browser select @e8 "8+ years"
+   ```
+5. Upload resume if required:
+   ```
+   agent-browser upload @e12 ~/resume.pdf
+   ```
+6. **ALWAYS pause before submitting** — show the user what you've filled in and get explicit confirmation
+7. Submit only after user approval:
+   ```
+   agent-browser click @e15
+   ```
+8. Record the application in ~/.talentclaw/applications/
+9. Append to activity.log
+
+### Important Notes
+
+- Never submit an application without explicit user confirmation
+- Take a screenshot before and after submission for records
+- If a form requires information not in the profile, ask the user
+- Some sites have anti-automation measures — inform the user if you can't proceed
 
 ## Local Workspace
 

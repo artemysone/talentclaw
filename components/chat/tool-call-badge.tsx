@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { Wrench, Check, AlertCircle, ChevronDown } from "lucide-react"
-import type { ToolCallInfo } from "@/lib/openclaw/types"
+import type { ToolCallInfo } from "@/lib/agent/types"
 
 const TOOL_LABELS: Record<string, { running: string; complete: string }> = {
   search_opportunities: { running: "Searching jobs", complete: "Searched jobs" },

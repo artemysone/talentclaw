@@ -74,6 +74,13 @@ const DAMPING = 0.88
 const CENTER_GRAVITY = 0.0008
 const SETTLE_ITERATIONS = 600
 
+function detectMode(): 'light' | 'dark' {
+  const root = document.documentElement
+  if (root.classList.contains('dark')) return 'dark'
+  if (root.classList.contains('light')) return 'light'
+  return window.matchMedia?.('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+}
+
 // ── Component ────────────────────────────────────────────────
 
 export default function CareerContextCanvas({ data }: { data: CareerGraphData }) {
@@ -111,12 +118,6 @@ export default function CareerContextCanvas({ data }: { data: CareerGraphData })
       return { source, target }
     }).filter(e => e.source && e.target)
 
-    function detectMode(): 'light' | 'dark' {
-      const root = document.documentElement
-      if (root.classList.contains('dark')) return 'dark'
-      if (root.classList.contains('light')) return 'light'
-      return window.matchMedia?.('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
-    }
     const mode: 'light' | 'dark' = detectMode()
 
     // Run physics to settle layout — all computation happens here, not in render loop

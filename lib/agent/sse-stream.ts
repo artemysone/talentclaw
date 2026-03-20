@@ -50,6 +50,7 @@ export function buildSseResponse(
       unsubscribe = subscribeToRun(sessionId, (event: SseEvent | null) => {
         if (event === null) {
           clearInterval(keepalive)
+          unsubscribe?.()
           try {
             controller.close()
           } catch {

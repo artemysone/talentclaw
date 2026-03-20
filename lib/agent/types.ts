@@ -1,37 +1,4 @@
-// OpenClaw gateway protocol types and domain types for the TalentClaw integration.
-
-// --- Gateway protocol frames ---
-
-export type GatewayRequest = {
-  type: "req"
-  id: string
-  method: string
-  params?: unknown
-}
-
-export type GatewayResponse = {
-  type: "res"
-  id: string
-  ok: boolean
-  payload?: unknown
-  error?: { code?: string; message: string }
-}
-
-export type GatewayEvent = {
-  type: "event"
-  event: string
-  payload?: unknown
-  seq?: number
-}
-
-export type GatewayFrame = GatewayRequest | GatewayResponse | GatewayEvent
-
-// --- Connection config ---
-
-export type GatewayConfig = {
-  url: string
-  token: string | null
-}
+// Agent SDK types and domain types for the TalentClaw chat integration.
 
 // --- Chat domain types ---
 
@@ -51,7 +18,7 @@ export type ChatMessage = {
   createdAt: number
 }
 
-// --- SSE events sent to browser ---
+// --- SSE events sent to browser (preserved exactly) ---
 
 export type SseEvent =
   | { type: "session"; sessionId: string }
@@ -71,3 +38,11 @@ export type ActiveRunInfo = {
   eventCount: number
   error?: string
 }
+
+// --- Agent config ---
+
+export type AgentConfig = {
+  apiKey: string
+  model: string
+}
+

@@ -43,18 +43,12 @@ npm install -g talentclaw
 talentclaw
 ```
 
-The CLI is a native Rust binary (~3.6 MB, ~8ms startup). The npm package includes platform-specific binaries for macOS (arm64, x64) and Linux (x64) — a thin JS shim detects your platform and execs the right one. No Rust toolchain needed.
+The CLI is a TypeScript script. Scaffolds your workspace at `~/.talentclaw/`, registers the TalentClaw skill for Claude Code, and opens the career hub at `localhost:3100`.
 
-Detects your agent runtime (OpenClaw, ZeroClaw, Claude Code), installs the talentclaw skill, scaffolds your workspace at `~/.talentclaw/`, and opens the career hub at `localhost:3100`.
-
-### Candidate Skill (agent runtimes)
+### Claude Code Skill
 
 ```bash
-# ClawHub.ai (OpenClaw / ZeroClaw)
-clawhub install talentclaw
-
-# skills.sh (Claude Code, Cursor, Copilot, Codex, Gemini CLI, etc.)
-npx skills add artemyshq/talentclaw
+npx talentclaw setup
 ```
 
 Gives any AI agent career advisor capabilities — profile optimization, job search, application strategy, and employer communication.
@@ -115,10 +109,7 @@ talentclaw/
 │   └── (workspace)/             # Dashboard, pipeline, jobs, file viewer
 ├── components/                  # React components (kanban, hub, file-viewer, etc.)
 ├── lib/                         # Data layer (types, filesystem I/O, utilities)
-├── cli/                         # Rust CLI (Cargo workspace)
-│   ├── crates/                  # CLI binary + platform shim crates
-│   ├── npm/                     # Platform-specific npm packages
-│   └── scripts/                 # Build and release scripts
+├── bin/                         # CLI entry point (TypeScript)
 ├── skills/                      # Agent skill definition + reference docs
 │   ├── SKILL.md                 # Skill definition
 │   ├── references/              # Career strategy, profiles, applications, tools
@@ -131,7 +122,6 @@ talentclaw/
 ## ⚙️ Prerequisites
 
 - **Node.js 22+** — for the web UI and npm-based installation
-- **Rust toolchain** (contributors only) — `rustup` for building the CLI from source
 - **Coffee Shop CLI** — `npm install -g @artemyshq/coffeeshop`
 - **Coffee Shop account** — `coffeeshop register --display-name "<name>"`
 
@@ -144,13 +134,9 @@ talentclaw/
 bun install              # install dependencies
 bun run dev              # start web UI (dev mode)
 
-# Rust CLI
-cd cli && cargo build    # compile CLI binary (debug)
-cd cli && cargo test     # run CLI tests
-cd cli && cargo build --release  # compile optimized binary
-
-# Full product
-npx talentclaw           # full launcher with workspace scaffold
+# CLI
+node bin/cli.ts          # scaffold + start web UI
+node bin/cli.ts setup    # scaffold + register skill + MCP
 ```
 
 ---

@@ -1,6 +1,6 @@
 "use client"
 
-import type { ChatMessage } from "@/lib/openclaw/types"
+import type { ChatMessage } from "@/lib/agent/types"
 import { ToolCallBadge } from "./tool-call-badge"
 import { formatRelativeTime } from "@/lib/ui-utils"
 

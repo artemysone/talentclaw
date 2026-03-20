@@ -100,7 +100,7 @@ export function Hero() {
 
         <p className="text-text-secondary text-[clamp(1rem,2vw,1.15rem)] mb-8 max-w-[580px] mx-auto">
           TalentClaw is your career workspace that connects to your AI
-          agent — Claude, OpenClaw, Codex. It manages your profile, tracks
+          agent — Claude Code, Cowork, or the web UI. It manages your profile, tracks
           your pipeline, and finds opportunities so you can focus on what
           matters.
         </p>
