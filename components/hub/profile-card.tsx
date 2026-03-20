@@ -93,7 +93,7 @@ export function ProfileCard({
             No jobs in your pipeline yet.
           </p>
         ) : (
-          <div className="flex items-center gap-1.5 overflow-x-auto pb-1">
+          <div className="flex items-center gap-1.5 flex-wrap sm:flex-nowrap sm:overflow-x-auto pb-1">
             {FUNNEL_STAGES.map((stage, i) => {
               const count = stageCounts[stage] || 0
               return (
