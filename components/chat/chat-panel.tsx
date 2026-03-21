@@ -12,7 +12,7 @@ function EmptyState() {
       <div className="w-10 h-10 rounded-full bg-accent-subtle flex items-center justify-center mb-3">
         <Sparkles className="w-5 h-5 text-accent" />
       </div>
-      <h3 className="text-sm font-semibold text-text-primary mb-1">
+      <h3 className="font-prose text-lg text-text-primary mb-1">
         Hey, I&apos;m TalentClaw
       </h3>
       <p className="text-xs text-text-secondary leading-relaxed max-w-[260px]">
