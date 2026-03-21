@@ -5,6 +5,7 @@ import {
 import { Sidebar } from "@/components/workspace/sidebar"
 import { TopBar } from "@/components/workspace/top-bar"
 import { ChatShell } from "@/components/chat/chat-shell"
+import { ChatPanel } from "@/components/chat/chat-panel"
 import { listJobs, getWorkspaceTree, getProfile } from "@/lib/fs-data"
 
 export default async function WorkspaceLayout({
@@ -50,6 +51,7 @@ export default async function WorkspaceLayout({
             <TopBar />
             <main className="flex-1 flex flex-col min-h-0 overflow-y-auto">{children}</main>
           </div>
+          <ChatPanel displayName={displayName} />
         </div>
       </ChatShell>
     </SidebarProvider>
