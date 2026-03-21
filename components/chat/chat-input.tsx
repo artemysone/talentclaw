@@ -76,7 +76,7 @@ export function ChatInput({
               type="button"
               onClick={() => handleSuggestion(s)}
               disabled={disabled}
-              className="px-3 py-1.5 text-xs rounded-full bg-surface-overlay text-text-secondary
+              className="px-3 py-2 text-xs rounded-full bg-surface-overlay text-text-secondary
                 hover:bg-accent-subtle hover:text-accent transition-colors
                 disabled:opacity-50 disabled:cursor-not-allowed"
             >
@@ -105,7 +105,7 @@ export function ChatInput({
           onClick={handleSend}
           disabled={!canSend}
           className={`
-            flex-shrink-0 w-7 h-7 rounded-full flex items-center justify-center transition-all
+            flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center transition-all
             ${canSend
               ? "bg-accent text-white hover:bg-accent-hover active:scale-95"
               : "bg-surface-overlay text-text-muted cursor-not-allowed"

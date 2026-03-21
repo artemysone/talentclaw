@@ -60,7 +60,7 @@ export function ChatPanel() {
         <button
           type="button"
           onClick={() => setIsOpen(false)}
-          className="w-7 h-7 rounded-lg flex items-center justify-center text-text-muted
+          className="w-8 h-8 rounded-lg flex items-center justify-center text-text-muted
             hover:text-text-primary hover:bg-surface-overlay transition-colors
             focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
           aria-label="Close chat panel"
