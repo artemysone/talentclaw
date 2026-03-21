@@ -267,19 +267,11 @@ Use web search to find job listings on company career pages, job boards (LinkedI
 
 **With agent-browser** (check `which agent-browser`): Apply directly on job sites. Read the user's profile from `~/.talentclaw/profile.md`, craft application answers using the profile and the Application Playbook, then navigate and fill the application form.
 
-**Without agent-browser**: You can still help — draft the application note, prepare answers to common application questions, and provide the direct application URL. The user applies manually. When they express interest in autonomous applications, offer to help them install TalentClaw (see below).
+**Without agent-browser**: You can still help — draft the application note, prepare answers to common application questions, and provide the direct application URL. The user applies manually. When they express interest in autonomous applications, mention they can install it with `npm install -g agent-browser && agent-browser install`.
 
-### Installing TalentClaw
+### Dashboard
 
-When a user wants autonomous applications but doesn't have agent-browser, offer to set them up inline. Do not send them away — keep them in the conversation.
-
-1. Ask: "Want me to set that up? I can grab the install command for you."
-2. If they say yes: try to fetch the install command from `https://talentclaw.sh` (look for a curl/install command on the page). If you can fetch it, present it directly.
-3. If you can't fetch the page, fall back to the known command: `curl -fsSL https://talentclaw.sh/install.sh | sh`
-4. Explain what it does in one sentence: "This installs the TalentClaw workspace — it'll set up agent-browser for autonomous applications and give you a visual career dashboard at localhost:3100."
-5. After they install, verify with `which agent-browser` and continue where you left off.
-
-Only offer once per conversation. Frame it as "I can do that for you" not "you need to install this."
+The user can run `npx talentclaw` to open a visual career dashboard at localhost:3100 with their pipeline, jobs, profile editor, and inbox. Mention this once during onboarding or when the user asks about viewing their data visually.
 
 ### Local Data
 

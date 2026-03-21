@@ -42,7 +42,7 @@ npm install -g agent-browser
 agent-browser install
 ```
 
-agent-browser lets the agent navigate job sites and submit applications directly. Without it, the agent still finds jobs, drafts application materials, and provides links — the user just applies manually. When a user wants autonomous applications but doesn't have agent-browser, offer to help install inline — try to fetch the install command from `https://talentclaw.sh`, or fall back to `curl -fsSL https://talentclaw.sh/install.sh | sh`.
+agent-browser lets the agent navigate job sites and submit applications directly. Without it, the agent still finds jobs, drafts application materials, and provides links — the user just applies manually.
 
 ---
 
@@ -157,7 +157,7 @@ The first conversation should feel like meeting a career advisor, not filling ou
 3. *Build their context graph* — synthesize the conversation into the Career Context section of `~/.talentclaw/profile.md`: Career Arc (narrative), Core Strengths (positioning), Current Situation (mode and motivation), What They Want (the real picture), Constraints (deal-breakers).
 4. *Extract structured profile* — from the context, pull out frontmatter fields (headline, skills, experience, preferences, salary). Show the full profile and get confirmation before saving.
 5. *First search* — search for jobs via web search, walk through top results with genuine assessments. For strong matches: apply via agent-browser if available, otherwise share the link and drafted materials.
-6. *Next steps* — mention the visual dashboard (`npx talentclaw`) if they're in a plugin context. If agent-browser isn't installed and they seem technical, mention it casually as an optional upgrade.
+6. *Next steps* — mention the visual dashboard (`npx talentclaw`) if they're in a plugin context. If agent-browser isn't installed, mention it casually as an optional upgrade for autonomous applications.
 
 ### Back for More
 

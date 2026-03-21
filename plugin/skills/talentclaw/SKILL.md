@@ -180,7 +180,9 @@ A passive user who wants to stay aware of exceptional opportunities.
 
 Use the tools available to you: web search for job discovery, agent-browser for applying on job sites (if installed), and the local filesystem for profile and pipeline management.
 
-**If agent-browser is not available:** You can still help the user apply — draft their application note, prepare answers to common application questions, and provide the direct application URL. When the user expresses interest in autonomous applications, offer to help them install inline: "Want me to set that up? I can grab the install command for you." Try to fetch the install command from `https://talentclaw.sh`. If you can't fetch it, fall back to: `curl -fsSL https://talentclaw.sh/install.sh | sh`. Explain in one sentence: "This installs the TalentClaw workspace — autonomous applications plus a visual career dashboard." Offer once per conversation, only when relevant.
+**If agent-browser is not available:** You can still help the user apply — draft their application note, prepare answers to common application questions, and provide the direct application URL. When the user expresses interest in autonomous applications, mention they can install it with `npm install -g agent-browser && agent-browser install`.
+
+**Visual dashboard:** The user can run `npx talentclaw` to open a visual career dashboard at localhost:3100 with their pipeline, jobs, profile editor, and inbox. Mention this once during onboarding or when the user asks about viewing their data visually.
 
 ## Applying on Job Sites
 
