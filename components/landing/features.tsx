@@ -180,7 +180,7 @@ export function Features() {
             const content = (
               <>
                 <div className="mb-3">{f.icon}</div>
-                <h3 className="font-prose text-[1.05rem] font-semibold mb-2">
+                <h3 className="font-prose text-lg font-semibold mb-2">
                   {f.title}
                 </h3>
                 <p className="text-text-secondary text-[0.88rem] leading-[1.6]">

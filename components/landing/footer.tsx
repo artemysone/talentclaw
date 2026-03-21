@@ -9,12 +9,12 @@ export function Footer() {
       </div>
       <ul className="flex gap-6 list-none">
         <li>
-          <a href="/privacy" className="text-[0.8rem] text-text-muted hover:text-text-primary transition-colors">
+          <a href="/privacy" className="text-[0.8rem] text-text-muted hover:text-text-primary transition-colors py-3">
             Privacy
           </a>
         </li>
         <li>
-          <a href="/terms" className="text-[0.8rem] text-text-muted hover:text-text-primary transition-colors">
+          <a href="/terms" className="text-[0.8rem] text-text-muted hover:text-text-primary transition-colors py-3">
             Terms
           </a>
         </li>
@@ -23,7 +23,7 @@ export function Footer() {
             href="https://github.com/artemyshq/talentclaw"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-[0.8rem] text-text-muted hover:text-text-primary transition-colors"
+            className="text-[0.8rem] text-text-muted hover:text-text-primary transition-colors py-3"
           >
             GitHub
           </a>
