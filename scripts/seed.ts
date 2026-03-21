@@ -83,8 +83,7 @@ compensation:
   max: 280000
   currency: USD
 url: https://stripe.com/jobs/platform-engineer
-source: coffeeshop
-coffeeshop_id: cs-job-9f3a1b
+source: manual
 status: discovered
 match_score: 92
 tags:
@@ -120,8 +119,7 @@ compensation:
   max: 260000
   currency: USD
 url: https://vercel.com/careers/dx-engineer
-source: coffeeshop
-coffeeshop_id: cs-job-7e2d4c
+source: manual
 status: discovered
 match_score: 88
 tags:
@@ -156,8 +154,7 @@ compensation:
   max: 240000
   currency: USD
 url: https://linear.app/careers
-source: coffeeshop
-coffeeshop_id: cs-job-4a8f2e
+source: manual
 status: discovered
 match_score: 95
 tags:
@@ -193,8 +190,7 @@ compensation:
   max: 270000
   currency: USD
 url: https://notion.so/careers
-source: coffeeshop
-coffeeshop_id: cs-job-1c5e8a
+source: manual
 status: saved
 match_score: 84
 tags:
@@ -265,8 +261,7 @@ compensation:
   max: 265000
   currency: USD
 url: https://datadog.com/careers
-source: coffeeshop
-coffeeshop_id: cs-job-6d9b3f
+source: manual
 status: applied
 match_score: 81
 tags:
@@ -302,8 +297,7 @@ compensation:
   max: 230000
   currency: USD
 url: https://supabase.com/careers
-source: coffeeshop
-coffeeshop_id: cs-job-8b1c7d
+source: manual
 status: applied
 match_score: 87
 tags:
@@ -381,8 +375,7 @@ compensation:
   max: 260000
   currency: USD
 url: https://fly.io/jobs
-source: coffeeshop
-coffeeshop_id: cs-job-2f4e9a
+source: manual
 status: offer
 match_score: 86
 tags:
@@ -426,8 +419,7 @@ compensation:
   max: 255000
   currency: USD
 url: https://cloudflare.com/careers
-source: coffeeshop
-coffeeshop_id: cs-job-5a3d7b
+source: manual
 status: rejected
 match_score: 79
 tags:
@@ -457,13 +449,12 @@ write(
 job: datadog-senior-frontend
 status: applied
 applied_at: "2026-03-05"
-coffeeshop_application_id: cs-app-44a1b2
 next_step: Technical phone screen
 next_step_date: "2026-03-18"
 ---
 
 ## Application Notes
-Applied through Coffee Shop. Recruiter confirmed receipt same day. Phone screen scheduled for March 18 with the dashboards team lead.
+Applied directly. Recruiter confirmed receipt same day. Phone screen scheduled for March 18 with the dashboards team lead.
 
 ## Prep
 - Review D3.js and Canvas API basics
@@ -479,13 +470,12 @@ write(
 job: supabase-backend
 status: applied
 applied_at: "2026-03-04"
-coffeeshop_application_id: cs-app-55b2c3
 next_step: Portfolio review with eng manager
 next_step_date: "2026-03-15"
 ---
 
 ## Application Notes
-Applied via Coffee Shop. They have an async portfolio review step before scheduling a call — sent links to open-source work and a write-up of the auth system I built at my last role.
+Applied directly. They have an async portfolio review step before scheduling a call — sent links to open-source work and a write-up of the auth system I built at my last role.
 
 ## Prep
 - Clean up the auth middleware example repo
@@ -532,7 +522,7 @@ next_step_date: "2026-03-16"
 ---
 
 ## Application Notes
-Applied through Coffee Shop. Full process took about 3 weeks — very efficient.
+Applied directly. Full process took about 3 weeks — very efficient.
 
 ## Interview Log
 - **Feb 18** — Recruiter call
@@ -556,7 +546,7 @@ applied_at: "2026-02-08"
 ---
 
 ## Application Notes
-Applied via Coffee Shop. Quick process — phone screen on Feb 15, rejection on Mar 1.
+Applied directly. Quick process — phone screen on Feb 15, rejection on Mar 1.
 
 ## Feedback
 Recruiter shared that the team wanted deeper V8 internals and C++ systems programming experience. My TypeScript and platform skills were strong but not the right fit for this particular role.
@@ -722,7 +712,6 @@ write(
 direction: inbound
 from: PlanetScale Recruiting
 to: Jordan Blue
-coffeeshop_message_id: cs-msg-91a2b3
 sent_at: "2026-03-10T14:30:00Z"
 ---
 
@@ -753,7 +742,6 @@ write(
 direction: inbound
 from: Fly.io Recruiting
 to: Jordan Blue
-coffeeshop_message_id: cs-msg-82b3c4
 sent_at: "2026-03-10T11:00:00Z"
 ---
 
@@ -821,7 +809,7 @@ const activities = [
     ts: "2026-03-12T08:00:00Z",
     type: "discovery",
     slug: "linear-fullstack",
-    summary: "Discovered Full-Stack Engineer at Linear via Coffee Shop (95% match)",
+    summary: "Discovered Full-Stack Engineer at Linear (95% match)",
   },
   {
     ts: "2026-03-11T14:30:00Z",
@@ -857,13 +845,13 @@ const activities = [
     ts: "2026-03-05T10:00:00Z",
     type: "application",
     slug: "datadog-senior-frontend",
-    summary: "Applied to Senior Frontend Engineer at Datadog via Coffee Shop",
+    summary: "Applied to Senior Frontend Engineer at Datadog",
   },
   {
     ts: "2026-03-04T09:30:00Z",
     type: "application",
     slug: "supabase-backend",
-    summary: "Applied to Backend Engineer at Supabase via Coffee Shop",
+    summary: "Applied to Backend Engineer at Supabase",
   },
   {
     ts: "2026-03-01T12:00:00Z",

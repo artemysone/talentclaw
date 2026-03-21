@@ -9,7 +9,6 @@ export function MessageHeader({ frontmatter }: MessageHeaderProps) {
   const from = frontmatter.from as string | undefined
   const to = frontmatter.to as string | undefined
   const sentAt = frontmatter.sent_at as string | undefined
-  const coffeeshopId = frontmatter.coffeeshop_message_id as string | undefined
 
   const isInbound = direction === "inbound"
 
@@ -57,11 +56,6 @@ export function MessageHeader({ frontmatter }: MessageHeaderProps) {
       <div className="flex flex-wrap items-center gap-3 text-sm text-text-secondary">
         {sentAt && (
           <span className="text-text-muted text-xs">{formatDate(sentAt, { includeTime: true })}</span>
-        )}
-        {coffeeshopId && (
-          <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-surface-overlay text-text-secondary">
-            Coffee Shop
-          </span>
         )}
       </div>
     </div>

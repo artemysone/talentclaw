@@ -6,7 +6,7 @@
 
 <p align="center">
   <strong>Your AI career agent — skill + product</strong><br>
-  Local-first career hub with platform-agnostic agent skills, powered by <a href="https://coffeeshop.sh">Coffee Shop</a>.
+  Local-first career hub with platform-agnostic agent skills.
 </p>
 
 <p align="center">
@@ -20,13 +20,12 @@
   <a href="#what-it-does">Features</a> ·
   <a href="#architecture">Architecture</a> ·
   <a href="#development">Development</a> ·
-  <a href="https://coffeeshop.sh">Coffee Shop</a> ·
   <a href="https://skills.sh">Skills Store</a>
 </p>
 
 ---
 
-talentclaw is an AI career agent that combines a **local-first career hub** with **platform-agnostic agent skills**. It helps individuals manage their job search pipeline, discover opportunities, and communicate with employers — all through the [Coffee Shop](https://coffeeshop.sh) agent-to-agent talent network.
+talentclaw is an AI career agent that combines a **local-first career hub** with **platform-agnostic agent skills**. It helps individuals manage their job search pipeline, discover opportunities, and communicate with employers.
 
 ---
 
@@ -60,7 +59,7 @@ Gives any AI agent career advisor capabilities — profile optimization, job sea
 ### Career Hub
 
 - 📋 **Kanban pipeline** — drag-and-drop stages: Discovered, Saved, Applied, Interviewing, Offer, Accepted/Rejected
-- 🔍 **Job discovery** — search Coffee Shop with filters for skills, location, remote, compensation
+- 🔍 **Job discovery** — search with filters for skills, location, remote, compensation
 - 📊 **Career dashboard** — application stats, activity feed, upcoming deadlines
 - 💾 **Local-first data** — markdown files at `~/.talentclaw/`, human-readable and git-friendly
 
@@ -82,7 +81,7 @@ Gives any AI agent career advisor capabilities — profile optimization, job sea
 │                                                         │
 │  ┌──────────────┐  ┌──────────┐  ┌───────────────────┐  │
 │  │  Career Hub  │  │   CLI    │  │   Agent Skills    │  │
-│  │  (Next.js)   │  │  (Rust)  │  │ Candidate Skill   │  │
+│  │  (Next.js)   │  │  (TS)   │  │ Candidate Skill   │  │
 │  └──────┬───────┘  └────┬─────┘  └────────┬──────────┘  │
 │         │               │                 │              │
 │         └───────────┬───┘─────────────────┘              │
@@ -90,12 +89,7 @@ Gives any AI agent career advisor capabilities — profile optimization, job sea
 │            ┌────────┴────────┐                           │
 │            │ ~/.talentclaw/  │                           │
 │            │  (filesystem)   │                           │
-│            └────────┬────────┘                           │
-│                     │                                    │
-│              ┌──────┴──────┐                             │
-│              │ Coffee Shop │                             │
-│              │  (network)  │                             │
-│              └─────────────┘                             │
+│            └─────────────────┘                           │
 └─────────────────────────────────────────────────────────┘
 ```
 
@@ -122,8 +116,6 @@ talentclaw/
 ## ⚙️ Prerequisites
 
 - **Node.js 22+** — for the web UI and npm-based installation
-- **Coffee Shop CLI** — `npm install -g @artemyshq/coffeeshop`
-- **Coffee Shop account** — `coffeeshop register --display-name "<name>"`
 
 ---
 
@@ -145,8 +137,6 @@ node bin/cli.ts setup    # scaffold + register skill + MCP
 
 | Project | Description |
 |---------|-------------|
-| [Coffee Shop](https://coffeeshop.sh) | The agent-to-agent talent network |
-| [Coffee Shop SDK](https://github.com/artemyshq/coffeeshop) | SDK, CLI, and MCP server |
 | [Skills Store](https://skills.sh) | Platform-agnostic AI agent skills |
 
 ---

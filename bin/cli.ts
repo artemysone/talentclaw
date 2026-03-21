@@ -4,7 +4,6 @@ import { execFileSync, execSync, spawn, spawnSync } from "node:child_process";
 import {
   existsSync,
   mkdirSync,
-  readFileSync,
   symlinkSync,
   writeFileSync,
 } from "node:fs";
@@ -61,7 +60,6 @@ function promptYesNo(question: string): boolean {
 // ---------------------------------------------------------------------------
 
 export const TEMPLATE_CONFIG = `# TalentClaw configuration
-# coffeeshop_api_key: "your-key-here"
 # theme: "auto"
 `;
 
@@ -108,32 +106,12 @@ function writeIfMissing(path: string, content: string): void {
 // ---------------------------------------------------------------------------
 
 interface DepStatus {
-  hasCoffeeshop: boolean;
   hasAgentBrowser: boolean;
   hasApiKey: boolean;
   hasClaude: boolean;
 }
 
 function checkDeps(autoInstall = false): DepStatus {
-  let hasCoffeeshop = which("coffeeshop");
-  if (!hasCoffeeshop) {
-    if (autoInstall) {
-      const shouldInstall = promptYesNo(
-        "Coffee Shop CLI not found. Install it? (npm install -g @artemyshq/coffeeshop)"
-      );
-      if (shouldInstall) {
-        try {
-          execSync("npm install -g @artemyshq/coffeeshop", { stdio: "inherit" });
-          hasCoffeeshop = which("coffeeshop");
-        } catch {
-          console.log("  Failed to install. Install manually: npm install -g @artemyshq/coffeeshop");
-        }
-      }
-    } else {
-      console.log("! Coffee Shop CLI not found — install with: npm install -g @artemyshq/coffeeshop");
-    }
-  }
-
   let hasAgentBrowser = which("agent-browser");
   if (!hasAgentBrowser) {
     if (autoInstall) {
@@ -160,7 +138,7 @@ function checkDeps(autoInstall = false): DepStatus {
   const hasApiKey = !!process.env.ANTHROPIC_API_KEY;
   const hasClaude = which("claude");
 
-  return { hasCoffeeshop, hasAgentBrowser, hasApiKey, hasClaude };
+  return { hasAgentBrowser, hasApiKey, hasClaude };
 }
 
 // ---------------------------------------------------------------------------
@@ -170,7 +148,6 @@ function checkDeps(autoInstall = false): DepStatus {
 function printChecklist(deps: DepStatus, webUrl?: string, webError?: string): void {
   console.log();
   check("Workspace", true, dataDir());
-  check("Coffee Shop CLI", deps.hasCoffeeshop, deps.hasCoffeeshop ? "installed" : "npm install -g @artemyshq/coffeeshop");
   check("agent-browser", deps.hasAgentBrowser, deps.hasAgentBrowser ? "installed" : "npm install -g agent-browser");
   check("Auth", deps.hasApiKey || deps.hasClaude, deps.hasApiKey ? "API key" : deps.hasClaude ? "Claude subscription" : "run: claude login");
 
@@ -264,29 +241,11 @@ function setup(): void {
   scaffold();
   console.log("  Workspace scaffolded: " + dataDir());
 
-  // 2. Check deps with auto-install (before MCP registration so coffeeshop is available)
+  // 2. Check deps with auto-install
   const deps = checkDeps(true);
 
-  // 3. Register Coffee Shop MCP server
+  // 3. Symlink skill
   const claudeDir = join(homedir(), ".claude");
-  const mcpPath = join(claudeDir, "mcp_servers.json");
-
-  mkdirSync(claudeDir, { recursive: true });
-
-  let mcpConfig: Record<string, unknown> = {};
-  if (existsSync(mcpPath)) {
-    try {
-      mcpConfig = JSON.parse(readFileSync(mcpPath, "utf-8"));
-    } catch { /* malformed file — start fresh */ }
-  }
-
-  const mcpServers = (mcpConfig.mcpServers ?? {}) as Record<string, unknown>;
-  mcpServers.coffeeshop = { command: "coffeeshop", args: ["mcp-server"] };
-  mcpConfig.mcpServers = mcpServers;
-  writeFileSync(mcpPath, JSON.stringify(mcpConfig, null, 2) + "\n", "utf-8");
-  console.log("  Coffee Shop MCP registered: " + mcpPath);
-
-  // 4. Symlink skill
   const skillSource = join(packageRoot(), "skills");
   const skillTarget = join(claudeDir, "skills", "talentclaw");
 
@@ -302,7 +261,7 @@ function setup(): void {
     console.log("  Skill already linked: " + skillTarget);
   }
 
-  // 5. Print summary
+  // 4. Print summary
   printChecklist(deps);
 }
 

@@ -17,7 +17,7 @@ function EmptyState() {
       </h3>
       <p className="text-xs text-text-secondary leading-relaxed max-w-[260px]">
         I can search for jobs, manage your pipeline, update your profile, and
-        handle messages on Coffee Shop.
+        draft applications.
       </p>
     </div>
   )

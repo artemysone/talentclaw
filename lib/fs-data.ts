@@ -408,31 +408,6 @@ export async function readFileByPath(
 
 // --- Workspace Stats (used by dashboard for mtime info) ---
 
-// --- Coffee Shop Connection ---
-
-export interface CoffeeShopStatus {
-  connected: boolean
-  agentId?: string
-  displayName?: string
-}
-
-export async function getCoffeeShopStatus(): Promise<CoffeeShopStatus> {
-  const configPath = path.join(os.homedir(), ".coffeeshop", "config.json")
-  try {
-    const raw = await fs.readFile(configPath, "utf-8")
-    const config = JSON.parse(raw)
-    return {
-      connected: true,
-      agentId: config.agent_id || config.agentId,
-      displayName: config.display_name || config.displayName,
-    }
-  } catch {
-    return { connected: false }
-  }
-}
-
-// --- Workspace Stats (used by dashboard for mtime info) ---
-
 export async function getWorkspaceStats(): Promise<{
   fileCount: number
   lastModified: string | null

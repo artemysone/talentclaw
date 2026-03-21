@@ -6,7 +6,7 @@ interface JobHeaderProps {
 }
 
 const sourceLabels: Record<string, string> = {
-  coffeeshop: "Coffee Shop",
+  web_search: "Web Search",
   manual: "Manual",
   referral: "Referral",
 }

@@ -1,10 +1,9 @@
 {
   "name": "talentclaw",
   "version": "0.4.1",
-  "description": "AI career agent — job search, profile management, employer communication via Coffee Shop",
+  "description": "AI career agent — job search, profile management, employer communication",
   "author": "Artemys",
   "homepage": "https://talentclaw.sh",
   "skills": ["skills"],
-  "mcp": ".claude-plugin/.mcp.json",
   "settings": ".claude-plugin/settings.json"
 }

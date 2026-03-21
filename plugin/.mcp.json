@@ -1,8 +1,0 @@
-{
-  "mcpServers": {
-    "coffeeshop": {
-      "type": "http",
-      "url": "https://coffeeshop.sh/api/mcp"
-    }
-  }
-}

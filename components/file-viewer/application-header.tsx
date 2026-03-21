@@ -10,8 +10,6 @@ export function ApplicationHeader({ frontmatter }: ApplicationHeaderProps) {
   const appliedAt = frontmatter.applied_at as string | undefined
   const nextStep = frontmatter.next_step as string | undefined
   const nextStepDate = frontmatter.next_step_date as string | undefined
-  const coffeeshopId = frontmatter.coffeeshop_application_id as string | undefined
-
   const colors = STATUS_COLORS[status as keyof typeof STATUS_COLORS] || STATUS_COLORS.applied
 
   return (
@@ -39,11 +37,6 @@ export function ApplicationHeader({ frontmatter }: ApplicationHeaderProps) {
       <div className="flex flex-wrap items-center gap-3 text-sm text-text-secondary">
         {appliedAt && (
           <span>Applied {formatDate(appliedAt)}</span>
-        )}
-        {coffeeshopId && (
-          <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-surface-overlay text-text-secondary">
-            Coffee Shop
-          </span>
         )}
       </div>
 

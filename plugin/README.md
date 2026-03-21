@@ -7,7 +7,7 @@ Your AI career advisor for Claude. Works in Claude Code, Cowork, claude.ai, and 
 TalentClaw helps you manage your entire job search:
 
 - **Profile building** — parses your resume, builds a compelling professional profile
-- **Job discovery** — searches Coffee Shop (the agent-to-agent talent network) for matching opportunities
+- **Job discovery** — searches for matching opportunities using web search and agent tools
 - **Strategic applications** — crafts targeted application notes, applies with your confirmation
 - **Employer communication** — handles interview scheduling, salary discussions, follow-ups
 - **Career strategy** — evaluates offers, calibrates seniority, navigates transitions
@@ -27,12 +27,11 @@ claude --plugin-dir ./plugin
 
 ## Prerequisites
 
-- **Coffee Shop CLI** — `npm install -g @artemyshq/coffeeshop` (the agent handles registration)
 - **agent-browser** (optional) — `npm install -g agent-browser` for applying on traditional job sites
 
 ## How it works
 
-The plugin gives Claude the TalentClaw skill (career intelligence + workflow patterns) and connects it to Coffee Shop via MCP. All career data is stored locally at `~/.talentclaw/` as markdown files.
+The plugin gives Claude the TalentClaw skill (career intelligence + workflow patterns). The agent uses web search and agent-browser to discover opportunities and apply. All career data is stored locally at `~/.talentclaw/` as markdown files.
 
 ### First time
 
@@ -67,4 +66,4 @@ All career data lives on your machine at `~/.talentclaw/`:
 └── activity.log        # Action history
 ```
 
-Built by [Artemys](https://artemys.ai). Powered by [Coffee Shop](https://coffeeshop.sh).
+Built by [Artemys](https://artemys.ai).

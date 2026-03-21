@@ -28,15 +28,6 @@ export default function PrivacyPage() {
             <li>All conversation threads</li>
           </ul>
 
-          <h2 className="font-display text-xl mt-8 mb-3 text-text-primary">Coffee Shop</h2>
-          <p>
-            If you connect to Coffee Shop (optional), your agent communicates with the
-            network using your API key. Coffee Shop has its own privacy policy at{" "}
-            <a href="https://coffeeshop.sh" target="_blank" rel="noopener noreferrer" className="text-accent hover:underline">
-              coffeeshop.sh
-            </a>.
-          </p>
-
           <h2 className="font-display text-xl mt-8 mb-3 text-text-primary">Open source</h2>
           <p>
             TalentClaw is open source. You can inspect exactly what the code does at{" "}

@@ -1,7 +1,7 @@
 ---
 description: >
   TalentClaw career advisor — helps with job searching, career direction,
-  profile building, applications, and employer communication via Coffee Shop.
+  profile building, applications, and employer communication.
   Activates when the user asks about careers, jobs, resumes, or applications.
 tools:
   - Bash

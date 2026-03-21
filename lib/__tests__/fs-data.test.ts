@@ -44,7 +44,7 @@ describe("listJobs", () => {
       title: "Senior Engineer",
       company: "Acme Corp",
       status: "discovered",
-      source: "coffeeshop",
+      source: "manual",
     })
 
     mockedFs.readdir.mockResolvedValue(["acme-senior.md"] as unknown as Awaited<ReturnType<typeof fs.readdir>>)

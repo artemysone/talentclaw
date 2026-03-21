@@ -66,12 +66,7 @@ export async function runAgent(
           persistSession: false,
           permissionMode: "bypassPermissions",
           allowDangerouslySkipPermissions: true,
-          mcpServers: {
-            coffeeshop: {
-              command: "coffeeshop",
-              args: ["mcp-server"],
-            },
-          },
+          mcpServers: undefined,
           env: process.env as Record<string, string>,
         },
       })

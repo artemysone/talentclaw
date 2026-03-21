@@ -186,7 +186,7 @@ Every view must have a designed empty state. Empty states should:
 
 Examples:
 - Pipeline empty: "Your pipeline is clear. Run `talentclaw search` to discover opportunities."
-- Inbox empty: "No messages yet. When employers reach out through Coffee Shop, they'll appear here."
+- Inbox empty: "No messages yet. When employers reach out, they'll appear here."
 - Activity empty: "Nothing here yet. Your activity will show up as you search, save, and apply."
 
 ## AI Slop Prevention

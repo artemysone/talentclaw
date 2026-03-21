@@ -30,8 +30,7 @@ export const JobFrontmatterSchema = z.object({
   remote: z.enum(["remote", "hybrid", "onsite"]).optional(),
   compensation: CompensationSchema.optional(),
   url: z.string().optional(),
-  source: z.enum(["coffeeshop", "manual", "referral"]).default("manual"),
-  coffeeshop_id: z.string().optional(),
+  source: z.enum(["web_search", "manual", "referral"]).default("manual"),
   status: PipelineStageSchema.default("discovered"),
   match_score: z.number().min(0).max(100).optional(),
   tags: z.array(z.string()).optional(),
@@ -72,7 +71,6 @@ export const ApplicationFrontmatterSchema = z.object({
     .enum(["applied", "interviewing", "offer", "accepted", "rejected"])
     .default("applied"),
   applied_at: z.string().optional(),
-  coffeeshop_application_id: z.string().optional(),
   next_step: z.string().optional(),
   next_step_date: z.string().optional(),
   workflow_status: ApplicationWorkflowStatusSchema.optional(),
@@ -144,7 +142,6 @@ export const ProfileFrontmatterSchema = z.object({
     .optional(),
   salary_range: CompensationSchema.optional(),
   availability: z.enum(["active", "passive", "not_looking"]).optional(),
-  coffeeshop_agent_id: z.string().optional(),
   updated_at: z.string().optional(),
   experience: z.array(ExperienceSchema).optional(),
   education: z.array(EducationSchema).optional(),
@@ -206,7 +203,6 @@ export const MessageFrontmatterSchema = z.object({
   direction: z.enum(["inbound", "outbound"]),
   from: z.string(),
   to: z.string(),
-  coffeeshop_message_id: z.string().optional(),
   sent_at: z.string(),
 })
 
@@ -223,7 +219,6 @@ export const ThreadFrontmatterSchema = z.object({
   participant: z.string(),
   subject: z.string().optional(),
   job_ref: z.string().optional(),
-  coffeeshop_thread_id: z.string().optional(),
   last_active: z.string(),
   unread: z.boolean().default(false),
 })

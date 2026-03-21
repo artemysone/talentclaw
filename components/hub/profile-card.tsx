@@ -48,8 +48,8 @@ export function ProfileCard({
           />
           <OnboardingStep
             step={2}
-            title="Connect to Coffee Shop"
-            description="Your agent will register you automatically. Just start a conversation."
+            title="Discover opportunities"
+            description="Search for jobs that match your profile. Your agent finds and evaluates them."
           />
           <OnboardingStep
             step={3}

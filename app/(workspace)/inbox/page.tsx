@@ -28,7 +28,7 @@ export default async function InboxPage() {
             No messages yet.
           </p>
           <p className="text-text-muted text-xs mt-1">
-            When employers reach out through Coffee Shop, they&apos;ll appear here.
+            When employers reach out, messages will appear here.
           </p>
         </div>
       )}

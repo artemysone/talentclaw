@@ -1,7 +1,6 @@
 import { type ReactNode } from "react"
-import { CoffeeShopLogo } from "@/components/coffeeshop-logo"
 
-// -- Custom feature icons (32x32 viewBox, match CoffeeShopLogo sizing) -------
+// -- Custom feature icons (32x32 viewBox) -------
 
 function DashboardIcon({ className = "w-7 h-7" }: { className?: string }) {
   return (
@@ -63,6 +62,29 @@ function PipelineIcon({ className = "w-7 h-7" }: { className?: string }) {
       <rect x="10.5" y="14" width="4" height="4" rx="1" fill="#2563eb" opacity="0.3" />
       <rect x="18" y="7" width="4" height="5" rx="1" fill="#059669" opacity="0.65" />
       <rect x="25.5" y="7" width="4" height="5" rx="1" fill="#7c3aed" opacity="0.55" />
+    </svg>
+  )
+}
+
+function BrowserIcon({ className = "w-7 h-7" }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+      {/* Browser frame */}
+      <rect x="3" y="5" width="26" height="22" rx="3.5" stroke="#78716c" strokeWidth="1.2" fill="none" />
+      {/* URL bar */}
+      <rect x="3" y="5" width="26" height="6" rx="3.5" fill="#f5f5f4" />
+      <line x1="3" y1="11" x2="29" y2="11" stroke="#78716c" strokeWidth="0.6" opacity="0.3" />
+      <rect x="10" y="7" width="12" height="2.5" rx="1.2" fill="#e7e5e4" />
+      {/* Traffic lights */}
+      <circle cx="6.5" cy="8.2" r="1" fill="#fc5753" opacity="0.7" />
+      <circle cx="9.5" cy="8.2" r="1" fill="#fdbc40" opacity="0.0" />
+      {/* Form fields */}
+      <rect x="6" y="14" width="14" height="2" rx="1" fill="#059669" opacity="0.2" />
+      <rect x="6" y="18" width="10" height="2" rx="1" fill="#059669" opacity="0.15" />
+      {/* Submit button */}
+      <rect x="6" y="22" width="7" height="3" rx="1.5" fill="#059669" opacity="0.6" />
+      {/* Checkmark on button */}
+      <path d="M8 23.5L9 24.5L11.5 22.5" stroke="white" strokeWidth="0.8" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   )
 }
@@ -129,10 +151,9 @@ const features: Feature[] = [
   },
   // Row 2
   {
-    icon: <CoffeeShopLogo className="w-7 h-7" />,
-    title: "Coffee Shop",
-    href: "https://coffeeshop.sh",
-    desc: "A talent network with 200+ companies' openings in one place. TalentClaw connects automatically and pulls matching opportunities into your workspace. No API keys, no setup.",
+    icon: <BrowserIcon />,
+    title: "Apply Anywhere",
+    desc: "TalentClaw's agent applies to jobs on your behalf across Greenhouse, Lever, LinkedIn, and other platforms. You review and approve — the agent handles the forms.",
   },
   {
     icon: <AgentIcon />,

@@ -4,14 +4,13 @@ description: >
   Talent advisor skill for AI agents, built by Artemys. Helps your human
   clarify career direction, build a compelling professional profile, discover
   relevant opportunities, apply strategically, and communicate with employers.
-  Connects to Coffee Shop, the agent-to-agent talent network, for job
-  discovery, applications, and employer messaging. Use when the user asks
-  about job searching, career opportunities, applying to positions, updating
-  their resume, checking application status, or says "find me a job" or
-  "check my inbox".
+  Uses agent-browser for job applications and web search for job discovery.
+  Use when the user asks about job searching, career opportunities, applying
+  to positions, updating their resume, checking application status, or says
+  "find me a job".
 license: MIT
-compatibility: Requires network access to coffeeshop.sh. OAuth handles authentication automatically.
-metadata: {"author":"artemyshq","version":"0.5.0","homepage":"https://github.com/artemyshq/talentclaw","npm":"@artemyshq/coffeeshop"}
+compatibility: Requires agent-browser for job applications.
+metadata: {"author":"artemyshq","version":"0.5.0","homepage":"https://github.com/artemyshq/talentclaw"}
 ---
 
 # talentclaw
@@ -26,7 +25,7 @@ You are an overall talent advisor with the ability to act. You help your human c
 /plugin install talentclaw
 ```
 
-The plugin gives Claude the TalentClaw career advisor skill and connects it to Coffee Shop via MCP. OAuth handles authentication -- you'll authorize once via your browser.
+The plugin gives Claude the TalentClaw career advisor skill.
 
 ### Web Dashboard (optional -- visual career hub)
 
@@ -36,22 +35,14 @@ npx talentclaw
 
 Opens a visual dashboard at localhost:3100 with your pipeline, jobs, profile editor, and inbox.
 
-### Manual MCP Configuration (advanced)
+### agent-browser (required for applications)
 
-If you prefer to configure the Coffee Shop MCP server manually instead of using the plugin:
-
-```json
-{
-  "mcpServers": {
-    "coffeeshop": {
-      "type": "http",
-      "url": "https://coffeeshop.sh/api/mcp"
-    }
-  }
-}
+```bash
+npm install -g agent-browser
+agent-browser install
 ```
 
-Add this to your `.mcp.json` or MCP server configuration. OAuth discovery is automatic via RFC 9728.
+agent-browser is used to navigate job sites and submit applications on behalf of the user.
 
 ---
 
@@ -107,10 +98,10 @@ For deep-dive guidance on every profile field, common anti-patterns, and iterati
 
 ### Searching Strategically
 
-- **Start with Coffee Shop for agent-native opportunities.** It is the primary exchange in this workflow for employer discovery, applications, and follow-up messaging.
+- **Use web search to discover job listings** on company career pages, LinkedIn, Greenhouse, Lever, and other job boards.
 - **Start narrow, expand if needed.** Use the profile's skills and preferences as the primary filter. If results are sparse, broaden incrementally.
-- **Focus on top 5-10 results.** Ranked by match quality. Scanning 50 results produces anxiety, not action.
-- **Re-search after profile updates.** Changed skills or preferences change match ranking. Always search again after updating.
+- **Focus on top 5-10 results.** Scanning 50 results produces anxiety, not action.
+- **Re-search after profile updates.** Changed skills or preferences change search strategy. Always search again after updating.
 - **Quality over volume.** 5 well-targeted searches per week beats 20 unfocused ones. Each search should have a purpose.
 
 ### Applying with Purpose
@@ -159,14 +150,14 @@ Your messages may reach human recruiters. Write accordingly.
 
 ### New Here? Let's Get Set Up
 
-The first conversation should feel like meeting a career advisor, not filling out a form. Detect new users automatically (no coffeeshop config or empty profile) and launch into onboarding without being asked.
+The first conversation should feel like meeting a career advisor, not filling out a form. Detect new users automatically (empty profile or missing agent-browser) and launch into onboarding without being asked.
 
-1. *Welcome* — brief, warm intro. Explain what talentclaw + Coffee Shop do in plain terms.
-2. *Connect to Coffee Shop* — if MCP tools are available, call `get_identity` to trigger OAuth authorization (the user authorizes once via browser popup). If MCP is not available, fall back to `coffeeshop register --display-name "<name>" --role candidate_agent`. Don't tell them to run commands.
+1. *Welcome* — brief, warm intro. Explain what talentclaw does in plain terms.
+2. *Setup check* — verify agent-browser is installed. If not, suggest installing it.
 3. *Career discovery conversation* — have a real conversation to understand who they are. Ask about their career arc, current situation, strengths, what they want, and constraints. If they have a resume, parse it and use it as a foundation, then ask about what the resume can't tell you. 2-3 questions per turn, react to what they say.
 4. *Build their context graph* — synthesize the conversation into the Career Context section of `~/.talentclaw/profile.md`: Career Arc (narrative), Core Strengths (positioning), Current Situation (mode and motivation), What They Want (the real picture), Constraints (deal-breakers).
-5. *Extract structured profile* — from the context, pull out frontmatter fields (headline, skills, experience, preferences, salary). Show the full profile and get confirmation before syncing.
-6. *First search* — search Coffee Shop, walk through top results with genuine assessments, help apply to the best match if there is one.
+5. *Extract structured profile* — from the context, pull out frontmatter fields (headline, skills, experience, preferences, salary). Show the full profile and get confirmation before saving.
+6. *First search* — search for jobs via web search, walk through top results with genuine assessments, help apply to the best match via agent-browser if there is one.
 
 ### Back for More
 
@@ -199,38 +190,30 @@ A passive user who wants to stay aware of exceptional opportunities.
 
 ## Tools and Execution
 
-Use MCP tools (available automatically with the plugin). Fall back to CLI commands only if MCP is not set up.
+### Job Discovery
 
-MCP tools are available automatically when using the plugin. CLI commands are for manual/fallback use.
+Use web search to find job listings on company career pages, job boards (LinkedIn, Indeed, Glassdoor), and ATS platforms (Greenhouse, Lever, Workday). Start narrow based on the user's profile, expand if needed.
 
-### Tool Quick Reference
+### Applications via agent-browser
 
-| Task | MCP Tool | CLI Command | When to Use |
-|------|----------|-------------|-------------|
-| Check identity | `get_identity` | `coffeeshop whoami` | Verify setup, confirm connectivity |
-| View profile | `get_profile` | `coffeeshop profile show` | Review current profile before updates |
-| Update profile | `update_profile` | `coffeeshop profile update --file <path>` | Initial setup, preference changes, skill updates |
-| Search jobs | `search_opportunities` | `coffeeshop search` | Active hunting, exploring market |
-| Apply to job | `express_interest` | `coffeeshop apply` | When match quality is 60%+ |
-| Track applications | `get_my_applications` | `coffeeshop applications` | Monitor pipeline status |
-| Check inbox | `check_inbox` | `coffeeshop inbox` | Daily during active search |
-| Reply to message | `respond_to_message` | `coffeeshop respond` | Interview scheduling, employer questions |
-| Find agents | `discover_agents` | `coffeeshop discover` | Explore the network |
+Use agent-browser to apply directly on job sites:
 
-### Tool Behavior Notes
+1. Read the user's profile from `~/.talentclaw/profile.md`
+2. Craft application answers using the profile and the Application Playbook
+3. Navigate to the job posting with `agent-browser open <url>`
+4. Take a snapshot to identify form elements: `agent-browser snapshot -i`
+5. Fill in the application form fields
+6. **Always pause before submitting** — show the user what you've filled in and get explicit confirmation
+7. Submit only after user approval
+8. Record the application in `~/.talentclaw/applications/` and append to `activity.log`
 
-- **`search_opportunities`** accepts skill filters, location, remote flag, and compensation range. Returns up to 100 results ranked by match score. Start with `--limit 10` and expand if needed.
-- **`express_interest`** requires a `job_id` from search results. The `match_reasoning` field (max 4000 chars) is your cover letter -- always include it for Tier 1 and Tier 2 applications.
-- **`update_profile`** syncs to the Coffee Shop hub automatically. Changes are reflected in search results within minutes.
-- **`check_inbox`** with `--unread-only` keeps your inbox manageable during active search.
-- **`respond_to_message`** sends through the hub. Messages may reach human recruiters, so write accordingly.
+### Local Data
 
-See [Tool & CLI Reference](references/TOOLS.md) for full schemas, parameters, and return types.
+All career data is stored in `~/.talentclaw/` as markdown files with YAML frontmatter. The profile, jobs, applications, and messages all live here. The filesystem IS the database.
 
-## Applying on External Job Sites
+## Applying on Job Sites
 
-When a job is on a traditional platform (LinkedIn, Greenhouse, Lever, Workday, etc.)
-and not discoverable through Coffee Shop, use agent-browser to apply directly.
+Use agent-browser to apply on job sites (LinkedIn, Greenhouse, Lever, Workday, etc.).
 
 ### Prerequisites
 
@@ -281,7 +264,7 @@ talentclaw stores all career data as human-readable files in `~/.talentclaw/`. B
 
 ```
 ~/.talentclaw/
-├── config.yaml              # CoffeeShop keys, UI preferences
+├── config.yaml              # UI preferences
 ├── profile.md               # User's career profile
 ├── jobs/                    # One markdown file per opportunity
 │   └── figma-staff-engineer.md
@@ -315,8 +298,7 @@ location: San Francisco, CA
 remote: hybrid           # remote | hybrid | onsite
 compensation: { min: 200000, max: 260000, currency: USD }
 url: https://figma.com/careers/staff-engineer
-source: coffeeshop       # coffeeshop | manual | referral
-coffeeshop_id: job_abc123
+source: web_search       # web_search | manual | referral
 status: discovered       # discovered | saved | applied | interviewing | offer | accepted | rejected
 match_score: 95
 tags: [design-systems, react, typescript]
@@ -330,7 +312,6 @@ discovered_at: 2026-03-10
 job: figma-staff-engineer  # slug reference to jobs/
 status: applied
 applied_at: 2026-03-10
-coffeeshop_application_id: app_def456
 next_step: Awaiting response
 next_step_date: 2026-03-17
 ---
@@ -348,7 +329,6 @@ preferred_locations: [San Francisco, Remote]
 remote_preference: remote_ok
 salary_range: { min: 180000, max: 240000, currency: USD }
 availability: active
-coffeeshop_agent_id: "@alex-chen"
 updated_at: 2026-03-10
 ---
 ```
@@ -357,9 +337,8 @@ updated_at: 2026-03-10
 ```yaml
 ---
 direction: inbound
-from: "@acme-recruiter"
-to: "@alex-chen"
-coffeeshop_message_id: msg_xyz789
+from: "Acme Corp Recruiting"
+to: "Alex Chen"
 sent_at: 2026-03-10T14:30:00Z
 ---
 ```
@@ -382,51 +361,31 @@ Append a line after every meaningful action: discovering a job, saving it, apply
 
 | Agent Action | Filesystem Effect |
 |-------------|-------------------|
-| CoffeeShop search | Creates `jobs/{slug}.md` per result |
+| Discover job | Creates `jobs/{slug}.md` per result |
 | Save job | Updates `status: saved` in job frontmatter |
 | Submit application | Creates `applications/{slug}.md` + updates job `status: applied` |
-| Check inbox | Creates `messages/{thread}/{timestamp}.md` files |
 | Update profile | Rewrites `profile.md` frontmatter |
 | Any action | Appends to `activity.log` |
 
 ## Diagnostics
 
-Run `coffeeshop doctor` to verify your setup. It checks:
-
-- Node.js version
-- CLI installation
-- Agent identity and credentials
-- Hub connectivity
-- Profile status
-
 ### Common Issues
 
 | Error | Cause | Fix |
 |-------|-------|-----|
-| `No agent card found` | Haven't registered | Run `coffeeshop register` or `coffeeshop doctor` |
-| `401 Unauthorized` | Invalid or missing credentials | Run `coffeeshop register` again or check `coffeeshop doctor` |
-| `404 Not Found` on apply | Invalid `job_id` | Re-run search to get current job IDs |
-| `429 Too Many Requests` | Rate limited | Wait and retry with exponential backoff |
-| `Profile not found` on search | No profile set | Run `update_profile` / `coffeeshop profile update` first |
-| `ECONNREFUSED` | Can't reach the network | Check network connectivity and run `coffeeshop doctor` |
-| `ENOTFOUND` | DNS resolution failure | Check internet connection; `coffeeshop.sh` must be reachable |
-| `coffeeshop: command not found` | CLI not in PATH | Run `npm install -g @artemyshq/coffeeshop` or check your PATH |
+| `agent-browser: command not found` | Not installed | Run `npm install -g agent-browser && agent-browser install` |
+| Profile empty | Haven't onboarded | Launch onboarding flow |
+| Form submission blocked | Anti-automation measures | Inform the user and suggest manual submission |
 
 ## Notes
 
-- All messages are routed through a central hub -- you will not communicate with employers directly.
-- For agent-native job discovery and employer messaging, start with Coffee Shop.
-- Every request requires authentication (configured during `coffeeshop register`).
-- Set up a profile before searching for best results -- match quality depends on it.
-- Agent IDs use `@handle` format (e.g., `@alex-chen`).
-- Back off if you hit rate limits (429 responses).
-- Application notes are capped at 4000 characters. Search results are capped at 100 per request.
+- Set up a profile before searching for best results -- application quality depends on it.
+- Application notes should be under 4000 characters.
+- Never submit an application without explicit user confirmation.
+- Some job sites have anti-automation measures -- inform the user if you cannot proceed.
 
 ## References
 
 - [Profile Optimization Guide](references/PROFILE-OPTIMIZATION.md) -- field-by-field optimization, anti-patterns, resume transformation
 - [Application Playbook](references/APPLICATION-PLAYBOOK.md) -- match reasoning templates, targeting strategy, employer communication
 - [Career Strategy Guide](references/CAREER-STRATEGY.md) -- decision frameworks, seniority calibration, compensation, transitions
-- [Tool & CLI Reference](references/TOOLS.md) -- full schemas, parameters, return types for all tools
-- [Coffee Shop SDK GitHub](https://github.com/artemyshq/coffeeshop) -- source code, SDK, and CLI
-- [npm: @artemyshq/coffeeshop](https://www.npmjs.com/package/@artemyshq/coffeeshop) -- package on npm

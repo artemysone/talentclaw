@@ -69,8 +69,7 @@ describe("JobFrontmatterSchema", () => {
       remote: "remote",
       compensation: { min: 150000, max: 200000 },
       url: "https://example.com/apply",
-      source: "coffeeshop",
-      coffeeshop_id: "abc-123",
+      source: "manual",
       status: "applied",
       match_score: 85,
       tags: ["typescript", "react"],
@@ -145,7 +144,7 @@ describe("ActivityEntrySchema", () => {
     const result = ActivityEntrySchema.parse({
       ts: "2026-03-01T00:00:00Z",
       type: "search",
-      summary: "Searched Coffee Shop",
+      summary: "Searched for jobs",
     })
     expect(result.type).toBe("search")
   })

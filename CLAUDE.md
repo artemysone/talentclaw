@@ -10,7 +10,7 @@ Next.js web UI + TypeScript CLI. The CLI handles bootstrapping and server manage
 - **Web:** Next.js 15, React 19, Tailwind CSS v4
 - **Data:** Filesystem (local-first, `~/.talentclaw/` markdown + YAML frontmatter)
 - **Runtime:** Bun + Node.js 22+ (for web UI dev and Next.js server)
-- **Network:** Coffee Shop (agent uses SDK/CLI externally; not a project dependency)
+- **Network:** Web search + agent-browser (external tools, not project dependencies)
 
 ## Key Directories
 
@@ -46,14 +46,6 @@ node bin/cli.ts         # scaffold + start web UI
 node bin/cli.ts setup   # scaffold + register skill + MCP
 ```
 
-## Coffee Shop SDK
-
-The agent uses CoffeeShop directly via MCP tools or CLI. The web UI reads the resulting files from `~/.talentclaw/`. Available SDK methods (used by the agent, not the web UI):
-- `searchJobs()` — search the network for job listings
-- `submitApplication()` — apply to a job
-- `getInbox()` — fetch incoming messages
-- `respondToMessage()` — reply to employer messages
-
 ## Testing
 
 - **TypeScript tests:** live next to the code they test (`__tests__/` directories or `.test.ts` files)
@@ -73,7 +65,7 @@ Career data lives in `~/.talentclaw/` as markdown files with YAML frontmatter. D
 - `contacts/` — people in network
 - `messages/` — conversation threads
 - `activity.log` — append-only JSONL activity feed
-- `config.yaml` — CoffeeShop keys, UI preferences
+- `config.yaml` — UI preferences
 
 Types defined in `lib/types.ts`. Read/write functions in `lib/fs-data.ts`.
 

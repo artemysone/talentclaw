@@ -33,9 +33,9 @@ export default function TermsPage() {
 
           <h2 className="font-display text-xl mt-8 mb-3 text-text-primary">Third-party services</h2>
           <p>
-            TalentClaw can optionally connect to Coffee Shop and other services via your
-            AI agent. Those services have their own terms. TalentClaw is not responsible
-            for third-party actions, policies, or data handling.
+            TalentClaw may connect to third-party services via your AI agent. Those
+            services have their own terms. TalentClaw is not responsible for third-party
+            actions, policies, or data handling.
           </p>
 
           <h2 className="font-display text-xl mt-8 mb-3 text-text-primary">Agent actions</h2>
