@@ -103,13 +103,13 @@ html {
   font-size: 0.85em;
   padding: 0.15em 0.35em;
   border-radius: 4px;
-  background: rgba(0, 0, 0, 0.05);
+  background: var(--color-surface-overlay);
 }
 .chat-prose pre {
   margin: 0.5em 0;
   padding: 0.75em;
   border-radius: 6px;
-  background: rgba(0, 0, 0, 0.05);
+  background: var(--color-surface-overlay);
   overflow-x: auto;
 }
 .chat-prose pre code { padding: 0; background: none; }
