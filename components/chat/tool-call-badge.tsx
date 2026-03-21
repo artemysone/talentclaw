@@ -39,7 +39,7 @@ export function ToolCallBadge({ toolCall }: { toolCall: ToolCallInfo }) {
           ${toolCall.status === "running"
             ? "bg-accent-subtle text-accent animate-pulse"
             : toolCall.status === "error"
-              ? "bg-red-50 text-red-600"
+              ? "bg-danger/8 text-danger"
               : "bg-surface-overlay text-text-secondary"
           }
           ${hasDetails ? "cursor-pointer hover:opacity-80" : "cursor-default"}

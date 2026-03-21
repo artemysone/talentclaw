@@ -83,7 +83,7 @@ export function ChatPanel() {
 
       {/* Error banner */}
       {error && (
-        <div className="mx-4 mb-2 px-3 py-2 rounded-lg bg-red-50 text-red-700 text-xs">
+        <div className="mx-4 mb-2 px-3 py-2 rounded-lg bg-danger/8 text-danger text-xs">
           {error}
         </div>
       )}
