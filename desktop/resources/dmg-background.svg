@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 660 400" width="660" height="400">
+  <defs>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Instrument+Serif&amp;family=DM+Sans:wght@400;500&amp;display=swap');
+    </style>
+  </defs>
+
+  <!-- Background -->
+  <rect width="660" height="400" fill="#0f0f0f"/>
+
+  <!-- Subtle radial glow behind the drag zone -->
+  <ellipse cx="270" cy="220" rx="220" ry="120" fill="#34d399" opacity="0.025"/>
+
+  <!-- Title -->
+  <text x="330" y="72" text-anchor="middle"
+        font-family="'Instrument Serif', Georgia, serif" font-size="36"
+        fill="#e7e5e4" letter-spacing="0.5">
+    TalentClaw
+  </text>
+
+  <!-- Arrow / motion guide from app icon to Applications -->
+  <!-- Dashed line connecting the two positions -->
+  <line x1="190" y1="220" x2="350" y2="220"
+        stroke="#34d399" stroke-width="1.5" stroke-dasharray="6 4" opacity="0.5"/>
+
+  <!-- Arrow head -->
+  <polygon points="355,213 370,220 355,227" fill="#34d399" opacity="0.6"/>
+
+  <!-- Subtle motion lines trailing behind the arrow -->
+  <line x1="195" y1="210" x2="215" y2="210"
+        stroke="#34d399" stroke-width="1" opacity="0.2"/>
+  <line x1="200" y1="230" x2="225" y2="230"
+        stroke="#34d399" stroke-width="1" opacity="0.15"/>
+  <line x1="190" y1="220" x2="205" y2="220"
+        stroke="#34d399" stroke-width="1" opacity="0.25"/>
+
+  <!-- Hint text -->
+  <text x="270" y="290" text-anchor="middle"
+        font-family="'DM Sans', system-ui, sans-serif" font-size="13" font-weight="500"
+        fill="#78716c" letter-spacing="0.8">
+    Drag to Applications to install
+  </text>
+
+  <!-- Subtle bottom border accent -->
+  <rect x="230" y="390" width="200" height="2" rx="1" fill="#34d399" opacity="0.15"/>
+</svg>

@@ -32,6 +32,11 @@ const config: Configuration = {
     entitlementsInherit: "desktop/resources/entitlements.mac.plist",
   },
   dmg: {
+    background: "desktop/resources/dmg-background.svg",
+    window: {
+      width: 660,
+      height: 400,
+    },
     contents: [
       { x: 130, y: 220 },
       { x: 410, y: 220, type: "link", path: "/Applications" },
