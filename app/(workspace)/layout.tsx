@@ -49,7 +49,7 @@ export default async function WorkspaceLayout({
           </SidebarShell>
           <div className="flex-1 flex flex-col min-w-0">
             <TopBar />
-            <main className="flex-1 flex flex-col min-h-0 overflow-y-auto">{children}</main>
+            <main className="flex-1 flex flex-col min-h-0 overflow-y-auto overflow-x-hidden">{children}</main>
           </div>
           <ChatPanel displayName={displayName} />
         </div>

@@ -1,7 +1,6 @@
 "use client"
 
 import { useEffect, useRef } from "react"
-import { X } from "lucide-react"
 import { CrabLogo } from "@/components/crab-logo"
 import { useChatContext } from "./chat-provider"
 import { ChatMessageBubble } from "./chat-message"
@@ -24,7 +23,7 @@ function EmptyState({ displayName }: { displayName: string }) {
 }
 
 export function ChatPanel({ displayName = "" }: { displayName?: string }) {
-  const { isOpen, setIsOpen, messages, isStreaming, isAvailable, error, sendMessage } =
+  const { isOpen, messages, isStreaming, isAvailable, error, sendMessage } =
     useChatContext()
   const scrollRef = useRef<HTMLDivElement>(null)
 
@@ -42,35 +41,17 @@ export function ChatPanel({ displayName = "" }: { displayName?: string }) {
       className={`
         h-full flex-shrink-0 overflow-hidden
         transition-[width] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)]
-        ${isOpen ? "max-sm:w-full w-[400px]" : "w-0"}
+        ${isOpen ? "max-sm:w-full w-[480px]" : "w-0"}
       `}
     >
       <div
-        className="max-sm:w-full w-[400px] h-full flex flex-col
+        className="max-sm:w-full w-[480px] h-full flex flex-col
           bg-surface-raised border-l border-border-subtle
           shadow-[-4px_0_24px_rgba(0,0,0,0.08)]"
         role="dialog"
         aria-label="Chat with TalentClaw"
         aria-hidden={!isOpen}
       >
-        {/* Header */}
-        <div className="flex items-center justify-between px-4 py-3 border-b border-border-subtle">
-          <div className="flex items-center gap-2">
-            <CrabLogo className="w-5 h-5 text-accent" />
-            <h2 className="text-sm font-semibold text-text-primary">TalentClaw</h2>
-          </div>
-          <button
-            type="button"
-            onClick={() => setIsOpen(false)}
-            className="w-8 h-8 rounded-lg flex items-center justify-center text-text-muted
-              hover:text-text-primary hover:bg-surface-overlay transition-colors
-              focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
-            aria-label="Close chat panel"
-          >
-            <X className="w-4 h-4" />
-          </button>
-        </div>
-
         {/* Messages */}
         <div
           ref={scrollRef}
@@ -97,7 +78,6 @@ export function ChatPanel({ displayName = "" }: { displayName?: string }) {
           <ChatInput
             onSend={sendMessage}
             disabled={isStreaming}
-            showSuggestions={messages.length === 0}
           />
         </div>
       </div>
