@@ -3,7 +3,7 @@
 import { useState, useRef, useCallback, useEffect } from "react"
 import { Upload, FileText, AlertCircle, Loader2 } from "lucide-react"
 import { useChatContext } from "@/components/chat/chat-provider"
-import { PARSE_RESUME_PROMPT } from "@/lib/agent-prompts"
+import { RESUME_FILE_PROMPT } from "@/lib/agent-prompts"
 import Link from "next/link"
 
 type UploadState = "idle" | "dragging" | "uploading" | "success" | "error"
@@ -38,9 +38,9 @@ export function ResumeUpload() {
       setErrorMsg(null)
 
       // Client-side size check
-      if (file.size > 5 * 1024 * 1024) {
+      if (file.size > 10 * 1024 * 1024) {
         setState("error")
-        setErrorMsg("File too large. Maximum size is 5 MB.")
+        setErrorMsg("File too large. Maximum size is 10 MB.")
         return
       }
 
@@ -62,8 +62,8 @@ export function ResumeUpload() {
         }
 
         setState("success")
-        // Send the resume text to the agent for parsing
-        sendPrefilled(PARSE_RESUME_PROMPT(data.text))
+        // Send the file path to the agent for parsing
+        sendPrefilled(RESUME_FILE_PROMPT(data.path))
       } catch {
         setState("error")
         setErrorMsg("Upload failed. Please try again.")
@@ -210,7 +210,7 @@ export function ResumeUpload() {
                   : "Drag and drop your resume, or click to browse"}
               </p>
               <p className="text-[0.65rem] text-text-muted mt-1">
-                PDF, DOCX, or TXT &middot; Max 5 MB
+                PDF, DOCX, or TXT &middot; Max 10 MB
               </p>
             </div>
           </div>

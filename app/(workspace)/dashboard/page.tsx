@@ -1,3 +1,4 @@
+import { redirect } from "next/navigation"
 import {
   listJobs,
   listApplications,
@@ -14,17 +15,23 @@ import { AgentQueue } from "@/components/hub/agent-queue"
 import CareerGraphWrapper from "@/components/graph/career-graph-wrapper"
 
 export default async function DashboardPage() {
-  const [jobs, applications, activityLog, profile] = await Promise.all([
-    listJobs(),
-    listApplications(),
-    getActivityLog(50),
-    getProfile(),
-  ])
-
-  const careerGraph = buildCareerGraph(profile.frontmatter)
+  // Check profile first — redirect before loading everything else
+  const profile = await getProfile()
 
   const isFirstRun =
     !profile.frontmatter.display_name && !profile.frontmatter.headline
+
+  if (isFirstRun) {
+    redirect("/onboarding")
+  }
+
+  const [jobs, applications, activityLog] = await Promise.all([
+    listJobs(),
+    listApplications(),
+    getActivityLog(50),
+  ])
+
+  const careerGraph = buildCareerGraph(profile.frontmatter)
 
   // Stage counts
   const stageCounts: Record<string, number> = {}
@@ -78,7 +85,7 @@ export default async function DashboardPage() {
       {/* Profile Card */}
       <ProfileCard
         profile={profile.frontmatter}
-        isFirstRun={isFirstRun}
+        isFirstRun={false}
         stageCounts={stageCounts}
         briefing={briefing}
         completeness={completeness}

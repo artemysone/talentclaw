@@ -16,6 +16,10 @@ export function DRAFT_FOLLOWUP_PROMPT(
 export const OPTIMIZE_PROFILE_PROMPT =
   "Please review my profile and suggest improvements to make it more compelling for the roles I'm targeting."
 
+export function RESUME_FILE_PROMPT(filePath: string): string {
+  return `I just uploaded my resume to ${filePath} — please read it and set up my profile.`
+}
+
 export function PARSE_RESUME_PROMPT(resumeText: string): string {
   // Sanitize: truncate to 8000 chars and neutralize delimiter sequences
   const sanitized = resumeText.slice(0, 8000).replace(/---/g, "___")
