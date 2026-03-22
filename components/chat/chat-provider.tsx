@@ -1,12 +1,11 @@
 "use client"
 
 import { createContext, useContext, useState, useCallback, type ReactNode } from "react"
+import { useRouter } from "next/navigation"
 import { useChat } from "@/lib/agent/use-chat"
 import type { ChatMessage } from "@/lib/agent/types"
 
 type ChatContextValue = {
-  isOpen: boolean
-  setIsOpen: (open: boolean) => void
   messages: ChatMessage[]
   isStreaming: boolean
   isAvailable: boolean | null
@@ -14,28 +13,32 @@ type ChatContextValue = {
   sendMessage: (text: string) => void
   sendPrefilled: (text: string) => void
   clearMessages: () => void
+  pendingMessage: string | null
+  clearPending: () => void
   displayName: string
 }
 
 const ChatContext = createContext<ChatContextValue | null>(null)
 
 export function ChatProvider({ children, displayName = "" }: { children: ReactNode; displayName?: string }) {
-  const [isOpen, setIsOpen] = useState(false)
+  const router = useRouter()
+  const [pendingMessage, setPendingMessage] = useState<string | null>(null)
   const chat = useChat()
 
   const sendPrefilled = useCallback(
     (text: string) => {
-      setIsOpen(true)
-      // Brief delay to let the panel open before sending
-      setTimeout(() => {
-        chat.sendMessage(text)
-      }, 150)
+      setPendingMessage(text)
+      router.push("/chat")
     },
-    [chat],
+    [router],
   )
 
+  const clearPending = useCallback(() => {
+    setPendingMessage(null)
+  }, [])
+
   return (
-    <ChatContext.Provider value={{ isOpen, setIsOpen, sendPrefilled, displayName, ...chat }}>
+    <ChatContext.Provider value={{ sendPrefilled, pendingMessage, clearPending, displayName, ...chat }}>
       {children}
     </ChatContext.Provider>
   )

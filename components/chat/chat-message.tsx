@@ -35,7 +35,7 @@ export function ChatMessageBubble({ message }: { message: ChatMessage }) {
 
       <div
         className={`
-          max-w-[85%] rounded-2xl px-3.5 py-2.5 text-sm leading-relaxed
+          max-w-[85%] lg:max-w-2xl rounded-2xl px-3.5 py-2.5 text-sm leading-relaxed
           ${isUser
             ? "bg-accent-subtle text-text-primary rounded-br-md"
             : "bg-surface-overlay text-text-primary rounded-bl-md"

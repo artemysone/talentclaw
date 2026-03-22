@@ -24,7 +24,7 @@ export const useSidebar = () => useContext(SidebarContext)
 
 export function SidebarProvider({ children }: { children: React.ReactNode }) {
   const [open, setOpen] = useState(false)
-  const [collapsed, setCollapsed] = useState(false)
+  const [collapsed, setCollapsed] = useState(true)
   const toggle = useCallback(() => setOpen((v) => !v), [])
   const toggleCollapsed = useCallback(() => setCollapsed((v) => !v), [])
 

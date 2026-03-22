@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { Home, Briefcase, KanbanSquare, User, X } from "lucide-react"
+import { Home, MessageCircle, Briefcase, KanbanSquare, User, X } from "lucide-react"
 import { useSidebar } from "./sidebar-wrapper"
 import { FileTree } from "./file-tree"
 import type { TreeNode } from "@/lib/types"
@@ -26,6 +26,12 @@ export function SidebarNav({
       href: "/dashboard",
       label: "Career Hub",
       icon: <Home className="w-4 h-4" />,
+      count: 0,
+    },
+    {
+      href: "/chat",
+      label: "Chat",
+      icon: <MessageCircle className="w-4 h-4" />,
       count: 0,
     },
     {

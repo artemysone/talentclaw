@@ -18,8 +18,7 @@ export function ChatInput({
     const el = textareaRef.current
     if (!el) return
     el.style.height = "auto"
-    // Clamp between 1 and 4 lines (approx 24px per line)
-    el.style.height = `${Math.min(el.scrollHeight, 96)}px`
+    el.style.height = `${Math.min(el.scrollHeight, 192)}px`
   }, [])
 
   useEffect(() => {
@@ -31,7 +30,6 @@ export function ChatInput({
     if (!trimmed || disabled) return
     onSend(trimmed)
     setValue("")
-    // Reset textarea height
     if (textareaRef.current) {
       textareaRef.current.style.height = "auto"
     }
@@ -50,21 +48,28 @@ export function ChatInput({
   const canSend = value.trim().length > 0 && !disabled
 
   return (
-    <div className="flex flex-col gap-2">
-      <div className="flex items-end gap-2 bg-surface-raised border border-border-subtle rounded-xl px-3 py-2
-        focus-within:border-accent/30 transition-colors">
+    <div
+      className="bg-surface-raised border border-border-subtle rounded-2xl
+        focus-within:border-accent/30 transition-colors shadow-sm"
+    >
+      {/* Textarea area */}
+      <div className="px-5 pt-4 pb-2">
         <textarea
           ref={textareaRef}
           value={value}
           onChange={(e) => setValue(e.target.value)}
           onKeyDown={handleKeyDown}
-          placeholder={disabled ? "Waiting for response..." : "Ask TalentClaw anything..."}
+          placeholder={disabled ? "Waiting for response..." : "How can I help you today?"}
           disabled={disabled}
           rows={1}
-          className="flex-1 resize-none bg-transparent text-sm text-text-primary placeholder:text-text-muted
-            outline-none min-h-[24px] max-h-[96px] leading-6 disabled:opacity-60"
+          className="w-full resize-none bg-transparent text-base text-text-primary placeholder:text-text-muted
+            outline-none min-h-[28px] max-h-[192px] leading-7 disabled:opacity-60"
           aria-label="Chat message input"
         />
+      </div>
+
+      {/* Bottom toolbar */}
+      <div className="flex items-center justify-end px-3 pb-3">
         <button
           type="button"
           onClick={handleSend}

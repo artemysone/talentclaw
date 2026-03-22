@@ -11,7 +11,7 @@ const pageNames: Record<string, string> = {
   "/jobs": "Jobs",
 }
 
-const hiddenTopBarRoutes = new Set([...Object.keys(pageNames), "/profile"])
+const hiddenTopBarRoutes = new Set([...Object.keys(pageNames), "/profile", "/chat"])
 
 function FileBreadcrumb({ pathname }: { pathname: string }) {
   const raw = pathname.replace(/^\/file\//, "")

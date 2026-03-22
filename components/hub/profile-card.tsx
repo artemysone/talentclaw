@@ -69,16 +69,16 @@ export function ProfileCard({
   return (
     <div className="bg-surface-raised rounded-2xl border border-border-subtle p-6">
       {/* Top row: greeting + actions */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="font-prose text-xl text-text-primary">
+      <div className="flex items-start justify-between gap-4 flex-wrap">
+        <div className="min-w-0">
+          <h2 className="font-prose text-xl text-text-primary truncate">
             {getGreeting()}, {profile.display_name}
           </h2>
           {profile.headline && (
-            <p className="text-sm text-text-secondary mt-1">{profile.headline}</p>
+            <p className="text-sm text-text-secondary mt-1 truncate">{profile.headline}</p>
           )}
         </div>
-        <div className="flex items-center gap-3 shrink-0">
+        <div className="flex items-center gap-3">
           {momentum && momentum.score !== null && (
             <MomentumRing score={momentum.score} trend={momentum.trend} qualifier={momentum.qualifier} />
           )}
