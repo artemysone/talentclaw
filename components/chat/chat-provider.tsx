@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useState, useCallback, type ReactNode } from "react"
 import { useRouter } from "next/navigation"
-import { useChat } from "@/lib/agent/use-chat"
+import { useChat, type ConversationSummary } from "@/lib/agent/use-chat"
 import type { ChatMessage } from "@/lib/agent/types"
 
 type ChatContextValue = {
@@ -16,6 +16,9 @@ type ChatContextValue = {
   pendingMessage: string | null
   clearPending: () => void
   displayName: string
+  conversations: ConversationSummary[]
+  conversationSlug: string | null
+  loadConversation: (slug: string) => Promise<void>
 }
 
 const ChatContext = createContext<ChatContextValue | null>(null)

@@ -31,7 +31,7 @@ export function AgentActionButton({
     setUnavailable(false)
 
     try {
-      const res = await fetch("/api/chat/status")
+      const res = await fetch("/api/agent/status")
       const data: { available: boolean; connected: boolean } = await res.json()
 
       if (data.available && data.connected) {

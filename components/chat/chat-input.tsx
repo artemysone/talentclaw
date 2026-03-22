@@ -6,9 +6,11 @@ import { ArrowUp } from "lucide-react"
 export function ChatInput({
   onSend,
   disabled = false,
+  autoFocus = false,
 }: {
   onSend: (text: string) => void
   disabled?: boolean
+  autoFocus?: boolean
 }) {
   const [value, setValue] = useState("")
   const textareaRef = useRef<HTMLTextAreaElement>(null)
@@ -27,13 +29,13 @@ export function ChatInput({
 
   const handleSend = useCallback(() => {
     const trimmed = value.trim()
-    if (!trimmed || disabled) return
+    if (!trimmed) return
     onSend(trimmed)
     setValue("")
     if (textareaRef.current) {
       textareaRef.current.style.height = "auto"
     }
-  }, [value, disabled, onSend])
+  }, [value, onSend])
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
@@ -45,7 +47,7 @@ export function ChatInput({
     [handleSend]
   )
 
-  const canSend = value.trim().length > 0 && !disabled
+  const canSend = value.trim().length > 0
 
   return (
     <div
@@ -59,11 +61,11 @@ export function ChatInput({
           value={value}
           onChange={(e) => setValue(e.target.value)}
           onKeyDown={handleKeyDown}
-          placeholder={disabled ? "Waiting for response..." : "How can I help you today?"}
-          disabled={disabled}
+          placeholder={disabled ? "Type your next message..." : "How can I help you today?"}
+          autoFocus={autoFocus}
           rows={1}
           className="w-full resize-none bg-transparent text-base text-text-primary placeholder:text-text-muted
-            outline-none min-h-[28px] max-h-[192px] leading-7 disabled:opacity-60"
+            outline-none min-h-[28px] max-h-[192px] leading-7"
           aria-label="Chat message input"
         />
       </div>
@@ -81,7 +83,7 @@ export function ChatInput({
               : "bg-surface-overlay text-text-muted cursor-not-allowed"
             }
           `}
-          aria-label="Send message"
+          aria-label={disabled ? "Queue message" : "Send message"}
         >
           <ArrowUp className="w-4 h-4" />
         </button>

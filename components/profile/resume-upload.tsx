@@ -19,7 +19,7 @@ export function ResumeUpload() {
   // Check agent availability on mount
   useEffect(() => {
     let cancelled = false
-    fetch("/api/chat/status")
+    fetch("/api/agent/status")
       .then((r) => r.json())
       .then((data: { available: boolean; connected: boolean }) => {
         if (!cancelled) setAgentAvailable(data.available && data.connected)

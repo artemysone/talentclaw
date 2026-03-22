@@ -3,18 +3,11 @@
 import { useEffect, useRef, useState } from "react"
 import { ChevronDown, SquarePen } from "lucide-react"
 import { CrabLogo } from "@/components/crab-logo"
+import { getGreeting } from "@/lib/ui-utils"
 import { useChatContext } from "./chat-provider"
 import { ChatMessageBubble } from "./chat-message"
-import type { ChatMessage } from "@/lib/agent/types"
 import { ChatInput } from "./chat-input"
 import { SuggestionChips } from "./suggestion-chips"
-
-function getGreeting(): string {
-  const hour = new Date().getHours()
-  if (hour < 12) return "Good morning"
-  if (hour < 17) return "Good afternoon"
-  return "Good evening"
-}
 
 function NewChatView({
   displayName,
@@ -24,33 +17,79 @@ function NewChatView({
   onSend: (text: string) => void
 }) {
   const firstName = displayName.split(" ")[0]
+  const { conversations } = useChatContext()
 
   return (
-    <div className="flex-1 flex flex-col items-center justify-center px-6 pb-[12vh]">
-      <h1 className="font-display text-4xl text-text-primary mb-8 flex items-center gap-3">
-        <CrabLogo className="w-10 h-10 text-accent" />
-        {getGreeting()}
-        {firstName ? `, ${firstName}` : ""}
-      </h1>
-      <div className="w-full max-w-[680px]">
-        <ChatInput onSend={onSend} />
-        <SuggestionChips onSelect={onSend} />
+    <div className="flex-1 flex flex-col min-h-0">
+      {/* Header — same position as active chat */}
+      {conversations.length > 0 && (
+        <div className="flex items-center gap-2 px-5 py-3 shrink-0">
+          <ConversationDropdown label="Recent conversations" />
+        </div>
+      )}
+
+      {/* Centered content */}
+      <div className="flex-1 flex flex-col items-center justify-center px-6 pb-[12vh]">
+        <h1 className="font-display text-4xl text-text-primary mb-8 flex items-center gap-3">
+          <CrabLogo className="w-10 h-10 text-accent" />
+          {getGreeting()}
+          {firstName ? `, ${firstName}` : ""}
+        </h1>
+        <div className="w-full max-w-[680px]">
+          <ChatInput onSend={onSend} autoFocus />
+          <SuggestionChips onSelect={onSend} />
+        </div>
       </div>
     </div>
   )
 }
 
-function ConversationTitle({ messages }: { messages: ChatMessage[] }) {
+function getDayLabel(dateStr: string): string {
+  const date = new Date(dateStr)
+  const now = new Date()
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
+  const yesterday = new Date(today)
+  yesterday.setDate(yesterday.getDate() - 1)
+  const target = new Date(date.getFullYear(), date.getMonth(), date.getDate())
+
+  if (target.getTime() === today.getTime()) return "Today"
+  if (target.getTime() === yesterday.getTime()) return "Yesterday"
+
+  // Same year → "March 20", different year → "March 20, 2025"
+  const opts: Intl.DateTimeFormatOptions =
+    date.getFullYear() === now.getFullYear()
+      ? { month: "long", day: "numeric" }
+      : { month: "long", day: "numeric", year: "numeric" }
+  return date.toLocaleDateString("en-US", opts)
+}
+
+function groupByDay(
+  items: { slug: string; frontmatter: { title: string; created_at: string; updated_at: string; message_count: number } }[]
+): { label: string; items: typeof items }[] {
+  const groups: Map<string, typeof items> = new Map()
+  for (const item of items) {
+    const label = getDayLabel(item.frontmatter.created_at)
+    const existing = groups.get(label)
+    if (existing) existing.push(item)
+    else groups.set(label, [item])
+  }
+  return Array.from(groups.entries()).map(([label, items]) => ({ label, items }))
+}
+
+function ConversationDropdown({ label }: { label?: string } = {}) {
+  const { messages, conversations, conversationSlug, loadConversation, clearMessages } = useChatContext()
   const [dropdownOpen, setDropdownOpen] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
 
-  // Derive title from first user message
+  // Derive current title from first user message, or use provided label
   const firstUserMsg = messages.find((m) => m.role === "user")
-  const title = firstUserMsg
-    ? firstUserMsg.content.length > 40
-      ? firstUserMsg.content.slice(0, 40) + "..."
-      : firstUserMsg.content
-    : "New conversation"
+  const title = label
+    ? label
+    : firstUserMsg
+      ? firstUserMsg.content.length > 40
+        ? firstUserMsg.content.slice(0, 40) + "..."
+        : firstUserMsg.content
+      : "New conversation"
 
   // Close dropdown on outside click
   useEffect(() => {
@@ -64,6 +103,9 @@ function ConversationTitle({ messages }: { messages: ChatMessage[] }) {
     return () => document.removeEventListener("mousedown", handleClick)
   }, [dropdownOpen])
 
+  // Group all conversations by day
+  const grouped = groupByDay(conversations)
+
   return (
     <div className="relative" ref={dropdownRef}>
       <button
@@ -76,15 +118,52 @@ function ConversationTitle({ messages }: { messages: ChatMessage[] }) {
       </button>
 
       {dropdownOpen && (
-        <div className="absolute top-full left-0 mt-1 w-64 bg-surface-raised border border-border-subtle rounded-xl shadow-md py-1 z-50">
-          {/* Current conversation */}
-          <div className="px-3 py-2 text-sm text-text-primary bg-accent-subtle/50 truncate">
-            {title}
-          </div>
-          {/* Placeholder for future conversation history */}
-          <div className="px-3 py-3 text-xs text-text-muted text-center">
-            No previous conversations
-          </div>
+        <div className="absolute top-full left-0 mt-1 w-72 bg-surface-raised border border-border-subtle rounded-xl shadow-md py-1 z-50 max-h-80 overflow-y-auto">
+          {/* New chat option */}
+          <button
+            type="button"
+            onClick={() => {
+              clearMessages()
+              setDropdownOpen(false)
+            }}
+            className="w-full text-left px-3 py-2 text-sm text-text-secondary hover:text-text-primary hover:bg-surface-overlay transition-colors cursor-pointer flex items-center gap-2"
+          >
+            <SquarePen className="w-3.5 h-3.5" />
+            New chat
+          </button>
+
+          {grouped.length > 0 ? (
+            grouped.map((group) => (
+              <div key={group.label} className="border-t border-border-subtle">
+                <div className="px-3 py-1.5 text-[11px] uppercase tracking-wider text-text-muted">
+                  {group.label}
+                </div>
+                {group.items.map((c) => {
+                  const isActive = c.slug === conversationSlug
+                  return (
+                    <button
+                      key={c.slug}
+                      type="button"
+                      onClick={() => {
+                        loadConversation(c.slug)
+                        setDropdownOpen(false)
+                      }}
+                      className={`w-full text-left px-3 py-2 text-sm hover:bg-surface-overlay transition-colors cursor-pointer flex items-baseline gap-2 ${isActive ? "text-accent font-medium" : "text-text-secondary hover:text-text-primary"}`}
+                    >
+                      <span className="truncate">{c.frontmatter.title}</span>
+                      <span className={`shrink-0 text-[11px] ${isActive ? "text-accent/70" : "text-text-muted"}`}>
+                        {new Date(c.frontmatter.created_at).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" })}
+                      </span>
+                    </button>
+                  )
+                })}
+              </div>
+            ))
+          ) : (
+            <div className="px-3 py-3 text-xs text-text-muted text-center">
+              No previous conversations
+            </div>
+          )}
         </div>
       )}
     </div>
@@ -112,12 +191,12 @@ function ActiveChatView({
     <div className="flex-1 flex flex-col min-h-0">
       {/* Header with conversation title + new chat */}
       <div className="flex items-center gap-2 px-5 py-3 shrink-0">
-        <ConversationTitle messages={messages} />
+        <ConversationDropdown />
         <button
           type="button"
           onClick={onNewChat}
           title="New chat"
-          className="p-1.5 rounded-lg text-text-muted hover:text-text-primary hover:bg-surface-overlay transition-colors cursor-pointer"
+          className="ml-auto p-1.5 rounded-lg border border-border-subtle text-text-muted hover:text-text-primary hover:bg-surface-overlay transition-colors cursor-pointer"
         >
           <SquarePen className="w-4 h-4" />
         </button>
@@ -129,9 +208,19 @@ function ActiveChatView({
         className="flex-1 overflow-y-auto chat-scrollbar px-6 pb-4"
       >
         <div className="max-w-3xl mx-auto flex flex-col gap-4">
-          {messages.map((msg) => (
-            <ChatMessageBubble key={msg.id} message={msg} />
-          ))}
+          {(() => {
+            const lastAssistantIdx = messages.reduce(
+              (acc, m, i) => (m.role === "assistant" ? i : acc), -1
+            )
+            return messages.map((msg, i) => (
+              <ChatMessageBubble
+                key={msg.id}
+                message={msg}
+                isLastAssistant={i === lastAssistantIdx}
+                isStreaming={isStreaming}
+              />
+            ))
+          })()}
         </div>
       </div>
 
@@ -147,7 +236,7 @@ function ActiveChatView({
       {/* Input */}
       <div className="px-6 pb-6 pt-2 shrink-0">
         <div className="max-w-3xl mx-auto">
-          <ChatInput onSend={onSend} disabled={isStreaming} />
+          <ChatInput onSend={onSend} disabled={isStreaming} autoFocus />
         </div>
       </div>
     </div>

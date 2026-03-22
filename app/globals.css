@@ -88,37 +88,67 @@ html {
   color: #1c1917;
 }
 
-/* Chat markdown prose — minimal styles for rendered markdown in bubbles */
+/* Chat markdown prose — claude.ai-style clean rendering */
 .chat-prose > *:first-child { margin-top: 0; }
 .chat-prose > *:last-child { margin-bottom: 0; }
-.chat-prose p { margin: 0.5em 0; }
+.chat-prose p { margin: 0.75em 0; }
 .chat-prose p:first-child { margin-top: 0; }
 .chat-prose p:last-child { margin-bottom: 0; }
-.chat-prose strong { font-weight: 600; }
+.chat-prose strong { font-weight: 700; }
 .chat-prose em { font-style: italic; }
-.chat-prose ul, .chat-prose ol { margin: 0.5em 0; padding-left: 1.25em; }
-.chat-prose li { margin: 0.15em 0; }
+.chat-prose ul, .chat-prose ol { margin: 0.75em 0; padding-left: 1.5em; }
+.chat-prose li { margin: 0.25em 0; }
+.chat-prose li::marker { color: var(--color-text-muted); }
+.chat-prose h1, .chat-prose h2, .chat-prose h3 {
+  font-weight: 700;
+  margin: 1.25em 0 0.5em;
+}
+.chat-prose h1 { font-size: 1.25em; }
+.chat-prose h2 { font-size: 1.125em; }
+.chat-prose h3 { font-size: 1em; }
 .chat-prose code {
   font-family: var(--font-mono);
   font-size: 0.85em;
-  padding: 0.15em 0.35em;
+  padding: 0.15em 0.4em;
   border-radius: 4px;
   background: var(--color-surface-overlay);
 }
 .chat-prose pre {
-  margin: 0.5em 0;
-  padding: 0.75em;
-  border-radius: 6px;
+  margin: 0.75em 0;
+  padding: 0.875em 1em;
+  border-radius: 8px;
   background: var(--color-surface-overlay);
   overflow-x: auto;
+  font-size: 0.875em;
+  line-height: 1.6;
 }
 .chat-prose pre code { padding: 0; background: none; }
 .chat-prose a { color: var(--color-accent); text-decoration: underline; }
 .chat-prose blockquote {
-  margin: 0.5em 0;
-  padding-left: 0.75em;
-  border-left: 2px solid var(--color-border-default);
+  margin: 0.75em 0;
+  padding-left: 1em;
+  border-left: 3px solid var(--color-border-default);
   color: var(--color-text-secondary);
+}
+.chat-prose hr {
+  margin: 1em 0;
+  border: none;
+  border-top: 1px solid var(--color-border-subtle);
+}
+
+/* Streaming typewriter — blinking cursor on last element while streaming */
+.chat-prose.streaming > *:last-child::after {
+  content: "▍";
+  display: inline;
+  color: var(--color-accent);
+  animation: cursor-blink 1s steps(2) infinite;
+  margin-left: 1px;
+  font-weight: 400;
+}
+
+@keyframes cursor-blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
 }
 
 /* Chat panel width transition is handled inline via Tailwind */

@@ -25,6 +25,8 @@ import type {
   ProfileFrontmatter,
   ContactFile,
   CompanyFile,
+  ConversationFile,
+  ConversationFrontmatter,
 } from "./types"
 import { getCached, setCache, invalidateCache } from "./cache"
 
@@ -659,4 +661,86 @@ export const createCompany = (slug: string, fm: Record<string, unknown>, content
 export const updateCompany = (slug: string, data: Partial<Record<string, unknown>>) =>
   updateEntity("companies", CompanyFrontmatterSchema, slug, data)
 export const deleteCompany = (slug: string) => deleteEntity("companies", "Company", slug)
+
+// --- Conversations ---
+
+export async function listConversations(): Promise<Omit<ConversationFile, "messages">[]> {
+  const dir = path.join(getDataDir(), "conversations")
+  await ensureDir(dir)
+  const files = await fs.readdir(dir)
+  const mdFiles = files.filter((f) => f.endsWith(".md"))
+
+  const results = await Promise.all(
+    mdFiles.map(async (file) => {
+      try {
+        const raw = await fs.readFile(path.join(dir, file), "utf-8")
+        const { data } = matter(raw)
+        return {
+          slug: file.replace(/\.md$/, ""),
+          frontmatter: data as ConversationFrontmatter,
+        }
+      } catch {
+        return null
+      }
+    })
+  )
+
+  const convos = results.filter((r): r is NonNullable<typeof r> => r !== null)
+  convos.sort((a, b) => b.frontmatter.updated_at.localeCompare(a.frontmatter.updated_at))
+  return convos
+}
+
+export async function getConversation(slug: string): Promise<ConversationFile | null> {
+  if (slug.includes("..") || slug.includes("/") || slug.includes("\\")) {
+    throw new Error(`Invalid conversation slug: ${slug}`)
+  }
+  const filePath = path.join(getDataDir(), "conversations", `${slug}.md`)
+  try {
+    const raw = await fs.readFile(filePath, "utf-8")
+    const { data, content } = matter(raw)
+    const messages = content.trim() ? JSON.parse(content) : []
+    return {
+      slug,
+      frontmatter: data as ConversationFrontmatter,
+      messages,
+    }
+  } catch {
+    return null
+  }
+}
+
+// Cache created_at timestamps to avoid re-reading files on every save
+const createdAtCache = new Map<string, string>()
+
+export async function saveConversation(
+  slug: string,
+  title: string,
+  messages: ConversationFile["messages"],
+): Promise<void> {
+  const dir = path.join(getDataDir(), "conversations")
+  await ensureDir(dir)
+  const filePath = path.join(dir, `${slug}.md`)
+
+  const now = new Date().toISOString()
+  const created_at = createdAtCache.get(slug) ?? now
+  if (!createdAtCache.has(slug)) createdAtCache.set(slug, created_at)
+
+  const fm: ConversationFrontmatter = {
+    title,
+    created_at,
+    updated_at: now,
+    message_count: messages.length,
+  }
+
+  const content = matter.stringify(JSON.stringify(messages, null, 2), fm)
+  await withFileLock(filePath, () => fs.writeFile(filePath, content, "utf-8"))
+}
+
+export async function deleteConversation(slug: string): Promise<void> {
+  if (slug.includes("..") || slug.includes("/") || slug.includes("\\")) {
+    throw new Error(`Invalid conversation slug: ${slug}`)
+  }
+  const filePath = path.join(getDataDir(), "conversations", `${slug}.md`)
+  await fs.unlink(filePath).catch(() => {})
+}
 

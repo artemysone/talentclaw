@@ -4,6 +4,7 @@ import {
 } from "@/components/workspace/sidebar-wrapper"
 import { Sidebar } from "@/components/workspace/sidebar"
 import { TopBar } from "@/components/workspace/top-bar"
+import { ThemeToggle } from "@/components/workspace/theme-toggle"
 import { ChatProvider } from "@/components/chat/chat-provider"
 import { listJobs, getWorkspaceTree, getProfile } from "@/lib/fs-data"
 
@@ -49,6 +50,9 @@ export default async function WorkspaceLayout({
           <div className="flex-1 flex flex-col min-w-0">
             <TopBar />
             <main className="flex-1 flex flex-col min-h-0 overflow-y-auto overflow-x-hidden">{children}</main>
+          </div>
+          <div className="fixed bottom-4 right-8 z-50">
+            <ThemeToggle />
           </div>
         </div>
       </ChatProvider>

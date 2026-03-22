@@ -250,6 +250,26 @@ export type FileType =
   | "message"
   | "generic"
 
+// Conversation (chat history)
+export const ConversationFrontmatterSchema = z.object({
+  title: z.string(),
+  created_at: z.string(),
+  updated_at: z.string(),
+  message_count: z.number().default(0),
+})
+
+export type ConversationFrontmatter = z.infer<typeof ConversationFrontmatterSchema>
+
+export interface ConversationFile {
+  slug: string
+  frontmatter: ConversationFrontmatter
+  messages: Array<{
+    role: "user" | "assistant"
+    content: string
+    createdAt: number
+  }>
+}
+
 // Activity log entry (JSONL)
 export const ActivityEntrySchema = z.object({
   ts: z.string(),
