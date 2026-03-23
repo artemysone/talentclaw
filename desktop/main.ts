@@ -104,13 +104,14 @@ async function showErrorWithRetry(
 // Server lifecycle
 // ---------------------------------------------------------------------------
 
+function getProjectRoot(): string {
+  if (app.isPackaged) return process.resourcesPath;
+  // Dev: __dirname is dist-electron/, project root is one level up
+  return join(__dirname, "..");
+}
+
 function getServerJsPath(): string {
-  if (app.isPackaged) {
-    // Packaged: server.js is inside the app's asar/Resources
-    return join(process.resourcesPath, ".next", "standalone", "server.js");
-  }
-  // Dev: server.js is in the project root's .next/standalone/
-  return join(app.getAppPath(), ".next", "standalone", "server.js");
+  return join(getProjectRoot(), ".next", "standalone", "server.js");
 }
 
 function startBackendServer(): Promise<void> {

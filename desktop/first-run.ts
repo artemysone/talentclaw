@@ -224,11 +224,16 @@ export async function ensureClaudeAuth(claudePath?: string): Promise<boolean> {
     if (!resolved) return false
     claudePath = resolved
   }
+
+  // Already authenticated — skip login
+  if (checkAuth(claudePath) || hasClaudeCredentialFiles()) return true
+  if (process.env.ANTHROPIC_API_KEY) return true
+
   const AUTH_TIMEOUT_MS = 120_000
 
   return new Promise<boolean>((resolve) => {
     const proc = spawn(claudePath, ["login"], {
-      stdio: "inherit", // Allows the process to open the browser
+      stdio: "inherit",
     })
 
     const timer = setTimeout(() => {
