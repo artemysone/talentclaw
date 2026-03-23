@@ -272,7 +272,7 @@ async function stopBackendServer(): Promise<void> {
 // ---------------------------------------------------------------------------
 
 function getAppUrl(): string {
-  return `http://127.0.0.1:${serverPort}`;
+  return `http://127.0.0.1:${serverPort}/dashboard`;
 }
 
 function isAppUrl(url: string): boolean {
