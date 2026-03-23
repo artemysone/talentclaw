@@ -1,4 +1,3 @@
-import { SidebarBrand } from "./sidebar-brand"
 import { SidebarNav } from "./sidebar-nav"
 import type { TreeNode } from "@/lib/types"
 
@@ -14,15 +13,10 @@ export function Sidebar({
   tree,
 }: SidebarProps) {
   return (
-    <>
-      <SidebarBrand />
-
-      {/* Navigation (client) */}
-      <SidebarNav
-        jobCount={jobCount}
-        activeCount={activeCount}
-        tree={tree}
-      />
-    </>
+    <SidebarNav
+      jobCount={jobCount}
+      activeCount={activeCount}
+      tree={tree}
+    />
   )
 }

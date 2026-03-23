@@ -123,17 +123,24 @@ function startBackendServer(): Promise<void> {
       return;
     }
 
-    // Spawn using Electron's bundled Node.js via ELECTRON_RUN_AS_NODE
-    const child = spawn(process.execPath, [serverJs], {
-      env: {
-        ...process.env,
-        ELECTRON_RUN_AS_NODE: "1",
-        PORT: String(serverPort),
-        HOSTNAME: "127.0.0.1",
-        TALENTCLAW_AUTH_TOKEN: authToken,
-        // Ensure Node.js mode — suppress Electron-specific behaviors
-        ELECTRON_NO_ASAR: "1",
-      },
+    // In dev mode, use system Node.js to avoid Electron's bundled Node v24
+    // compatibility issues with Next.js static file serving (returns 400).
+    // In packaged mode, fall back to Electron's bundled Node.js.
+    const useSystemNode = !app.isPackaged;
+    const nodeBin = useSystemNode ? "node" : process.execPath;
+    const spawnEnv: Record<string, string> = {
+      ...process.env as Record<string, string>,
+      PORT: String(serverPort),
+      HOSTNAME: "127.0.0.1",
+      TALENTCLAW_AUTH_TOKEN: authToken,
+    };
+    if (!useSystemNode) {
+      spawnEnv.ELECTRON_RUN_AS_NODE = "1";
+      spawnEnv.ELECTRON_NO_ASAR = "1";
+    }
+
+    const child = spawn(nodeBin, [serverJs], {
+      env: spawnEnv,
       stdio: ["ignore", "pipe", "pipe"],
       cwd: join(serverJs, ".."),
     });
@@ -297,7 +304,7 @@ function createMainWindow(): void {
     show: false,
     title: APP_NAME,
     titleBarStyle: "hiddenInset",
-    trafficLightPosition: { x: 16, y: 18 },
+    trafficLightPosition: { x: 20, y: 14 },
     backgroundColor: "#0f0f0f",
     webPreferences: {
       preload: join(__dirname, "preload.cjs"),
@@ -621,10 +628,16 @@ async function bootServer(): Promise<void> {
 // ---------------------------------------------------------------------------
 
 app.whenReady().then(async () => {
-  // In development, clear the HTTP cache so rebuilt pages load fresh
+  // In development, clear all caches so rebuilt pages load fresh.
+  // clearCache() alone is insufficient — Chromium also caches compiled JS
+  // bytecode and other storage that can persist stale CSS/JS across restarts.
   if (!app.isPackaged) {
     const { session } = await import("electron");
     await session.defaultSession.clearCache();
+    await session.defaultSession.clearCodeCaches({});
+    await session.defaultSession.clearStorageData({
+      storages: ["cachestorage", "serviceworkers"],
+    });
   }
 
   // Generate auth token for server-client isolation

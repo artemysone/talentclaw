@@ -65,14 +65,39 @@ interface LayoutNode {
   neighbors: Set<string>
 }
 
+// ── Deterministic seeded random ──────────────────────────────
+
+/** Simple seeded PRNG (mulberry32) — same seed = same layout */
+function seededRandom(seed: number): () => number {
+  return () => {
+    seed |= 0; seed = seed + 0x6D2B79F5 | 0
+    let t = Math.imul(seed ^ seed >>> 15, 1 | seed)
+    t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t
+    return ((t ^ t >>> 14) >>> 0) / 4294967296
+  }
+}
+
+/** Hash a string to a 32-bit integer for seeding */
+function hashString(str: string): number {
+  let h = 0
+  for (let i = 0; i < str.length; i++) {
+    h = Math.imul(31, h) + str.charCodeAt(i) | 0
+  }
+  return h
+}
+
+// ── Node types that always show labels ──────────────────────
+
+const PROMINENT_TYPES = new Set<CareerNodeType>(['profile', 'company', 'title', 'education'])
+
 // ── Constants ────────────────────────────────────────────────
 
-const REPULSION = 1800
-const SPRING_LENGTH = 120
-const SPRING_K = 0.004
+const BASE_REPULSION = 3000
+const BASE_SPRING_LENGTH = 160
+const SPRING_K = 0.003
 const DAMPING = 0.88
-const CENTER_GRAVITY = 0.0008
-const SETTLE_ITERATIONS = 600
+const CENTER_GRAVITY = 0.0006
+const SETTLE_ITERATIONS = 800
 
 function detectMode(): 'light' | 'dark' {
   const root = document.documentElement
@@ -96,12 +121,16 @@ export default function CareerContextCanvas({ data }: { data: CareerGraphData })
   } | null>(null)
 
   const initState = useCallback((W: number, H: number) => {
+    // Deterministic seed from node slugs so layout is stable across reloads
+    const seed = hashString(data.nodes.map(n => n.slug).sort().join(','))
+    const rand = seededRandom(seed)
+
     const nodeMap: Record<string, LayoutNode> = {}
     const nodes: LayoutNode[] = data.nodes.map((n) => {
       const node: LayoutNode = {
         ...n,
-        x: W / 2 + (Math.random() - 0.5) * 300,
-        y: H / 2 + (Math.random() - 0.5) * 300,
+        x: W / 2 + (rand() - 0.5) * 300,
+        y: H / 2 + (rand() - 0.5) * 300,
         vx: 0, vy: 0,
         connections: 0,
         neighbors: new Set(),
@@ -120,7 +149,16 @@ export default function CareerContextCanvas({ data }: { data: CareerGraphData })
 
     const mode: 'light' | 'dark' = detectMode()
 
-    // Run physics to settle layout — all computation happens here, not in render loop
+    // Find the profile (user) node — it gets pinned to center
+    const profileNode = nodes.find(nd => nd.type === 'profile')
+
+    // Adaptive physics — scale repulsion and spring length with node count
+    const nc = nodes.length
+    const scaleFactor = Math.max(1, Math.pow(nc / 12, 0.6))
+    const repulsion = BASE_REPULSION * scaleFactor
+    const springLength = BASE_SPRING_LENGTH * scaleFactor
+
+    // Run physics to settle layout — profile node is pinned to center
     let cf = 1.0
     for (let i = 0; i < SETTLE_ITERATIONS; i++) {
       for (let a = 0; a < nodes.length; a++) {
@@ -128,7 +166,7 @@ export default function CareerContextCanvas({ data }: { data: CareerGraphData })
           const na = nodes[a], nb = nodes[b]
           const dx = nb.x - na.x, dy = nb.y - na.y
           const dist = Math.sqrt(dx * dx + dy * dy) || 1
-          const f = REPULSION / (dist * dist) * cf
+          const f = repulsion / (dist * dist) * cf
           const fx = (dx / dist) * f, fy = (dy / dist) * f
           na.vx -= fx; na.vy -= fy
           nb.vx += fx; nb.vy += fy
@@ -137,41 +175,53 @@ export default function CareerContextCanvas({ data }: { data: CareerGraphData })
       for (const e of edges) {
         const dx = e.target.x - e.source.x, dy = e.target.y - e.source.y
         const dist = Math.sqrt(dx * dx + dy * dy) || 1
-        const f = SPRING_K * (dist - SPRING_LENGTH) * cf
+        const f = SPRING_K * (dist - springLength) * cf
         const fx = (dx / dist) * f, fy = (dy / dist) * f
         e.source.vx += fx; e.source.vy += fy
         e.target.vx -= fx; e.target.vy -= fy
       }
-      for (const n of nodes) {
-        n.vx += (W / 2 - n.x) * CENTER_GRAVITY * cf
-        n.vy += (H / 2 - n.y) * CENTER_GRAVITY * cf
-        n.vx *= DAMPING; n.vy *= DAMPING
-        n.x += n.vx; n.y += n.vy
+      for (const node of nodes) {
+        if (node === profileNode) {
+          // Pin profile node to center — zero out velocity, snap to center
+          node.vx = 0; node.vy = 0
+          node.x = W / 2; node.y = H / 2
+          continue
+        }
+        node.vx += (W / 2 - node.x) * CENTER_GRAVITY * cf
+        node.vy += (H / 2 - node.y) * CENTER_GRAVITY * cf
+        node.vx *= DAMPING; node.vy *= DAMPING
+        node.x += node.vx; node.y += node.vy
       }
       cf *= 0.995
     }
 
-    // Fit the graph into the container with padding for labels
-    const PAD = 40
+    // Fit the graph into the container — use the full card space
+    const PAD = 30
     let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity
-    for (const n of nodes) {
-      const r = nodeRadius(n)
-      // Account for label below the node (~20px)
-      minX = Math.min(minX, n.x - r - 40)
-      maxX = Math.max(maxX, n.x + r + 40)
-      minY = Math.min(minY, n.y - r)
-      maxY = Math.max(maxY, n.y + r + 20)
+    for (const node of nodes) {
+      const r = nodeRadius(node)
+      minX = Math.min(minX, node.x - r - 50)
+      maxX = Math.max(maxX, node.x + r + 50)
+      minY = Math.min(minY, node.y - r - 10)
+      maxY = Math.max(maxY, node.y + r + 25)
     }
     const graphW = maxX - minX
     const graphH = maxY - minY
     const scaleX = (W - PAD * 2) / graphW
     const scaleY = (H - PAD * 2) / graphH
-    const scale = Math.min(scaleX, scaleY, 1) // never upscale
-    const cx = (minX + maxX) / 2
-    const cy = (minY + maxY) / 2
-    for (const n of nodes) {
-      n.x = W / 2 + (n.x - cx) * scale
-      n.y = H / 2 + (n.y - cy) * scale
+    const scale = Math.min(scaleX, scaleY)
+
+    // Scale all nodes relative to the profile node, then snap profile to exact center
+    const anchorX = profileNode ? profileNode.x : (minX + maxX) / 2
+    const anchorY = profileNode ? profileNode.y : (minY + maxY) / 2
+    for (const node of nodes) {
+      node.x = W / 2 + (node.x - anchorX) * scale
+      node.y = H / 2 + (node.y - anchorY) * scale
+    }
+    // Force profile to dead center (insurance against floating point drift)
+    if (profileNode) {
+      profileNode.x = W / 2
+      profileNode.y = H / 2
     }
 
     const state = { nodes, edges, W, H, hoveredNode: null as LayoutNode | null, mode }
@@ -355,21 +405,77 @@ function draw(ctx: CanvasRenderingContext2D, s: {
     ctx.fill()
   }
 
-  // Labels
-  for (const n of nodes) {
+  // Labels — collision avoidance with priority ordering.
+  // Profile node drawn first, then prominent types, then by connections.
+  const profileNode = nodes.find(nd => nd.type === 'profile')
+  const labelNodes = [...nodes].sort((a, b) => {
+    // Profile always first
+    if (a.type === 'profile') return -1
+    if (b.type === 'profile') return 1
+    const aP = PROMINENT_TYPES.has(a.type) ? 1 : 0
+    const bP = PROMINENT_TYPES.has(b.type) ? 1 : 0
+    if (bP !== aP) return bP - aP
+    return b.connections - a.connections
+  })
+  const placed: { x: number; y: number; w: number; h: number }[] = []
+
+  ctx.font = "500 11px 'DM Sans', sans-serif"
+  ctx.textAlign = 'center'
+  ctx.textBaseline = 'top'
+
+  // Draw profile label first (always visible, never skipped)
+  if (profileNode) {
+    const a = opacity(profileNode)
+    if (a > 0) {
+      const r = nodeRadius(profileNode)
+      const bright = profileNode === hoveredNode || (isHovering && neighborSlugs?.has(profileNode.slug))
+      const lc: RGBA = bright ? t.labelBright : t.labelBright // always bright
+      ctx.font = "600 12px 'DM Sans', sans-serif"
+      ctx.fillStyle = `rgba(${lc.r},${lc.g},${lc.b},${a})`
+      ctx.fillText(profileNode.label, profileNode.x, profileNode.y + r + 5)
+      // Reserve the profile node area + its label so nothing overlaps
+      const labelW = ctx.measureText(profileNode.label).width
+      placed.push({ x: profileNode.x - labelW / 2, y: profileNode.y + r + 5, w: labelW, h: 14 })
+    }
+  }
+
+  // Reserve a clearance zone around the profile node circle
+  if (profileNode) {
+    const pr = nodeRadius(profileNode)
+    placed.push({
+      x: profileNode.x - pr - 10,
+      y: profileNode.y - pr - 10,
+      w: (pr + 10) * 2,
+      h: (pr + 10) * 2,
+    })
+  }
+
+  ctx.font = "500 11px 'DM Sans', sans-serif"
+
+  for (const n of labelNodes) {
+    if (n === profileNode) continue // already drawn
     const a = opacity(n)
     if (a <= 0) continue
     const r = nodeRadius(n)
-
-    const show = true
-
-    ctx.font = "500 11px 'DM Sans', sans-serif"
-    ctx.textAlign = 'center'
-    ctx.textBaseline = 'top'
-
     const bright = n === hoveredNode || (isHovering && neighborSlugs?.has(n.slug))
+
+    const labelW = ctx.measureText(n.label).width
+    const labelH = 13
+    const lx = n.x - labelW / 2
+    const ly = n.y + r + 4
+
+    // Check overlap with already-placed labels and profile clearance zone
+    const collides = placed.some(p =>
+      lx < p.x + p.w + 6 && lx + labelW > p.x - 6 &&
+      ly < p.y + p.h + 2 && ly + labelH > p.y - 2
+    )
+
+    // Always show hovered/neighbor labels; skip colliding others
+    if (collides && !bright) continue
+
     const lc: RGBA = bright ? t.labelBright : t.label
     ctx.fillStyle = `rgba(${lc.r},${lc.g},${lc.b},${a * (bright ? 1 : 0.8)})`
-    ctx.fillText(n.label, n.x, n.y + r + 6)
+    ctx.fillText(n.label, n.x, ly)
+    placed.push({ x: lx, y: ly, w: labelW, h: labelH })
   }
 }
