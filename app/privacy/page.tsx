@@ -31,8 +31,8 @@ export default function PrivacyPage() {
           <h2 className="font-display text-xl mt-8 mb-3 text-text-primary">Open source</h2>
           <p>
             TalentClaw is open source. You can inspect exactly what the code does at{" "}
-            <a href="https://github.com/jeffreyblue/talentclaw" target="_blank" rel="noopener noreferrer" className="text-accent hover:underline">
-              github.com/jeffreyblue/talentclaw
+            <a href="https://github.com/artemysone/talentclaw" target="_blank" rel="noopener noreferrer" className="text-accent hover:underline">
+              github.com/artemysone/talentclaw
             </a>.
           </p>
         </div>

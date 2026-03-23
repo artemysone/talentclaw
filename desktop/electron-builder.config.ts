@@ -1,7 +1,7 @@
 import type { Configuration } from "electron-builder"
 
 const config: Configuration = {
-  appId: "com.jeffreyblue.talentclaw",
+  appId: "com.artemysone.talentclaw",
   productName: "TalentClaw",
   // electron-builder needs the main process entry point
   extends: null,
@@ -46,7 +46,7 @@ const config: Configuration = {
   },
   publish: {
     provider: "github",
-    owner: "jeffreyblue",
+    owner: "artemysone",
     repo: "talentclaw",
   },
 }

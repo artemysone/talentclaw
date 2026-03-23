@@ -66,4 +66,4 @@ All career data lives on your machine at `~/.talentclaw/`:
 └── activity.log        # Action history
 ```
 
-Built by [Jeffrey Blue](https://github.com/jeffreyblue).
+Built by [Jeffrey Blue](https://github.com/artemysone).

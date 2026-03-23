@@ -31,7 +31,7 @@ export function DownloadSection() {
           {mac ? (
             <div className="flex flex-col items-center gap-5">
               <a
-                href="https://github.com/jeffreyblue/talentclaw/releases/latest"
+                href="https://github.com/artemysone/talentclaw/releases/latest"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="group inline-flex items-center gap-2.5 px-6 py-3 rounded-lg bg-accent text-white font-medium text-[0.95rem] hover:bg-accent-hover transition-colors"
@@ -52,7 +52,7 @@ export function DownloadSection() {
                 Available for macOS
               </p>
               <a
-                href="https://github.com/jeffreyblue/talentclaw/releases/latest"
+                href="https://github.com/artemysone/talentclaw/releases/latest"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 text-accent hover:text-accent-hover font-medium text-[0.9rem] transition-colors"

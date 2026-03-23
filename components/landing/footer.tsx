@@ -20,7 +20,7 @@ export function Footer() {
         </li>
         <li>
           <a
-            href="https://github.com/jeffreyblue/talentclaw"
+            href="https://github.com/artemysone/talentclaw"
             target="_blank"
             rel="noopener noreferrer"
             className="text-[0.8rem] text-text-muted hover:text-text-primary transition-colors py-3"

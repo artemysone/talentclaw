@@ -10,7 +10,7 @@
 
 <p align="center">
   <a href="#get-talentclaw"><img src="https://img.shields.io/badge/npx-talentclaw-000?style=for-the-badge&logo=npm&logoColor=white" alt="npx talentclaw"></a>&nbsp;
-  <a href="https://github.com/jeffreyblue/talentclaw/stargazers"><img src="https://img.shields.io/github/stars/jeffreyblue/talentclaw?style=for-the-badge" alt="GitHub stars"></a>&nbsp;
+  <a href="https://github.com/artemysone/talentclaw/stargazers"><img src="https://img.shields.io/github/stars/artemysone/talentclaw?style=for-the-badge" alt="GitHub stars"></a>&nbsp;
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge" alt="MIT License"></a>
 </p>
 
@@ -162,5 +162,5 @@ talentclaw/
 MIT Licensed. Fork it, extend it, make it yours.
 
 <p align="center">
-  Built by <a href="https://github.com/jeffreyblue">Jeff</a>
+  Built by <a href="https://github.com/artemysone">Jeff</a>
 </p>
