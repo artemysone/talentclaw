@@ -343,10 +343,6 @@ function createMainWindow(): void {
     mainWindow = null;
   });
 
-  // Open DevTools in development
-  if (!app.isPackaged) {
-    mainWindow.webContents.openDevTools();
-  }
 }
 
 /** Navigate from splash to the app URL once server is ready. */

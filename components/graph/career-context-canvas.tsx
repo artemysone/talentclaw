@@ -129,8 +129,8 @@ export default function CareerContextCanvas({ data }: { data: CareerGraphData })
     const nodes: LayoutNode[] = data.nodes.map((n) => {
       const node: LayoutNode = {
         ...n,
-        x: W / 2 + (rand() - 0.5) * 300,
-        y: H / 2 + (rand() - 0.5) * 300,
+        x: W / 2 + (rand() - 0.5) * W * 0.6,
+        y: H / 2 + (rand() - 0.5) * H * 0.6,
         vx: 0, vy: 0,
         connections: 0,
         neighbors: new Set(),
@@ -196,32 +196,28 @@ export default function CareerContextCanvas({ data }: { data: CareerGraphData })
     }
 
     // Fit the graph into the container — use the full card space
-    const PAD = 30
+    // Estimate label widths (no canvas context yet, so approximate at ~6.5px per char)
+    const PAD = 40
     let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity
     for (const node of nodes) {
       const r = nodeRadius(node)
-      minX = Math.min(minX, node.x - r - 50)
-      maxX = Math.max(maxX, node.x + r + 50)
-      minY = Math.min(minY, node.y - r - 10)
-      maxY = Math.max(maxY, node.y + r + 25)
+      const labelHalfW = node.label.length * 3.3 // half of ~6.6px per char at 11px font
+      minX = Math.min(minX, node.x - Math.max(r, labelHalfW))
+      maxX = Math.max(maxX, node.x + Math.max(r, labelHalfW))
+      minY = Math.min(minY, node.y - r)
+      maxY = Math.max(maxY, node.y + r + 18) // label sits below node
     }
     const graphW = maxX - minX
     const graphH = maxY - minY
     const scaleX = (W - PAD * 2) / graphW
     const scaleY = (H - PAD * 2) / graphH
-    const scale = Math.min(scaleX, scaleY)
 
-    // Scale all nodes relative to the profile node, then snap profile to exact center
-    const anchorX = profileNode ? profileNode.x : (minX + maxX) / 2
-    const anchorY = profileNode ? profileNode.y : (minY + maxY) / 2
+    // Center on bounding box center so the graph fills symmetrically
+    const centerX = (minX + maxX) / 2
+    const centerY = (minY + maxY) / 2
     for (const node of nodes) {
-      node.x = W / 2 + (node.x - anchorX) * scale
-      node.y = H / 2 + (node.y - anchorY) * scale
-    }
-    // Force profile to dead center (insurance against floating point drift)
-    if (profileNode) {
-      profileNode.x = W / 2
-      profileNode.y = H / 2
+      node.x = W / 2 + (node.x - centerX) * scaleX
+      node.y = H / 2 + (node.y - centerY) * scaleY
     }
 
     const state = { nodes, edges, W, H, hoveredNode: null as LayoutNode | null, mode }
