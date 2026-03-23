@@ -21,6 +21,7 @@ const config: Configuration = {
   extraResources: [
     { from: "desktop/splash.html", to: "splash.html" },
   ],
+  artifactName: "${productName}-${arch}.${ext}",
   mac: {
     target: [
       { target: "dmg", arch: ["arm64"] },

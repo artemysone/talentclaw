@@ -38,7 +38,7 @@ export function Hero() {
               />
             </div>
             <a
-              href="https://github.com/artemysone/talentclaw/releases/latest/download/TalentClaw-0.4.4-arm64.dmg"
+              href="https://github.com/artemysone/talentclaw/releases/latest/download/TalentClaw-arm64.dmg"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2.5 px-5 py-3 rounded-xl bg-accent text-white font-medium text-[0.9rem] hover:bg-accent-hover transition-colors"
