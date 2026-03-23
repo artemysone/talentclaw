@@ -1,13 +1,22 @@
 "use client"
 
+import { useState, useEffect } from "react"
 import { PanelLeftClose, PanelLeftOpen } from "lucide-react"
 import { CrabLogo } from "@/components/crab-logo"
 import { useSidebar } from "./sidebar-wrapper"
 
 /** Full-width window title bar — houses macOS traffic lights and toolbar.
+ *  Only renders inside Electron (detected via window.talentclaw from preload).
  *  The entire bar is a drag region; interactive elements opt out. */
 export function TitleBar() {
   const { collapsed, toggleCollapsed } = useSidebar()
+  const [isElectron, setIsElectron] = useState(false)
+
+  useEffect(() => {
+    setIsElectron("talentclaw" in window)
+  }, [])
+
+  if (!isElectron) return null
 
   return (
     <header

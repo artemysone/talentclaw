@@ -1,8 +1,9 @@
 "use client"
 
+import { useState, useEffect } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { Home, MessageCircle, Briefcase, KanbanSquare, User, X } from "lucide-react"
+import { Home, MessageCircle, Briefcase, KanbanSquare, User, X, PanelLeftClose, PanelLeftOpen } from "lucide-react"
 import { useSidebar } from "./sidebar-wrapper"
 import { FileTree } from "./file-tree"
 import type { TreeNode } from "@/lib/types"
@@ -19,7 +20,12 @@ export function SidebarNav({
   tree,
 }: SidebarNavProps) {
   const pathname = usePathname()
-  const { setOpen, collapsed } = useSidebar()
+  const { setOpen, collapsed, toggleCollapsed } = useSidebar()
+  const [isElectron, setIsElectron] = useState(false)
+
+  useEffect(() => {
+    setIsElectron("talentclaw" in window)
+  }, [])
 
   const navItems = [
     {
@@ -58,11 +64,24 @@ export function SidebarNav({
 
   return (
     <div className="flex-1 overflow-y-auto overflow-x-hidden">
-      {/* Mobile close button */}
-      <div className="flex items-center justify-end px-3 pt-2 md:hidden">
+      {/* Sidebar header: collapse toggle (desktop) / close button (mobile) */}
+      <div className={`flex items-center px-2 pt-2 ${collapsed ? "justify-center" : "justify-end"}`}>
+        {/* Desktop collapse/expand — hidden in Electron (title bar has its own toggle) */}
+        {!isElectron && <button
+          onClick={toggleCollapsed}
+          title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+          className="hidden md:flex w-8 h-8 items-center justify-center rounded-lg text-text-muted hover:text-text-primary hover:bg-surface-overlay transition-colors cursor-pointer"
+        >
+          {collapsed ? (
+            <PanelLeftOpen className="w-[18px] h-[18px]" />
+          ) : (
+            <PanelLeftClose className="w-[18px] h-[18px]" />
+          )}
+        </button>}
+        {/* Mobile close */}
         <button
           onClick={() => setOpen(false)}
-          className="p-1.5 rounded-lg text-text-muted hover:text-text-primary hover:bg-surface-overlay transition-colors cursor-pointer"
+          className="md:hidden p-1.5 rounded-lg text-text-muted hover:text-text-primary hover:bg-surface-overlay transition-colors cursor-pointer"
         >
           <X className="w-4 h-4" />
         </button>
@@ -70,7 +89,7 @@ export function SidebarNav({
 
       {/* Views section label */}
       {!collapsed && (
-        <div className="text-[11px] font-medium uppercase tracking-wider text-text-muted px-3 py-2 pt-4">
+        <div className="text-[11px] font-medium uppercase tracking-wider text-text-muted px-3 py-2 pt-2">
           Views
         </div>
       )}
