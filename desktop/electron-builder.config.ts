@@ -3,8 +3,12 @@ import type { Configuration } from "electron-builder"
 const config: Configuration = {
   appId: "com.artemysone.talentclaw",
   productName: "TalentClaw",
-  // electron-builder needs the main process entry point
+  // electron-builder needs the main process entry point — inject via
+  // extraMetadata so it doesn't pollute the npm package.json "main" field
   extends: null,
+  extraMetadata: {
+    main: "dist-electron/main.cjs",
+  },
   afterSign: "./desktop/notarize.ts",
   directories: {
     buildResources: "desktop/resources",
@@ -17,6 +21,12 @@ const config: Configuration = {
     "skills/**/*",
     "persona/**/*",
     "public/**/*",
+    // Strip wrong-platform vendor binaries from claude-agent-sdk
+    "!**/vendor/**/x64-*",
+    "!**/vendor/**/arm64-linux*",
+    "!**/vendor/**/arm64-win32*",
+    "!**/vendor/**/x64-linux*",
+    "!**/vendor/**/x64-win32*",
   ],
   extraResources: [
     { from: "desktop/splash.html", to: "splash.html" },

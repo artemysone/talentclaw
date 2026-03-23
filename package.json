@@ -1,10 +1,9 @@
 {
   "name": "talentclaw",
-  "version": "0.4.4",
+  "version": "0.4.5",
   "description": "talentclaw — your AI career agent. Local-first career hub + platform-agnostic agent skills.",
   "author": "Jeffrey Blue (https://github.com/artemysone)",
   "license": "MIT",
-  "main": "dist-electron/main.cjs",
   "type": "module",
   "homepage": "https://talentclaw.sh",
   "repository": {
@@ -36,9 +35,9 @@
     "lint": "next lint",
     "test": "vitest run",
     "dev:desktop": "tsdown desktop/main.ts desktop/preload.ts --out-dir dist-electron --format cjs --external electron --external electron-updater --external @electron/notarize && electron dist-electron/main.cjs",
-    "build:desktop": "next build && cp -r .next/static .next/standalone/.next/static && cp -r public .next/standalone/public && tsdown desktop/main.ts desktop/preload.ts --out-dir dist-electron --format cjs --external electron --external electron-updater --external @electron/notarize && electron-builder --mac --config desktop/electron-builder.config.ts",
+    "build:desktop": "next build && cp -r .next/static .next/standalone/.next/static && cp -r public .next/standalone/public && rm -rf .next/standalone/.claude .next/standalone/.gstack .next/standalone/AGENTS.md .next/standalone/CLAUDE.md .next/standalone/DESIGN.md .next/standalone/TODOS.md .next/standalone/plugin .next/standalone/persona .next/standalone/skills && tsdown desktop/main.ts desktop/preload.ts --out-dir dist-electron --format cjs --external electron --external electron-updater --external @electron/notarize && electron-builder --mac --config desktop/electron-builder.config.ts",
     "start:desktop": "electron dist-electron/main.cjs",
-    "prepublishOnly": "rm -rf .next dist && npm run build && tsdown bin/cli.ts --out-dir dist --format esm --platform node && rm -rf .next/standalone/.claude .next/standalone/.gstack .next/standalone/AGENTS.md .next/standalone/CLAUDE.md .next/standalone/DESIGN.md .next/standalone/TODOS.md .next/standalone/plugin"
+    "prepublishOnly": "rm -rf .next dist && npm run build && tsdown bin/cli.ts --out-dir dist --format esm --platform node && rm -rf .next/standalone/.claude .next/standalone/.gstack .next/standalone/AGENTS.md .next/standalone/CLAUDE.md .next/standalone/DESIGN.md .next/standalone/TODOS.md .next/standalone/plugin .next/standalone/persona .next/standalone/skills"
   },
   "devDependencies": {
     "@dnd-kit/core": "^6.3.1",
@@ -74,7 +73,6 @@
   "files": [
     "dist",
     ".next/standalone",
-    ".next/static",
     "skills",
     "persona",
     "public"

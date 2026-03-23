@@ -37,6 +37,7 @@ jobs:
           bun run build
           cp -r .next/static .next/standalone/.next/static
           cp -r public .next/standalone/public
+          rm -rf .next/standalone/.claude .next/standalone/.gstack .next/standalone/AGENTS.md .next/standalone/CLAUDE.md .next/standalone/DESIGN.md .next/standalone/TODOS.md .next/standalone/plugin .next/standalone/persona .next/standalone/skills
 
       - name: Compile Electron sources
         run: |

@@ -18,8 +18,7 @@ cli/npm/*/bin/talentclaw
 
 # env
 .env
-.env.local
-.env.*.local
+.env.*
 
 # data
 *.db
