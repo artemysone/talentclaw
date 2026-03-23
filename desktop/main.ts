@@ -300,10 +300,9 @@ function createMainWindow(): void {
     trafficLightPosition: { x: 16, y: 18 },
     backgroundColor: "#0f0f0f",
     webPreferences: {
-      preload: join(__dirname, "preload.js"),
+      preload: join(__dirname, "preload.cjs"),
       contextIsolation: true,
       nodeIntegration: false,
-      sandbox: true,
     },
   });
 
@@ -336,6 +335,11 @@ function createMainWindow(): void {
   mainWindow.on("closed", () => {
     mainWindow = null;
   });
+
+  // Open DevTools in development
+  if (!app.isPackaged) {
+    mainWindow.webContents.openDevTools();
+  }
 }
 
 /** Navigate from splash to the app URL once server is ready. */
