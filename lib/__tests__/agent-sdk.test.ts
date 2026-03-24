@@ -216,7 +216,7 @@ describe("config", () => {
     const { getAgentConfig } = await import("../agent/config")
     const config = getAgentConfig()
     expect(config.apiKey).toBe("sk-test-123")
-    expect(config.model).toBe("claude-sonnet-4-6")
+    expect(config.model).toBe("claude-opus-4-6")
   })
 
   it("getAgentConfig returns config without API key (uses subscription auth)", async () => {
@@ -224,7 +224,7 @@ describe("config", () => {
     const { getAgentConfig } = await import("../agent/config")
     const config = getAgentConfig()
     expect(config.apiKey).toBeFalsy()
-    expect(config.model).toBe("claude-sonnet-4-6")
+    expect(config.model).toBe("claude-opus-4-6")
   })
 })
 

@@ -59,7 +59,7 @@ describe("moveJobToStage", () => {
 })
 
 describe("saveJobToPipeline", () => {
-  it("sets status to saved", async () => {
+  it("sets status to discovered", async () => {
     await writeMockJob(tmpDir, "startup-eng", {
       title: "Engineer",
       company: "Startup",
@@ -71,7 +71,7 @@ describe("saveJobToPipeline", () => {
     expect(result.error).toBeUndefined()
 
     const job = await getJob("startup-eng")
-    expect(job!.frontmatter.status).toBe("saved")
+    expect(job!.frontmatter.status).toBe("discovered")
   })
 })
 
