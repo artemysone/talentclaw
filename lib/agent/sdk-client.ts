@@ -13,11 +13,11 @@ import type { SseEvent } from "./types"
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
-// Cache the system prompt across runs (files don't change at runtime)
+// Cache the system prompt across runs (skip cache in dev for prompt iteration)
 let cachedSystemPrompt: string | null = null
 
 async function loadSystemPrompt(): Promise<string> {
-  if (cachedSystemPrompt) return cachedSystemPrompt
+  if (cachedSystemPrompt && process.env.NODE_ENV !== "development") return cachedSystemPrompt
 
   // Resolve project root relative to this file (lib/agent/ → project root)
   const projectRoot = path.resolve(__dirname, "..", "..")
