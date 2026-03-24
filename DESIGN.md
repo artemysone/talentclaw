@@ -129,7 +129,7 @@ Each stage color is used at three intensities:
 
 ## Layout
 - **Approach:** Hybrid — grid-disciplined for dashboard/pipeline (data needs structure), editorial-feeling cards with generous padding
-- **Grid:** Sidebar (256px fixed) + main content area. Main area uses 1–3 columns depending on breakpoint.
+- **Grid:** Sidebar (220px fixed) + main content area. Main area uses 1–3 columns depending on breakpoint.
 - **Breakpoints:**
   - `sm`: 640px (mobile → single column)
   - `md`: 768px (tablet → sidebar appears, 1-2 columns)

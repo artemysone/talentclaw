@@ -69,7 +69,7 @@ Your career profile lives as a connected map of your skills, experience, goals, 
 
 ### Pipeline & Tracking
 
-A visual pipeline to manage your job search end-to-end. Drag opportunities through stages — discovered, saved, applied, interviewing, offer — and see match scores against your profile.
+A visual pipeline board to manage your job search end-to-end. Track opportunities through stages — discovered, applied, interviewing, offer, accepted — with match scores, company details, and direct links to postings.
 
 ### Apply Anywhere
 
@@ -107,6 +107,7 @@ Your career data is stored as markdown files with YAML frontmatter — human-rea
 ├── companies/           # Company research notes
 ├── contacts/            # People in your network
 ├── messages/            # Conversation threads with employers
+├── resumes/             # Resume versions (uploads, current.md, current.pdf)
 └── activity.log         # Activity feed
 ```
 
@@ -156,6 +157,11 @@ talentclaw/
 </details>
 
 ---
+
+## Docs
+
+- [CHANGELOG.md](CHANGELOG.md) — release history
+- [DESIGN.md](DESIGN.md) — design system (typography, color, spacing, motion)
 
 ## License
 

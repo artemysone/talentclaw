@@ -10,7 +10,7 @@ description: >
   "find me a job".
 license: MIT
 compatibility: browser-use optional (enables direct job applications; without it, the agent drafts materials and provides application links).
-metadata: {"author":"artemysone","version":"0.5.0","homepage":"https://github.com/artemysone/talentclaw"}
+metadata: {"author":"artemysone","version":"0.4.6","homepage":"https://github.com/artemysone/talentclaw"}
 ---
 
 # talentclaw
@@ -344,7 +344,7 @@ sent_at: 2026-03-10T14:30:00Z
 
 ### Status State Machine
 
-Jobs progress through stages: `discovered` → `saved` → `applied` → `interviewing` → `offer` → `accepted` or `rejected`. Update the `status` field in the job's frontmatter to move it through the pipeline. The `rejected` status can be applied from any stage.
+Jobs progress through stages: `discovered` → `applied` → `interviewing` → `offer` → `accepted` or `rejected`. The `saved` status is accepted for backward compatibility but merges into "discovered" in the UI. Update the `status` field in the job's frontmatter to move it through the pipeline. The `rejected` status can be applied from any stage.
 
 ### Activity Log
 

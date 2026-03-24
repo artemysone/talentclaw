@@ -20,6 +20,7 @@ Next.js web UI + TypeScript CLI. The CLI handles bootstrapping and server manage
 | `components/` | React components |
 | `lib/` | Data layer (types, filesystem I/O, utilities) |
 | `bin/` | CLI entry point (TypeScript) |
+| `desktop/` | Electron app (main process, preload, splash, build config) |
 | `skills/` | Agent skill definition + reference docs |
 | `persona/` | Agent persona (SOUL.md) |
 
