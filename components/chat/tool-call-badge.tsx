@@ -16,7 +16,7 @@ const TOOL_LABELS: Record<string, { running: string; complete: string }> = {
   discover_agents: { running: "Discovering agents", complete: "Discovered agents" },
 }
 
-function getLabel(name: string, status: ToolCallInfo["status"]): string {
+export function getToolLabel(name: string, status: ToolCallInfo["status"]): string {
   const entry = TOOL_LABELS[name]
   if (entry) return status === "complete" ? entry.complete : entry.running
   return name.replace(/_/g, " ")
@@ -24,7 +24,7 @@ function getLabel(name: string, status: ToolCallInfo["status"]): string {
 
 export function ToolCallBadge({ toolCall }: { toolCall: ToolCallInfo }) {
   const [expanded, setExpanded] = useState(false)
-  const label = getLabel(toolCall.name, toolCall.status)
+  const label = getToolLabel(toolCall.name, toolCall.status)
   const hasDetails = toolCall.output || Object.keys(toolCall.input).length > 0
 
   return (

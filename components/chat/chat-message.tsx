@@ -3,18 +3,25 @@
 import { useState, useEffect, useRef, useMemo } from "react"
 import Markdown from "react-markdown"
 import remarkGfm from "remark-gfm"
-import type { ChatMessage } from "@/lib/agent/types"
+import type { ChatMessage, ToolCallInfo } from "@/lib/agent/types"
+import { getToolLabel } from "./tool-call-badge"
 
-function TypingIndicator() {
+function getThinkingLabel(toolCalls?: ToolCallInfo[]): string {
+  if (!toolCalls || toolCalls.length === 0) return "Thinking..."
+  const running = [...toolCalls].reverse().find((tc) => tc.status === "running")
+  if (!running) return "Thinking..."
+  const label = getToolLabel(running.name, "running")
+  return `${label}...`
+}
+
+function TypingIndicator({ toolCalls }: { toolCalls?: ToolCallInfo[] }) {
+  const label = getThinkingLabel(toolCalls)
+
   return (
-    <div className="flex items-center gap-1 py-1" aria-label="Typing">
-      {[0, 1, 2].map((i) => (
-        <span
-          key={i}
-          className="w-1.5 h-1.5 rounded-full bg-text-muted"
-          style={{ animation: `typing-dot 1.2s ease-in-out ${i * 0.2}s infinite` }}
-        />
-      ))}
+    <div className="flex items-center py-1" aria-label={label}>
+      <span className="thinking-shimmer text-[15px] font-medium">
+        {label}
+      </span>
     </div>
   )
 }
@@ -28,9 +35,6 @@ function normalizeMarkdown(text: string): string {
   result = result.replace(/^\n- /, "- ")
   // Ensure blank line before list blocks for proper markdown parsing
   result = result.replace(/([^\n])\n(- )/g, "$1\n\n$2")
-
-  // Convert single *word* italic to **word** bold when it looks like a label
-  result = result.replace(/(^|\n)\*([^*\n]+)\*/g, "$1**$2**")
 
   return result
 }
@@ -139,7 +143,7 @@ export function ChatMessageBubble({
           <Markdown remarkPlugins={[remarkGfm]}>{normalized}</Markdown>
         </div>
       ) : (
-        <TypingIndicator />
+        <TypingIndicator toolCalls={message.toolCalls} />
       )}
     </div>
   )

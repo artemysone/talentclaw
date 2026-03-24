@@ -143,6 +143,7 @@ export function useChat() {
         const decoder = new TextDecoder()
         let buffer = ""
         let streamEnded = false
+        let hadToolSinceLastText = false
 
         while (true) {
           const { done, value } = await reader.read()
@@ -172,15 +173,18 @@ export function useChat() {
                 sdkSessionIdRef.current = event.sdkSessionId
                 break
 
-              case "text_delta":
+              case "text_delta": {
+                const sep = hadToolSinceLastText ? "\n\n" : ""
+                hadToolSinceLastText = false
                 setMessages((prev) =>
                   prev.map((m) =>
                     m.id === assistantId
-                      ? { ...m, content: m.content + event.content }
+                      ? { ...m, content: (m.content ? m.content + sep : "") + event.content }
                       : m
                   )
                 )
                 break
+              }
 
               case "tool_use":
                 setMessages((prev) =>
@@ -198,6 +202,7 @@ export function useChat() {
                 break
 
               case "tool_result":
+                hadToolSinceLastText = true
                 setMessages((prev) =>
                   prev.map((m) => {
                     if (m.id !== assistantId) return m

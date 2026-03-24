@@ -92,7 +92,7 @@ export function OnboardingPage() {
         setUploadState("done")
 
         setTimeout(() => {
-          sendPrefilled(RESUME_FILE_PROMPT(data.path))
+          sendPrefilled(RESUME_FILE_PROMPT(data.path, data.extractedText))
         }, 600)
       } catch {
         setUploadState("error")

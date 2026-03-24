@@ -64,6 +64,7 @@ Career data lives in `~/.talentclaw/` as markdown files with YAML frontmatter. D
 - `companies/` — company research notes
 - `contacts/` — people in network
 - `messages/` — conversation threads
+- `resumes/` — resume versions and conversions (original uploads, `current.md`, `current.pdf`)
 - `activity.log` — append-only JSONL activity feed
 - `config.yaml` — UI preferences
 

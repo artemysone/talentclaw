@@ -62,8 +62,8 @@ export function ResumeUpload() {
         }
 
         setState("success")
-        // Send the file path to the agent for parsing
-        sendPrefilled(RESUME_FILE_PROMPT(data.path))
+        // Send the extracted text (or file path fallback) to the agent for parsing
+        sendPrefilled(RESUME_FILE_PROMPT(data.path, data.extractedText))
       } catch {
         setState("error")
         setErrorMsg("Upload failed. Please try again.")

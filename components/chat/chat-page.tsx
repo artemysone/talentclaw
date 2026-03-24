@@ -180,11 +180,34 @@ function ActiveChatView({
   const { messages, isStreaming, error } = useChatContext()
   const scrollRef = useRef<HTMLDivElement>(null)
 
-  // Auto-scroll to bottom on new messages
+  const rafRef = useRef<number | null>(null)
+
+  // Auto-scroll to bottom when DOM content changes (typewriter effect, new messages).
+  // MutationObserver catches character-by-character reveals that don't change `messages`.
+  // Throttled to one scrollTo per animation frame to avoid hammering the compositor.
   useEffect(() => {
     const el = scrollRef.current
     if (!el) return
-    el.scrollTop = el.scrollHeight
+
+    function scheduleScroll() {
+      // Skip if user has scrolled up to read earlier messages
+      if (el!.scrollHeight - el!.scrollTop - el!.clientHeight > 100) return
+      if (rafRef.current !== null) return
+      rafRef.current = requestAnimationFrame(() => {
+        rafRef.current = null
+        el!.scrollTo({ top: el!.scrollHeight, behavior: "smooth" })
+      })
+    }
+
+    scheduleScroll()
+
+    const observer = new MutationObserver(scheduleScroll)
+    observer.observe(el, { childList: true, subtree: true, characterData: true })
+
+    return () => {
+      observer.disconnect()
+      if (rafRef.current !== null) cancelAnimationFrame(rafRef.current)
+    }
   }, [messages])
 
   return (

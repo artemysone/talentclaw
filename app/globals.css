@@ -61,14 +61,19 @@
   }
 }
 
-/* Typing dot animation */
-@keyframes typing-dot {
-  0%, 100% {
-    opacity: 0.3;
-  }
-  50% {
-    opacity: 1;
-  }
+/* Thinking shimmer — Claude Code-style text sweep */
+@keyframes shimmer {
+  from { background-position: 200% 0; }
+  to { background-position: -200% 0; }
+}
+
+.thinking-shimmer {
+  background: linear-gradient(90deg, #a8a29e 0%, #a8a29e 35%, #059669 50%, #a8a29e 65%, #a8a29e 100%);
+  background-size: 200% auto;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shimmer 2s ease-in-out infinite;
 }
 
 /* Gradient text utility */
@@ -213,6 +218,10 @@ html {
   color: #e7e5e4;
 }
 
+.dark .thinking-shimmer {
+  background: linear-gradient(90deg, #78716c 0%, #78716c 35%, #34d399 50%, #78716c 65%, #78716c 100%);
+}
+
 .dark .gradient-text {
   background: linear-gradient(135deg, #34d399 0%, #6ee7b7 50%, #a7f3d0 100%);
   -webkit-background-clip: text;
@@ -251,6 +260,10 @@ html {
   html:not(.light) ::selection {
     background: rgba(52, 211, 153, 0.25);
     color: #e7e5e4;
+  }
+
+  html:not(.light) .thinking-shimmer {
+    background: linear-gradient(90deg, #78716c 0%, #78716c 35%, #34d399 50%, #78716c 65%, #78716c 100%);
   }
 
   html:not(.light) .gradient-text {

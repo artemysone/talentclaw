@@ -43,13 +43,13 @@
     "@dnd-kit/core": "^6.3.1",
     "@dnd-kit/sortable": "^10.0.0",
     "@dnd-kit/utilities": "^3.2.2",
+    "@electron/notarize": "^3.0.0",
     "@tailwindcss/postcss": "^4.1.8",
     "@tailwindcss/typography": "^0.5.19",
     "@types/d3-force": "^3.0.10",
     "@types/node": "^22.15.0",
     "@types/react": "^19.1.0",
     "@types/react-dom": "^19.1.0",
-    "@electron/notarize": "^3.0.0",
     "electron": "^40.6.0",
     "electron-builder": "^25.0.0",
     "electron-updater": "^6.6.2",
@@ -68,7 +68,10 @@
     "zod": "^3.24.0"
   },
   "dependencies": {
-    "@anthropic-ai/claude-agent-sdk": "^0.2.80"
+    "@anthropic-ai/claude-agent-sdk": "^0.2.80",
+    "@types/pdfkit": "^0.17.5",
+    "mammoth": "^1.12.0",
+    "pdfkit": "^0.18.0"
   },
   "files": [
     "dist",
