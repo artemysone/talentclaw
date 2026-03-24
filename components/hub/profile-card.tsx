@@ -79,7 +79,7 @@ export function ProfileCard({
           )}
         </div>
         <div className="flex items-center gap-3">
-          {momentum && momentum.score !== null && (
+          {momentum && (
             <MomentumRing score={momentum.score} trend={momentum.trend} qualifier={momentum.qualifier} />
           )}
           <ProfileOptimizeButton />
@@ -177,19 +177,21 @@ export function ProfileCard({
           )}
 
           {/* Agent insights */}
-          {insights && insights.length > 0 && (
-            <div className="mt-3 pt-3 border-t border-border-subtle">
-              <div className="flex items-center gap-1.5 mb-2">
-                <Lightbulb className="w-3 h-3 text-amber-500" />
-                <span className="text-[11px] text-text-muted uppercase tracking-wider">What your agent learned</span>
-              </div>
+          <div className="mt-3 pt-3 border-t border-border-subtle">
+            <div className="flex items-center gap-1.5 mb-2">
+              <Lightbulb className="w-3 h-3 text-amber-500" />
+              <span className="text-[11px] text-text-muted uppercase tracking-wider">What your agent learned</span>
+            </div>
+            {insights && insights.length > 0 ? (
               <div className="space-y-1">
                 {insights.map((insight, i) => (
                   <p key={i} className="text-xs text-text-secondary leading-relaxed">{insight}</p>
                 ))}
               </div>
-            </div>
-          )}
+            ) : (
+              <p className="text-xs text-text-muted">&mdash;</p>
+            )}
+          </div>
         </div>
       )}
     </div>
@@ -245,23 +247,27 @@ function MomentumRing({
   trend,
   qualifier,
 }: {
-  score: number
+  score: number | null
   trend: "up" | "flat" | "down"
   qualifier: string
 }) {
   const circumference = 2 * Math.PI * 18
-  const strokeDashoffset = circumference - (score / 100) * circumference
+  const hasScore = score !== null
+  const strokeDashoffset = hasScore ? circumference - (score / 100) * circumference : circumference
 
-  let ringColor = "stroke-accent"
-  if (score < 40) ringColor = "stroke-warning"
-  else if (score < 70) ringColor = "stroke-amber-500"
+  let ringColor = "stroke-surface-overlay"
+  if (hasScore) {
+    ringColor = "stroke-accent"
+    if (score < 40) ringColor = "stroke-warning"
+    else if (score < 70) ringColor = "stroke-amber-500"
+  }
 
   const trendArrow = trend === "up" ? "\u2191" : trend === "down" ? "\u2193" : "\u2192"
   const trendColor = trend === "up" ? "text-accent" : trend === "down" ? "text-red-500" : "text-amber-500"
 
   return (
     <div className="flex items-center gap-2">
-      <div className="relative" role="img" aria-label={`Career momentum: ${score}, trending ${trend}`}>
+      <div className="relative" role="img" aria-label={hasScore ? `Career momentum: ${score}, trending ${trend}` : "Career momentum: not enough data"}>
         <svg width="44" height="44" viewBox="0 0 44 44" className="-rotate-90" aria-hidden="true">
           <circle cx="22" cy="22" r="18" fill="none" strokeWidth="3" className="stroke-surface-overlay" />
           <circle
@@ -271,12 +277,12 @@ function MomentumRing({
           />
         </svg>
         <div className="absolute inset-0 flex items-center justify-center">
-          <span className="text-[11px] font-semibold text-text-primary">{score}</span>
+          <span className="text-[11px] font-semibold text-text-muted">{hasScore ? score : "\u2014"}</span>
         </div>
       </div>
       <div>
         <div className="flex items-center gap-1">
-          <span className={`text-sm font-semibold ${trendColor}`}>{trendArrow}</span>
+          {hasScore && <span className={`text-sm font-semibold ${trendColor}`}>{trendArrow}</span>}
           <span className="text-[11px] text-text-muted">Momentum</span>
         </div>
         <p className="text-[11px] text-text-muted">{qualifier}</p>

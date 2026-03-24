@@ -38,13 +38,13 @@ interface ActivityFeedProps {
 
 export function ActivityFeed({ entries }: ActivityFeedProps) {
   return (
-    <div className="bg-surface-raised rounded-2xl border border-border-subtle p-6">
-      <h3 className="text-sm font-semibold text-text-primary mb-5">
+    <div className="bg-surface-raised rounded-2xl border border-border-subtle p-6 flex flex-col max-h-[420px]">
+      <h3 className="text-sm font-semibold text-text-primary mb-5 shrink-0">
         Recent Activity
       </h3>
 
       {entries.length > 0 ? (
-        <div className="space-y-1">
+        <div className="space-y-1 overflow-y-auto min-h-0">
           {entries.map((entry, i) => (
             <div
               key={`${entry.ts}-${i}`}
