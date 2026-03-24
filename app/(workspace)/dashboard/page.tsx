@@ -9,6 +9,7 @@ import {
 import { buildCareerGraph } from "@/lib/career-graph-data"
 import { generateBriefing, calculateCompleteness, computeMomentum } from "@/lib/analytics"
 import { PIPELINE_STAGES, PROGRESSED_STATUSES, type ApplicationFile, type JobFile } from "@/lib/types"
+import { formatActionTitle } from "@/lib/ui-utils"
 import { ProfileCard } from "@/components/hub/profile-card"
 import { ActivityFeed } from "@/components/hub/activity-feed"
 import { UpcomingActions } from "@/components/hub/upcoming-actions"
@@ -52,9 +53,11 @@ export default async function DashboardPage() {
     )
     .map((app) => {
       const job = jobMap.get(app.frontmatter.job)
+      const company = job?.frontmatter.company ?? app.slug
+      const step = app.frontmatter.next_step!
       return {
-        title: app.frontmatter.next_step!,
-        company: job?.frontmatter.company ?? app.slug,
+        title: formatActionTitle(step, company),
+        company,
         role: job?.frontmatter.title,
         date: app.frontmatter.next_step_date!,
         urgent: isWithinDays(app.frontmatter.next_step_date!, 3),
@@ -65,7 +68,7 @@ export default async function DashboardPage() {
     .slice(0, 5)
 
   // Analytics
-  const briefing = generateBriefing({ jobs, applications, threads: [], profile: profile.frontmatter, activityLog })
+  const briefing = generateBriefing({ jobs, applications, threads: [], profile: profile.frontmatter, activityLog, jobMap })
   const completeness = calculateCompleteness(profile.frontmatter)
   const momentum = computeMomentum(jobs, applications, activityLog)
 

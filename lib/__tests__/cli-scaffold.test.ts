@@ -10,7 +10,7 @@ process.env.TALENTCLAW_DIR = testDir;
 
 // Dynamic import after env is set
 const { scaffold, dataDir, TEMPLATE_CONFIG, TEMPLATE_PROFILE } = await import(
-  "../../bin/cli.ts"
+  "../../bin/cli"
 );
 
 describe("scaffold", () => {

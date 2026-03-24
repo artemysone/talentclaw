@@ -63,7 +63,7 @@ describe("calculateCompleteness", () => {
       preferred_roles: ["Staff Engineer"],
       preferred_locations: ["San Francisco"],
       remote_preference: "remote_only",
-      salary_range: { min: 150000, max: 200000 },
+      salary_range: { min: 150000, max: 200000, currency: "USD" },
       availability: "active",
       experience: [
         { company: "Acme", title: "Engineer", start: "2020-01" },

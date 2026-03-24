@@ -10,6 +10,7 @@ import {
   type ProfileCompletenessResult,
 } from "./types"
 import type { MatchBreakdown } from "./match-scoring"
+import { formatActionTitle } from "./ui-utils"
 
 // --- Funnel ---
 
@@ -137,10 +138,11 @@ interface BriefingInput {
   threads: Array<{ threadId: string; frontmatter: ThreadFrontmatter }>
   profile: ProfileFrontmatter
   activityLog?: ActivityEntry[]
+  jobMap?: Map<string, JobFile>
 }
 
 export function generateBriefing(input: BriefingInput): BriefingResult {
-  const { jobs, applications, threads, activityLog } = input
+  const { jobs, applications, threads, activityLog, jobMap: existingJobMap } = input
   // Count jobs discovered in the last 7 days
   const sevenDaysAgo = new Date()
   sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7)
@@ -155,12 +157,15 @@ export function generateBriefing(input: BriefingInput): BriefingResult {
   const unreadMessages = threads.filter((t) => t.frontmatter.unread).length
 
   // Collect upcoming actions from applications with next_step_date
+  const jobMap = existingJobMap ?? new Map(jobs.map((j) => [j.slug, j]))
   const upcomingActions: Array<{ title: string; date: string; type: string }> =
     []
   for (const app of applications) {
     if (app.frontmatter.next_step && app.frontmatter.next_step_date) {
+      const job = jobMap.get(app.frontmatter.job)
+      const company = job?.frontmatter.company ?? app.slug
       upcomingActions.push({
-        title: app.frontmatter.next_step,
+        title: formatActionTitle(app.frontmatter.next_step, company),
         date: app.frontmatter.next_step_date,
         type: "application",
       })

@@ -166,6 +166,14 @@ export function barColor(score: number): string {
   return "bg-red-400"
 }
 
+// Append company to generic action labels for at-a-glance readability.
+// Labels that already reference a person/place ("Interview with …") are left as-is.
+const HAS_CONTEXT_RE = /\b(from|with|at)\b/i
+export function formatActionTitle(step: string, company: string): string {
+  if (HAS_CONTEXT_RE.test(step)) return step
+  return `${step} — ${company}`
+}
+
 // Simple pluralization: pluralize(n, "job") → "job" | "jobs"
 export function pluralize(count: number, singular: string, plural?: string): string {
   return count === 1 ? singular : (plural ?? `${singular}s`)
