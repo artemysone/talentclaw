@@ -29,6 +29,7 @@ export function buildCareerGraph(profile: ProfileFrontmatter): CareerGraphData {
   const nodes: CareerNode[] = []
   const edges: CareerEdge[] = []
   const slugSet = new Set<string>()
+  const edgeSet = new Set<string>()
 
   function addNode(slug: string, type: CareerNodeType, label: string) {
     if (slugSet.has(slug)) return
@@ -37,9 +38,11 @@ export function buildCareerGraph(profile: ProfileFrontmatter): CareerGraphData {
   }
 
   function addEdge(from: string, to: string, rel: string) {
-    if (slugSet.has(from) && slugSet.has(to)) {
-      edges.push({ from, to, rel })
-    }
+    if (!slugSet.has(from) || !slugSet.has(to)) return
+    const key = `${from}:${to}:${rel}`
+    if (edgeSet.has(key)) return
+    edgeSet.add(key)
+    edges.push({ from, to, rel })
   }
 
   function toSlug(prefix: string, name: string): string {
@@ -68,13 +71,16 @@ export function buildCareerGraph(profile: ProfileFrontmatter): CareerGraphData {
     addNode(titleSlug, "title", exp.title)
 
     addEdge("profile", companySlug, "worked_at")
-    addEdge(companySlug, titleSlug, "held_title")
+    addEdge("profile", titleSlug, "held_title")
+    addEdge(companySlug, titleSlug, "role_at")
 
-    // Experience → skills used
+    // Experience → skills used (connect to profile, company, and title)
     for (const skill of exp.skills ?? []) {
       const skillSlug = toSlug("skill", skill)
       addNode(skillSlug, "skill", skill)
+      addEdge("profile", skillSlug, "has_skill")
       addEdge(companySlug, skillSlug, "used_skill")
+      addEdge(titleSlug, skillSlug, "used_skill")
     }
 
     // Experience → projects built during role
@@ -91,10 +97,11 @@ export function buildCareerGraph(profile: ProfileFrontmatter): CareerGraphData {
     addNode(slug, "project", proj.name)
     addEdge("profile", slug, "built")
 
-    // Project → skills
+    // Project → skills (also connect to profile)
     for (const skill of proj.skills ?? []) {
       const skillSlug = toSlug("skill", skill)
       addNode(skillSlug, "skill", skill)
+      addEdge("profile", skillSlug, "has_skill")
       addEdge(slug, skillSlug, "uses_skill")
     }
   }
@@ -107,10 +114,11 @@ export function buildCareerGraph(profile: ProfileFrontmatter): CareerGraphData {
     addNode(slug, "education", label)
     addEdge("profile", slug, "educated_at")
 
-    // Education → skills learned
+    // Education → skills learned (also connect to profile)
     for (const skill of edu.skills ?? []) {
       const skillSlug = toSlug("skill", skill)
       addNode(skillSlug, "skill", skill)
+      addEdge("profile", skillSlug, "has_skill")
       addEdge(slug, skillSlug, "taught_skill")
     }
   }
