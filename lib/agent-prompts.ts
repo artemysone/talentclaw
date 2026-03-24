@@ -26,18 +26,27 @@ ${sanitized}
 ---RESUME_END---`
 }
 
+const STRUCTURED_FIELDS_INSTRUCTION = `
+
+IMPORTANT: Extract ALL structured fields for the profile frontmatter, not just basic info. The career graph and profile editor depend on these:
+- experience: array of {company, title, start (YYYY-MM), end (YYYY-MM or omit if current), skills[], projects[]}
+- education: array of {institution, degree, year, skills[]}
+- projects: array of {name, skills[]}
+
+Use your Edit tool to write these as YAML arrays in the profile.md frontmatter. Quote all date strings.`
+
 export function RESUME_FILE_PROMPT(filePath: string, extractedText?: string | null): string {
   if (extractedText) {
-    return `I just uploaded my resume (saved to ${filePath}). Here's the extracted content — please parse it and set up my profile.
+    return `I just uploaded my resume (saved to ${filePath}). Here's the extracted content — please parse it and set up my profile.${STRUCTURED_FIELDS_INSTRUCTION}
 
 ${embedResumeText(extractedText)}`
   }
   // Fallback for PDFs or extraction failures — agent reads the file directly
-  return `I just uploaded my resume to ${filePath} — please read it and set up my profile.`
+  return `I just uploaded my resume to ${filePath} — please read it and set up my profile.${STRUCTURED_FIELDS_INSTRUCTION}`
 }
 
 export function PARSE_RESUME_PROMPT(resumeText: string): string {
-  return `I'm uploading my resume. Please parse the following resume text and update my profile with the extracted information (name, headline, skills, experience, education, etc.).
+  return `I'm uploading my resume. Please parse the following resume text and update my profile with the extracted information (name, headline, skills, experience, education, etc.).${STRUCTURED_FIELDS_INSTRUCTION}
 
 ${embedResumeText(resumeText, 8000)}`
 }
