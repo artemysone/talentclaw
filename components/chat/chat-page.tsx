@@ -182,12 +182,14 @@ function ActiveChatView({
   const rafRef = useRef<number | null>(null)
   const userScrolledUpRef = useRef(false)
   const prevMessageCountRef = useRef(0)
+  const isProgrammaticScrollRef = useRef(false)
 
-  // Track manual scroll: mark "scrolled up" only when user actively scrolls away from bottom
+  // Track manual scroll — ignore programmatic scrolls from auto-scroll
   useEffect(() => {
     const el = scrollRef.current
     if (!el) return
     function onScroll() {
+      if (isProgrammaticScrollRef.current) return
       const atBottom = el!.scrollHeight - el!.scrollTop - el!.clientHeight < 100
       userScrolledUpRef.current = !atBottom
     }
@@ -196,31 +198,35 @@ function ActiveChatView({
   }, [])
 
   // Auto-scroll on new messages and DOM mutations (typewriter effect).
-  // Reset "scrolled up" when new messages arrive so we always follow new content.
   useEffect(() => {
     const el = scrollRef.current
     if (!el) return
 
-    // New messages arrived — reset the user-scrolled flag and scroll to bottom
+    // New messages arrived — reset the user-scrolled flag
     const isNewMessage = messages.length > prevMessageCountRef.current
     if (isNewMessage) {
       userScrolledUpRef.current = false
     }
     prevMessageCountRef.current = messages.length
 
+    function doScroll() {
+      isProgrammaticScrollRef.current = true
+      el!.scrollTop = el!.scrollHeight
+      // Clear the flag after the scroll event fires
+      requestAnimationFrame(() => { isProgrammaticScrollRef.current = false })
+    }
+
     function scheduleScroll() {
       if (userScrolledUpRef.current) return
       if (rafRef.current !== null) return
       rafRef.current = requestAnimationFrame(() => {
         rafRef.current = null
-        el!.scrollTo({ top: el!.scrollHeight, behavior: "smooth" })
+        doScroll()
       })
     }
 
-    // Immediate scroll on new messages (don't wait for mutation)
-    if (isNewMessage) {
-      el.scrollTo({ top: el.scrollHeight, behavior: "instant" })
-    }
+    // Immediate scroll on new messages
+    if (isNewMessage) doScroll()
     scheduleScroll()
 
     const observer = new MutationObserver(scheduleScroll)
