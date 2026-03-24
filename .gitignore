@@ -25,6 +25,9 @@ cli/npm/*/bin/talentclaw
 *.db-wal
 *.db-shm
 
+# test / coverage
+coverage/
+
 # prototypes
 prototype-*.html
 
@@ -40,3 +43,4 @@ Thumbs.db
 .vercel
 .gstack/
 .claude/worktrees/
+.context/
