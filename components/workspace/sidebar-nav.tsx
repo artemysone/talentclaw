@@ -1,11 +1,11 @@
 "use client"
 
-import { useState, useEffect } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { Home, MessageCircle, Briefcase, KanbanSquare, User, X, PanelLeftClose, PanelLeftOpen } from "lucide-react"
+import { Home, MessageCircle, Briefcase, KanbanSquare, User, X } from "lucide-react"
 import { useSidebar } from "./sidebar-wrapper"
 import { FileTree } from "./file-tree"
+import { CrabLogo } from "@/components/crab-logo"
 import type { TreeNode } from "@/lib/types"
 
 interface SidebarNavProps {
@@ -20,12 +20,7 @@ export function SidebarNav({
   tree,
 }: SidebarNavProps) {
   const pathname = usePathname()
-  const { setOpen, collapsed, toggleCollapsed } = useSidebar()
-  const [isElectron, setIsElectron] = useState(false)
-
-  useEffect(() => {
-    setIsElectron("talentclaw" in window)
-  }, [])
+  const { setOpen } = useSidebar()
 
   const navItems = [
     {
@@ -64,38 +59,28 @@ export function SidebarNav({
 
   return (
     <div className="flex-1 overflow-y-auto overflow-x-hidden">
-      {/* Sidebar header: collapse toggle (desktop) / close button (mobile) */}
-      <div className={`flex items-center px-2 pt-2 ${collapsed ? "justify-center" : "justify-end"}`}>
-        {/* Desktop collapse/expand — hidden in Electron (title bar has its own toggle) */}
-        {!isElectron && <button
-          onClick={toggleCollapsed}
-          title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
-          className="hidden md:flex w-8 h-8 items-center justify-center rounded-lg text-text-muted hover:text-text-primary hover:bg-surface-overlay transition-colors cursor-pointer"
-        >
-          {collapsed ? (
-            <PanelLeftOpen className="w-[18px] h-[18px]" />
-          ) : (
-            <PanelLeftClose className="w-[18px] h-[18px]" />
-          )}
-        </button>}
+      {/* Logo + branding */}
+      <div className="flex items-center gap-2 px-3 pt-3 pb-1">
+        <CrabLogo className="w-5 h-5 text-accent" />
+        <span className="text-[13px] font-semibold tracking-tight text-text-primary">
+          talentclaw
+        </span>
         {/* Mobile close */}
         <button
           onClick={() => setOpen(false)}
-          className="md:hidden p-1.5 rounded-lg text-text-muted hover:text-text-primary hover:bg-surface-overlay transition-colors cursor-pointer"
+          className="md:hidden ml-auto p-1.5 rounded-lg text-text-muted hover:text-text-primary hover:bg-surface-overlay transition-colors cursor-pointer"
         >
           <X className="w-4 h-4" />
         </button>
       </div>
 
       {/* Views section label */}
-      {!collapsed && (
-        <div className="text-[11px] font-medium uppercase tracking-wider text-text-muted px-3 py-2 pt-2">
-          Views
-        </div>
-      )}
+      <div className="text-[10px] font-medium uppercase tracking-wider text-text-muted px-3 pt-3 pb-1">
+        Views
+      </div>
 
       {/* Main nav */}
-      <nav className={`px-2 pb-3 ${collapsed ? "pt-3" : ""}`}>
+      <nav className="px-1.5 pb-2">
         {navItems.map((item) => {
           const isActive = pathname === item.href
           return (
@@ -103,24 +88,15 @@ export function SidebarNav({
               key={item.href}
               href={item.href}
               onClick={handleNav}
-              title={collapsed ? item.label : undefined}
-              className={`flex items-center gap-3 rounded-lg text-sm transition-colors ${
-                collapsed
-                  ? `w-8 h-8 justify-center mx-auto mb-1 ${
-                      isActive
-                        ? "bg-accent-subtle text-accent"
-                        : "text-text-secondary hover:text-text-primary hover:bg-surface-overlay"
-                    }`
-                  : `px-3 py-2 ${
-                      isActive
-                        ? "bg-accent-subtle text-accent font-medium border-l-2 border-accent -ml-[2px]"
-                        : "text-text-secondary hover:text-text-primary hover:bg-surface-overlay"
-                    }`
+              className={`flex items-center gap-2.5 rounded-lg text-[13px] transition-colors px-2.5 py-1.5 ${
+                isActive
+                  ? "bg-accent-subtle text-accent font-medium border-l-2 border-accent -ml-[2px]"
+                  : "text-text-secondary hover:text-text-primary hover:bg-surface-overlay"
               }`}
             >
               {item.icon}
-              {!collapsed && <span>{item.label}</span>}
-              {!collapsed && item.count > 0 && (
+              <span>{item.label}</span>
+              {item.count > 0 && (
                 <span className="ml-auto text-[11px] text-text-muted bg-surface-overlay px-1.5 py-0.5 rounded-full min-w-[20px] text-center">
                   {item.count}
                 </span>
@@ -130,17 +106,13 @@ export function SidebarNav({
         })}
       </nav>
 
-      {/* Files section — hidden when collapsed */}
-      {!collapsed && (
-        <>
-          <div className="text-[11px] font-medium uppercase tracking-wider text-text-muted px-3 py-2">
-            Files
-          </div>
-          <div className="px-2 pb-4">
-            <FileTree tree={tree} />
-          </div>
-        </>
-      )}
+      {/* Files section */}
+      <div className="text-[10px] font-medium uppercase tracking-wider text-text-muted px-3 pt-2 pb-1">
+        Files
+      </div>
+      <div className="px-1.5 pb-3">
+        <FileTree tree={tree} />
+      </div>
     </div>
   )
 }
