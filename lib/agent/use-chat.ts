@@ -149,6 +149,16 @@ export function useChat() {
     localStorage.removeItem("talentclaw-active-session")
   }
 
+  /** Update messages, keep ref in sync immediately, and mark dirty for auto-save */
+  function updateMessages(updater: (prev: ChatMessage[]) => ChatMessage[]) {
+    setMessages((prev) => {
+      const next = updater(prev)
+      messagesRef.current = next
+      isDirtyRef.current = true
+      return next
+    })
+  }
+
   // Check agent availability on mount
   useEffect(() => {
     let cancelled = false
@@ -215,16 +225,16 @@ export function useChat() {
   )
 
   /** Start periodic auto-save (with dirty check) */
-  const startSaveTimer = useCallback(() => {
+  function startSaveTimer() {
     if (saveTimerRef.current) return
     saveTimerRef.current = setInterval(() => {
       const current = messagesRef.current
-      if (current.length > 0 && current.length !== lastSavedLenRef.current) {
-        lastSavedLenRef.current = current.length
+      if (current.length > 0 && isDirtyRef.current) {
+        isDirtyRef.current = false
         saveConversation(current)
       }
     }, 10000)
-  }, [saveConversation])
+  }
 
   // Auto-reconnect to active run on page load
   useEffect(() => {
@@ -259,7 +269,7 @@ export function useChat() {
         // Create a reconnect assistant message to hold incoming content
         const assistantId = `reconnect-${Date.now()}`
         let activeAssistantId = assistantId
-        setMessages((prev) => {
+        updateMessages((prev) => {
           if (prev.length > 0) return prev
           return [{ id: assistantId, role: "assistant" as const, content: "", toolCalls: [], createdAt: Date.now() }]
         })
@@ -278,7 +288,7 @@ export function useChat() {
           onTextDelta: (content, hadTool) => {
             const sep = hadTool ? "\n\n" : ""
             const targetId = resolveAssistantId()
-            setMessages((prev) =>
+            updateMessages((prev) =>
               prev.map((m) =>
                 m.id === targetId
                   ? { ...m, content: (m.content ? m.content + sep : "") + content }
@@ -288,12 +298,12 @@ export function useChat() {
           },
           onToolUse: (tc) => {
             const targetId = resolveAssistantId()
-            setMessages((prev) =>
+            updateMessages((prev) =>
               prev.map((m) => m.id !== targetId ? m : { ...m, toolCalls: [...(m.toolCalls ?? []), tc] })
             )
           },
           onToolResult: (toolCallId, output) => {
-            setMessages((prev) =>
+            updateMessages((prev) =>
               prev.map((m) => m.id !== activeAssistantId ? m : {
                 ...m,
                 toolCalls: (m.toolCalls ?? []).map((tc) =>
@@ -368,7 +378,7 @@ export function useChat() {
         createdAt: Date.now(),
       }
 
-      setMessages((prev) => [...prev, userMsg, assistantMsg])
+      updateMessages((prev) => [...prev, userMsg, assistantMsg])
       const assistantId = assistantMsg.id
 
       try {
@@ -399,7 +409,7 @@ export function useChat() {
           onSdkSession: (id) => { sdkSessionIdRef.current = id },
           onTextDelta: (content, hadTool) => {
             const sep = hadTool ? "\n\n" : ""
-            setMessages((prev) =>
+            updateMessages((prev) =>
               prev.map((m) =>
                 m.id === assistantId
                   ? { ...m, content: (m.content ? m.content + sep : "") + content }
@@ -408,12 +418,12 @@ export function useChat() {
             )
           },
           onToolUse: (tc) => {
-            setMessages((prev) =>
+            updateMessages((prev) =>
               prev.map((m) => m.id !== assistantId ? m : { ...m, toolCalls: [...(m.toolCalls ?? []), tc] })
             )
           },
           onToolResult: (toolCallId, output) => {
-            setMessages((prev) =>
+            updateMessages((prev) =>
               prev.map((m) => m.id !== assistantId ? m : {
                 ...m,
                 toolCalls: (m.toolCalls ?? []).map((tc) =>
@@ -438,7 +448,7 @@ export function useChat() {
         stopSaveTimer()
         clearActiveSession()
 
-        // Final save using ref
+        // Final save
         const final = messagesRef.current
         if (final.length > 0) {
           setTimeout(() => saveConversation(final), 100)
@@ -457,7 +467,7 @@ export function useChat() {
         isStreamingRef.current = false
         stopSaveTimer()
         clearActiveSession()
-        setMessages((prev) => {
+        updateMessages((prev) => {
           const last = prev[prev.length - 1]
           if (last?.id === assistantId && !last.content && !last.toolCalls?.length) {
             return prev.slice(0, -1)
@@ -466,7 +476,7 @@ export function useChat() {
         })
       }
     },
-    [saveConversation, scheduleRevalidate, immediateRevalidate, startSaveTimer, stopSaveTimer, clearActiveSession]
+    [saveConversation, scheduleRevalidate, immediateRevalidate]
   )
 
   // Load a previous conversation

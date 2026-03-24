@@ -193,6 +193,9 @@ function ActiveChatView({
     const el = scrollRef.current
     if (!el || !isStreaming) return
 
+    // Reset so first tick of new stream always triggers a scroll
+    prevScrollHeightRef.current = 0
+
     const interval = setInterval(() => {
       const sh = el.scrollHeight
       if (sh !== prevScrollHeightRef.current) {
