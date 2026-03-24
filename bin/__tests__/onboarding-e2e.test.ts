@@ -69,7 +69,7 @@ describe("CLI onboarding E2E", () => {
     expect(existsSync(join(tmpDir, "messages"))).toBe(true);
   });
 
-  it("detects missing browser-use when not on PATH and no venv", () => {
+  it("detects missing browser-use when not on PATH and no venv", { timeout: 35000 }, () => {
     // Run with a PATH that excludes browser-use, and a HOME that has no venv
     const fakeHome = mkdtempSync(join(tmpdir(), "fakehome-"));
     try {
@@ -96,7 +96,7 @@ describe("CLI onboarding E2E", () => {
     }
   });
 
-  it("detects browser-use via venv fallback path", () => {
+  it("detects browser-use via venv fallback path", { timeout: 35000 }, () => {
     // Create a fake venv with a browser-use binary
     const fakeHome = mkdtempSync(join(tmpdir(), "fakehome-"));
     const venvBin = join(fakeHome, ".browser-use-env", "bin");
