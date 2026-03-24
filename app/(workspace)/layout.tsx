@@ -6,6 +6,7 @@ import { Sidebar } from "@/components/workspace/sidebar"
 import { TitleBar } from "@/components/workspace/title-bar"
 import { TopBar } from "@/components/workspace/top-bar"
 import { ChatProvider } from "@/components/chat/chat-provider"
+import { DataRefreshProvider } from "@/components/data-refresh-provider"
 import { listJobs, getWorkspaceTree, getProfile } from "@/lib/fs-data"
 
 export default async function WorkspaceLayout({
@@ -39,6 +40,7 @@ export default async function WorkspaceLayout({
   return (
     <SidebarProvider>
       <ChatProvider displayName={displayName}>
+        <DataRefreshProvider>
         <div className="flex flex-col h-screen overflow-hidden bg-surface">
           {/* Window title bar — full width, houses traffic lights */}
           <TitleBar />
@@ -58,6 +60,7 @@ export default async function WorkspaceLayout({
             </div>
           </div>
         </div>
+      </DataRefreshProvider>
       </ChatProvider>
     </SidebarProvider>
   )

@@ -6,6 +6,89 @@ import type { ConversationFile } from "@/lib/types"
 
 export type ConversationSummary = Omit<ConversationFile, "messages">
 
+// --- Shared SSE stream consumer ---
+
+type SSEEventHandlers = {
+  onSession?: (sessionId: string) => void
+  onSdkSession?: (sdkSessionId: string) => void
+  onTextDelta: (content: string, hadToolSinceLastText: boolean) => void
+  onToolUse: (tc: ToolCallInfo) => void
+  onToolResult: (toolCallId: string, output: string) => void
+  onComplete: () => void
+  onError: (message: string) => void
+}
+
+/**
+ * Consume an SSE stream from the agent API, dispatching parsed events to handlers.
+ * Shared by both sendMessage and reconnect to avoid duplicating the decode/parse loop.
+ */
+async function consumeSSEStream(
+  reader: ReadableStreamDefaultReader<Uint8Array>,
+  handlers: SSEEventHandlers,
+  signal?: { cancelled: boolean },
+): Promise<{ streamEnded: boolean }> {
+  const decoder = new TextDecoder()
+  let buffer = ""
+  let streamEnded = false
+  let hadToolSinceLastText = false
+
+  while (true) {
+    const { done, value } = await reader.read()
+    if (done || signal?.cancelled) break
+
+    buffer += decoder.decode(value, { stream: true })
+    const lines = buffer.split("\n")
+    buffer = lines.pop() ?? ""
+
+    for (const line of lines) {
+      if (!line.startsWith("data: ")) continue
+      let event: SseEvent
+      try {
+        event = JSON.parse(line.slice(6))
+      } catch {
+        continue
+      }
+
+      switch (event.type) {
+        case "session":
+          handlers.onSession?.(event.sessionId)
+          break
+        case "sdk_session":
+          handlers.onSdkSession?.(event.sdkSessionId)
+          break
+        case "text_delta":
+          handlers.onTextDelta(event.content, hadToolSinceLastText)
+          hadToolSinceLastText = false
+          break
+        case "tool_use":
+          handlers.onToolUse({
+            toolCallId: event.toolCallId,
+            name: event.name,
+            input: event.input,
+            status: "running",
+          })
+          break
+        case "tool_result":
+          hadToolSinceLastText = true
+          handlers.onToolResult(event.toolCallId, event.output)
+          break
+        case "complete":
+          streamEnded = true
+          handlers.onComplete()
+          break
+        case "error":
+          streamEnded = true
+          handlers.onError(event.message)
+          break
+      }
+    }
+  }
+
+  return { streamEnded }
+}
+
+// --- Hook ---
+
 export function useChat() {
   const [messages, setMessages] = useState<ChatMessage[]>([])
   const [isStreaming, setIsStreaming] = useState(false)
@@ -20,6 +103,57 @@ export function useChat() {
   const [conversationSlug, setConversationSlug] = useState<string | null>(null)
   const queuedMessageRef = useRef<string | null>(null)
   const isStreamingRef = useRef(false)
+  const revalidateTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const saveTimerRef = useRef<ReturnType<typeof setInterval> | null>(null)
+  const reconnectAttemptedRef = useRef(false)
+  // Mirror messages in a ref for reading without the setMessages-as-reader anti-pattern
+  const messagesRef = useRef<ChatMessage[]>([])
+  // Dirty tracking for auto-save
+  const lastSavedLenRef = useRef(0)
+
+  // Keep messagesRef in sync
+  useEffect(() => {
+    messagesRef.current = messages
+  }, [messages])
+
+  // Revalidate server-side caches and notify DataRefreshProvider
+  const triggerRevalidate = useCallback(async () => {
+    try {
+      await fetch("/api/revalidate", { method: "POST" })
+    } catch {
+      // Silently fail
+    }
+    window.dispatchEvent(new Event("dataVersionChange"))
+  }, [])
+
+  const scheduleRevalidate = useCallback(() => {
+    if (revalidateTimerRef.current) clearTimeout(revalidateTimerRef.current)
+    revalidateTimerRef.current = setTimeout(() => {
+      revalidateTimerRef.current = null
+      triggerRevalidate()
+    }, 2000)
+  }, [triggerRevalidate])
+
+  const immediateRevalidate = useCallback(() => {
+    if (revalidateTimerRef.current) {
+      clearTimeout(revalidateTimerRef.current)
+      revalidateTimerRef.current = null
+    }
+    triggerRevalidate()
+  }, [triggerRevalidate])
+
+  // --- Shared stream lifecycle helpers ---
+
+  const stopSaveTimer = useCallback(() => {
+    if (saveTimerRef.current) {
+      clearInterval(saveTimerRef.current)
+      saveTimerRef.current = null
+    }
+  }, [])
+
+  const clearActiveSession = useCallback(() => {
+    localStorage.removeItem("talentclaw-active-session")
+  }, [])
 
   // Check agent availability on mount
   useEffect(() => {
@@ -86,6 +220,131 @@ export function useChat() {
     [refreshConversations],
   )
 
+  /** Start periodic auto-save (with dirty check) */
+  const startSaveTimer = useCallback(() => {
+    if (saveTimerRef.current) return
+    saveTimerRef.current = setInterval(() => {
+      const current = messagesRef.current
+      if (current.length > 0 && current.length !== lastSavedLenRef.current) {
+        lastSavedLenRef.current = current.length
+        saveConversation(current)
+      }
+    }, 10000)
+  }, [saveConversation])
+
+  // Auto-reconnect to active run on page load
+  useEffect(() => {
+    if (reconnectAttemptedRef.current) return
+    reconnectAttemptedRef.current = true
+
+    const storedSessionId = localStorage.getItem("talentclaw-active-session")
+    if (!storedSessionId) return
+
+    let cancelled = false
+
+    async function reconnect() {
+      try {
+        const res = await fetch(`/api/agent/stream?sessionId=${encodeURIComponent(storedSessionId!)}`)
+        if (!res.ok || cancelled) {
+          clearActiveSession()
+          return
+        }
+
+        sessionIdRef.current = storedSessionId
+        setIsStreaming(true)
+        isStreamingRef.current = true
+
+        const reader = res.body?.getReader()
+        if (!reader) {
+          clearActiveSession()
+          setIsStreaming(false)
+          isStreamingRef.current = false
+          return
+        }
+
+        // Create a reconnect assistant message to hold incoming content
+        const assistantId = `reconnect-${Date.now()}`
+        let activeAssistantId = assistantId
+        setMessages((prev) => {
+          if (prev.length > 0) return prev
+          return [{ id: assistantId, role: "assistant" as const, content: "", toolCalls: [], createdAt: Date.now() }]
+        })
+
+        startSaveTimer()
+
+        const resolveAssistantId = () => {
+          const last = [...messagesRef.current].reverse().find((m) => m.role === "assistant")
+          if (last) activeAssistantId = last.id
+          return activeAssistantId
+        }
+
+        const { streamEnded } = await consumeSSEStream(reader, {
+          onSession: (id) => { sessionIdRef.current = id },
+          onSdkSession: (id) => { sdkSessionIdRef.current = id },
+          onTextDelta: (content, hadTool) => {
+            const sep = hadTool ? "\n\n" : ""
+            const targetId = resolveAssistantId()
+            setMessages((prev) =>
+              prev.map((m) =>
+                m.id === targetId
+                  ? { ...m, content: (m.content ? m.content + sep : "") + content }
+                  : m
+              )
+            )
+          },
+          onToolUse: (tc) => {
+            const targetId = resolveAssistantId()
+            setMessages((prev) =>
+              prev.map((m) => m.id !== targetId ? m : { ...m, toolCalls: [...(m.toolCalls ?? []), tc] })
+            )
+          },
+          onToolResult: (toolCallId, output) => {
+            setMessages((prev) =>
+              prev.map((m) => m.id !== activeAssistantId ? m : {
+                ...m,
+                toolCalls: (m.toolCalls ?? []).map((tc) =>
+                  tc.toolCallId === toolCallId ? { ...tc, status: "complete" as const, output } : tc
+                ),
+              })
+            )
+            scheduleRevalidate()
+          },
+          onComplete: () => {
+            setIsStreaming(false)
+            immediateRevalidate()
+          },
+          onError: (message) => {
+            setError(message)
+            setIsStreaming(false)
+          },
+        }, { cancelled: false })
+
+        if (!streamEnded) setIsStreaming(false)
+        isStreamingRef.current = false
+        stopSaveTimer()
+        clearActiveSession()
+
+        // Final save
+        const final = messagesRef.current
+        if (final.length > 0) {
+          setTimeout(() => saveConversation(final), 100)
+        }
+      } catch {
+        clearActiveSession()
+        setIsStreaming(false)
+        isStreamingRef.current = false
+        stopSaveTimer()
+      }
+    }
+
+    reconnect()
+
+    return () => {
+      cancelled = true
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
   const sendMessage = useCallback(
     async (text: string) => {
       const trimmed = text.trim()
@@ -118,9 +377,6 @@ export function useChat() {
       setMessages((prev) => [...prev, userMsg, assistantMsg])
       const assistantId = assistantMsg.id
 
-      // Track final messages for save (populated after stream)
-      let finalMessages: ChatMessage[] = []
-
       try {
         const res = await fetch("/api/agent", {
           method: "POST",
@@ -140,116 +396,64 @@ export function useChat() {
         const reader = res.body?.getReader()
         if (!reader) throw new Error("No response stream")
 
-        const decoder = new TextDecoder()
-        let buffer = ""
-        let streamEnded = false
-        let hadToolSinceLastText = false
-
-        while (true) {
-          const { done, value } = await reader.read()
-          if (done) break
-
-          buffer += decoder.decode(value, { stream: true })
-          const lines = buffer.split("\n")
-          buffer = lines.pop() ?? ""
-
-          for (const line of lines) {
-            if (!line.startsWith("data: ")) continue
-            const json = line.slice(6)
-
-            let event: SseEvent
-            try {
-              event = JSON.parse(json)
-            } catch {
-              continue
-            }
-
-            switch (event.type) {
-              case "session":
-                sessionIdRef.current = event.sessionId
-                break
-
-              case "sdk_session":
-                sdkSessionIdRef.current = event.sdkSessionId
-                break
-
-              case "text_delta": {
-                const sep = hadToolSinceLastText ? "\n\n" : ""
-                hadToolSinceLastText = false
-                setMessages((prev) =>
-                  prev.map((m) =>
-                    m.id === assistantId
-                      ? { ...m, content: (m.content ? m.content + sep : "") + event.content }
-                      : m
-                  )
-                )
-                break
-              }
-
-              case "tool_use":
-                setMessages((prev) =>
-                  prev.map((m) => {
-                    if (m.id !== assistantId) return m
-                    const tc: ToolCallInfo = {
-                      toolCallId: event.toolCallId,
-                      name: event.name,
-                      input: event.input,
-                      status: "running",
-                    }
-                    return { ...m, toolCalls: [...(m.toolCalls ?? []), tc] }
-                  })
-                )
-                break
-
-              case "tool_result":
-                hadToolSinceLastText = true
-                setMessages((prev) =>
-                  prev.map((m) => {
-                    if (m.id !== assistantId) return m
-                    return {
-                      ...m,
-                      toolCalls: (m.toolCalls ?? []).map((tc) =>
-                        tc.toolCallId === event.toolCallId
-                          ? { ...tc, status: "complete" as const, output: event.output }
-                          : tc
-                      ),
-                    }
-                  })
-                )
-                break
-
-              case "complete":
-                streamEnded = true
-                setIsStreaming(false)
-                break
-
-              case "error":
-                streamEnded = true
-                setError(event.message)
-                setIsStreaming(false)
-                break
-            }
-          }
-        }
+        const { streamEnded } = await consumeSSEStream(reader, {
+          onSession: (id) => {
+            sessionIdRef.current = id
+            localStorage.setItem("talentclaw-active-session", id)
+            startSaveTimer()
+          },
+          onSdkSession: (id) => { sdkSessionIdRef.current = id },
+          onTextDelta: (content, hadTool) => {
+            const sep = hadTool ? "\n\n" : ""
+            setMessages((prev) =>
+              prev.map((m) =>
+                m.id === assistantId
+                  ? { ...m, content: (m.content ? m.content + sep : "") + content }
+                  : m
+              )
+            )
+          },
+          onToolUse: (tc) => {
+            setMessages((prev) =>
+              prev.map((m) => m.id !== assistantId ? m : { ...m, toolCalls: [...(m.toolCalls ?? []), tc] })
+            )
+          },
+          onToolResult: (toolCallId, output) => {
+            setMessages((prev) =>
+              prev.map((m) => m.id !== assistantId ? m : {
+                ...m,
+                toolCalls: (m.toolCalls ?? []).map((tc) =>
+                  tc.toolCallId === toolCallId ? { ...tc, status: "complete" as const, output } : tc
+                ),
+              })
+            )
+            scheduleRevalidate()
+          },
+          onComplete: () => {
+            setIsStreaming(false)
+            immediateRevalidate()
+          },
+          onError: (message) => {
+            setError(message)
+            setIsStreaming(false)
+          },
+        })
 
         if (!streamEnded) setIsStreaming(false)
         isStreamingRef.current = false
+        stopSaveTimer()
+        clearActiveSession()
 
-        // Read final messages and save (outside of state updater)
-        setMessages((prev) => {
-          finalMessages = prev
-          return prev
-        })
-        // Use setTimeout to ensure state has flushed before saving
-        setTimeout(() => {
-          if (finalMessages.length > 0) saveConversation(finalMessages)
-        }, 100)
+        // Final save using ref
+        const final = messagesRef.current
+        if (final.length > 0) {
+          setTimeout(() => saveConversation(final), 100)
+        }
 
         // Process queued message
         const queued = queuedMessageRef.current
         if (queued) {
           queuedMessageRef.current = null
-          // Small delay to let React flush the state updates
           setTimeout(() => sendMessage(queued), 50)
         }
       } catch (err) {
@@ -257,6 +461,8 @@ export function useChat() {
         setError(msg)
         setIsStreaming(false)
         isStreamingRef.current = false
+        stopSaveTimer()
+        clearActiveSession()
         setMessages((prev) => {
           const last = prev[prev.length - 1]
           if (last?.id === assistantId && !last.content && !last.toolCalls?.length) {
@@ -266,7 +472,7 @@ export function useChat() {
         })
       }
     },
-    [saveConversation]
+    [saveConversation, scheduleRevalidate, immediateRevalidate, startSaveTimer, stopSaveTimer, clearActiveSession]
   )
 
   // Load a previous conversation
@@ -302,7 +508,8 @@ export function useChat() {
     setConversationSlug(null)
     sessionIdRef.current = null
     sdkSessionIdRef.current = null
-  }, [])
+    clearActiveSession()
+  }, [clearActiveSession])
 
   return {
     messages,

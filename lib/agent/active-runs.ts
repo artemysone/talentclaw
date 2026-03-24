@@ -15,7 +15,7 @@ export class DuplicateRunError extends Error {
   }
 }
 
-const RUN_CLEANUP_DELAY = 5 * 60 * 1000 // 5 minutes after completion
+const RUN_CLEANUP_DELAY = 15 * 60 * 1000 // 15 minutes after completion
 const MAX_EVENT_BUFFER = 200
 
 type ActiveRun = {

@@ -359,6 +359,8 @@ Append a line after every meaningful action: discovering a job, saving it, apply
 
 ### Agent ↔ Filesystem Contract
 
+**MANDATORY: Every agent action MUST produce its corresponding filesystem write.** The filesystem is the source of truth — if it's not written to disk, it didn't happen. The web UI reads from these files, so skipping a write means the user's dashboard won't reflect their actual state. Never consider an action complete until the file is written and `activity.log` is appended.
+
 | Agent Action | Filesystem Effect |
 |-------------|-------------------|
 | Discover job | Creates `jobs/{slug}.md` per result |

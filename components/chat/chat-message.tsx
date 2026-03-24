@@ -26,6 +26,20 @@ function TypingIndicator({ toolCalls }: { toolCalls?: ToolCallInfo[] }) {
   )
 }
 
+/** Strip <internal>...</internal> blocks from agent output */
+function stripInternalTags(text: string, isStreaming: boolean): string {
+  // Remove complete <internal>...</internal> blocks (including multiline)
+  let result = text.replace(/<internal>[\s\S]*?<\/internal>/g, "")
+  if (isStreaming) {
+    // During streaming, hide content after an unclosed <internal> tag
+    const openIdx = result.lastIndexOf("<internal>")
+    if (openIdx !== -1) {
+      result = result.slice(0, openIdx)
+    }
+  }
+  return result.trim()
+}
+
 /** Normalize agent output to proper markdown */
 function normalizeMarkdown(text: string): string {
   let result = text
@@ -134,7 +148,10 @@ export function ChatMessageBubble({
     )
   }
 
-  const normalized = useMemo(() => normalizeMarkdown(displayedContent), [displayedContent])
+  const normalized = useMemo(
+    () => normalizeMarkdown(stripInternalTags(displayedContent, isActivelyStreaming)),
+    [displayedContent, isActivelyStreaming]
+  )
 
   return (
     <div className="animate-[chat-appear_0.3s_ease-out]">

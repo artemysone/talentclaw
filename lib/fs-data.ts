@@ -746,3 +746,28 @@ export async function deleteConversation(slug: string): Promise<void> {
   await fs.unlink(filePath).catch(() => {})
 }
 
+// --- Onboarding Check ---
+
+export async function hasCompletedOnboarding(): Promise<boolean> {
+  const profile = await getProfile()
+
+  // Check 1: Profile fields set
+  if (profile.frontmatter.display_name || profile.frontmatter.headline) return true
+
+  // Check 2: Resume uploaded
+  const resumesDir = path.join(getDataDir(), "resumes")
+  try {
+    const files = await fs.readdir(resumesDir)
+    if (files.some(f => f.startsWith("current."))) return true
+  } catch { /* dir doesn't exist */ }
+
+  // Check 3: Has conversation history (user has interacted with agent)
+  const conversationsDir = path.join(getDataDir(), "conversations")
+  try {
+    const files = await fs.readdir(conversationsDir)
+    if (files.length > 0) return true
+  } catch { /* dir doesn't exist */ }
+
+  return false
+}
+

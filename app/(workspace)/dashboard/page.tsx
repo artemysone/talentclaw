@@ -4,6 +4,7 @@ import {
   listApplications,
   getActivityLog,
   getProfile,
+  hasCompletedOnboarding,
 } from "@/lib/fs-data"
 import { buildCareerGraph } from "@/lib/career-graph-data"
 import { generateBriefing, calculateCompleteness, computeMomentum } from "@/lib/analytics"
@@ -15,15 +16,13 @@ import { AgentQueue } from "@/components/hub/agent-queue"
 import CareerGraphWrapper from "@/components/graph/career-graph-wrapper"
 
 export default async function DashboardPage() {
-  // Check profile first — redirect before loading everything else
-  const profile = await getProfile()
-
-  const isFirstRun =
-    !profile.frontmatter.display_name && !profile.frontmatter.headline
-
-  if (isFirstRun) {
+  // Check onboarding status — redirect before loading everything else
+  const onboarded = await hasCompletedOnboarding()
+  if (!onboarded) {
     redirect("/onboarding")
   }
+
+  const profile = await getProfile()
 
   const [jobs, applications, activityLog] = await Promise.all([
     listJobs(),
