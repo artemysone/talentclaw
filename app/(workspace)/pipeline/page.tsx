@@ -31,7 +31,7 @@ export default async function PipelinePage() {
   }
 
   return (
-    <div className="p-5 max-w-6xl xl:max-w-[1400px] mx-auto">
+    <div className="w-full max-w-[1080px] mx-auto px-8 py-8">
       {jobs.length === 0 ? (
         <div className="text-center py-24">
           <p className="text-text-secondary text-sm">

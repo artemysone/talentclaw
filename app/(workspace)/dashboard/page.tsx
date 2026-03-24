@@ -80,7 +80,7 @@ export default async function DashboardPage() {
   const insights = deriveInsights(applications, jobMap)
 
   return (
-    <div className="p-6 max-w-6xl xl:max-w-[1400px] 2xl:max-w-[1600px] mx-auto space-y-6">
+    <div className="w-full max-w-[1080px] mx-auto px-8 py-8 space-y-6">
       {/* Profile Card */}
       <ProfileCard
         profile={profile.frontmatter}
