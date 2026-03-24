@@ -12,6 +12,33 @@ import {
   ContactFrontmatterSchema,
   CompanyFrontmatterSchema,
 } from "./types"
+/**
+ * Coerce YAML Date objects to ISO strings in parsed frontmatter.
+ * gray-matter auto-parses unquoted dates (e.g. 2026-03-23) into Date objects,
+ * which breaks Zod z.string() validators.
+ */
+function coerceDates(obj: Record<string, unknown>): Record<string, unknown> {
+  const result: Record<string, unknown> = {}
+  for (const [key, value] of Object.entries(obj)) {
+    if (value instanceof Date) {
+      result[key] = value.toISOString()
+    } else if (Array.isArray(value)) {
+      result[key] = value.map((item) =>
+        item && typeof item === "object" && !(item instanceof Date)
+          ? coerceDates(item as Record<string, unknown>)
+          : item instanceof Date
+            ? item.toISOString()
+            : item
+      )
+    } else if (value && typeof value === "object") {
+      result[key] = coerceDates(value as Record<string, unknown>)
+    } else {
+      result[key] = value
+    }
+  }
+  return result
+}
+
 import type {
   JobFile,
   ApplicationFile,
@@ -126,7 +153,7 @@ async function listEntities<T>(
       warnings.push(`${subdir}/${file}: read error`)
       continue
     }
-    const parsed = schema.safeParse(data)
+    const parsed = schema.safeParse(coerceDates(data))
     if (parsed.success) {
       items.push({
         slug: file.replace(/\.md$/, ""),
@@ -154,7 +181,7 @@ async function getEntity<T>(
   try {
     const content = await fs.readFile(filePath, "utf-8")
     const { data, content: body } = matter(content)
-    const parsed = schema.safeParse(data)
+    const parsed = schema.safeParse(coerceDates(data))
     if (!parsed.success) return null
     return { slug, frontmatter: parsed.data, content: body.trim() }
   } catch {
@@ -262,7 +289,7 @@ export async function getProfile(): Promise<ProfileFile> {
   try {
     const content = await fs.readFile(filePath, "utf-8")
     const { data, content: body } = matter(content)
-    const parsed = ProfileFrontmatterSchema.safeParse(data)
+    const parsed = ProfileFrontmatterSchema.safeParse(coerceDates(data))
     return {
       frontmatter: parsed.success ? parsed.data : {},
       content: body.trim(),
@@ -518,7 +545,7 @@ export async function listThreads(): Promise<ThreadFile[]> {
     try {
       const raw = await fs.readFile(threadFilePath, "utf-8")
       const { data } = matter(raw)
-      const parsed = ThreadFrontmatterSchema.safeParse(data)
+      const parsed = ThreadFrontmatterSchema.safeParse(coerceDates(data))
       if (parsed.success) {
         threads.push({
           slug: entry.name,
@@ -557,7 +584,7 @@ export async function getThread(threadId: string): Promise<ThreadFile | null> {
     for (const file of messageFiles) {
       const msgRaw = await fs.readFile(path.join(threadDir, file), "utf-8")
       const { data: msgData, content: msgContent } = matter(msgRaw)
-      const msgParsed = MessageFrontmatterSchema.safeParse(msgData)
+      const msgParsed = MessageFrontmatterSchema.safeParse(coerceDates(msgData))
       if (msgParsed.success) {
         messages.push({
           filename: file,
