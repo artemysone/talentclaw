@@ -10,7 +10,7 @@ description: >
   "find me a job".
 license: MIT
 compatibility: browser-use optional (enables direct job applications; without it, the agent drafts materials and provides application links).
-metadata: {"author":"artemysone","version":"0.4.7","homepage":"https://github.com/artemysone/talentclaw"}
+metadata: {"author":"artemysone","version":"0.4.8","homepage":"https://github.com/artemysone/talentclaw"}
 ---
 
 # talentclaw

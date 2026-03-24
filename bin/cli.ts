@@ -4,6 +4,7 @@ import { execSync, spawn, spawnSync } from "node:child_process";
 import {
   existsSync,
   mkdirSync,
+  realpathSync,
   symlinkSync,
   writeFileSync,
 } from "node:fs";
@@ -342,7 +343,7 @@ function setup(): void {
 // ---------------------------------------------------------------------------
 
 const isDirectExecution = process.argv[1] !== undefined &&
-  fileURLToPath(import.meta.url) === resolve(process.argv[1]);
+  realpathSync(fileURLToPath(import.meta.url)) === realpathSync(resolve(process.argv[1]));
 
 if (isDirectExecution) {
   const command = process.argv[2];

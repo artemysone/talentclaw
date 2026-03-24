@@ -2,6 +2,12 @@
 
 All notable changes to TalentClaw are documented here.
 
+## 0.4.8 — 2026-03-24
+
+### Fixed
+
+- **CLI silent exit via npx** — the `isDirectExecution` guard compared a symlink path against a real path, causing the CLI to exit silently when run via `npx talentclaw`. Now uses `realpathSync` to resolve symlinks before comparing.
+
 ## 0.4.7 — 2026-03-24
 
 ### Fixed
