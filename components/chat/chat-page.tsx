@@ -179,64 +179,34 @@ function ActiveChatView({
 }) {
   const { messages, isStreaming, error } = useChatContext()
   const scrollRef = useRef<HTMLDivElement>(null)
-  const rafRef = useRef<number | null>(null)
-  const userScrolledUpRef = useRef(false)
-  const prevMessageCountRef = useRef(0)
-  const isProgrammaticScrollRef = useRef(false)
+  const prevScrollHeightRef = useRef(0)
 
-  // Track manual scroll — ignore programmatic scrolls from auto-scroll
+  // Scroll to bottom whenever messages change (new message sent/received)
   useEffect(() => {
     const el = scrollRef.current
     if (!el) return
-    function onScroll() {
-      if (isProgrammaticScrollRef.current) return
-      const atBottom = el!.scrollHeight - el!.scrollTop - el!.clientHeight < 100
-      userScrolledUpRef.current = !atBottom
-    }
-    el.addEventListener("scroll", onScroll, { passive: true })
-    return () => el.removeEventListener("scroll", onScroll)
-  }, [])
+    el.scrollTop = el.scrollHeight
+  }, [messages.length])
 
-  // Auto-scroll on new messages and DOM mutations (typewriter effect).
+  // During streaming, poll for height changes and auto-scroll
   useEffect(() => {
     const el = scrollRef.current
-    if (!el) return
+    if (!el || !isStreaming) return
 
-    // New messages arrived — reset the user-scrolled flag
-    const isNewMessage = messages.length > prevMessageCountRef.current
-    if (isNewMessage) {
-      userScrolledUpRef.current = false
-    }
-    prevMessageCountRef.current = messages.length
+    const interval = setInterval(() => {
+      const sh = el.scrollHeight
+      if (sh !== prevScrollHeightRef.current) {
+        prevScrollHeightRef.current = sh
+        // Only auto-scroll if user is near the bottom (hasn't scrolled up)
+        const distFromBottom = sh - el.scrollTop - el.clientHeight
+        if (distFromBottom < 300) {
+          el.scrollTop = sh
+        }
+      }
+    }, 100)
 
-    function doScroll() {
-      isProgrammaticScrollRef.current = true
-      el!.scrollTop = el!.scrollHeight
-      // Clear the flag after the scroll event fires
-      requestAnimationFrame(() => { isProgrammaticScrollRef.current = false })
-    }
-
-    function scheduleScroll() {
-      if (userScrolledUpRef.current) return
-      if (rafRef.current !== null) return
-      rafRef.current = requestAnimationFrame(() => {
-        rafRef.current = null
-        doScroll()
-      })
-    }
-
-    // Immediate scroll on new messages
-    if (isNewMessage) doScroll()
-    scheduleScroll()
-
-    const observer = new MutationObserver(scheduleScroll)
-    observer.observe(el, { childList: true, subtree: true, characterData: true })
-
-    return () => {
-      observer.disconnect()
-      if (rafRef.current !== null) cancelAnimationFrame(rafRef.current)
-    }
-  }, [messages])
+    return () => clearInterval(interval)
+  }, [isStreaming])
 
   return (
     <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
