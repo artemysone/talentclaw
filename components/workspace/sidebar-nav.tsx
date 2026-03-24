@@ -3,7 +3,7 @@
 import { useMemo, useCallback } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { Home, MessageCircle, Briefcase, KanbanSquare, User, X, SquarePen } from "lucide-react"
+import { Home, MessageCircle, KanbanSquare, User, X, SquarePen } from "lucide-react"
 import { useSidebar } from "./sidebar-wrapper"
 import { useChatContext } from "@/components/chat/chat-provider"
 import { CrabLogo } from "@/components/crab-logo"
@@ -12,7 +12,6 @@ import type { ConversationSummary } from "@/lib/agent/use-chat"
 
 interface SidebarNavProps {
   jobCount: number
-  activeCount: number
 }
 
 function groupByDay(items: ConversationSummary[]): { label: string; items: ConversationSummary[] }[] {
@@ -99,7 +98,6 @@ function SidebarConversations() {
 
 export function SidebarNav({
   jobCount,
-  activeCount,
 }: SidebarNavProps) {
   const pathname = usePathname()
   const { setOpen } = useSidebar()
@@ -118,16 +116,10 @@ export function SidebarNav({
       count: 0,
     },
     {
-      href: "/jobs",
-      label: "Jobs",
-      icon: <Briefcase className="w-4 h-4" />,
-      count: jobCount,
-    },
-    {
       href: "/pipeline",
       label: "Pipeline",
       icon: <KanbanSquare className="w-4 h-4" />,
-      count: activeCount,
+      count: jobCount,
     },
     {
       href: "/profile",

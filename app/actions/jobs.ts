@@ -25,7 +25,6 @@ export async function moveJobToStage(
       slug,
       summary: `Moved ${slug} to ${parsed.data}`,
     })
-    revalidatePath("/jobs")
     revalidatePath("/pipeline")
     return {}
   } catch (err) {
@@ -45,7 +44,6 @@ export async function saveJobToPipeline(
       slug,
       summary: `Saved ${slug} to pipeline`,
     })
-    revalidatePath("/jobs")
     revalidatePath("/pipeline")
     return {}
   } catch (err) {
@@ -76,7 +74,6 @@ export async function createJobAction(
       slug,
       summary: `Added ${parsed.data.title} at ${parsed.data.company}`,
     })
-    revalidatePath("/jobs")
     revalidatePath("/pipeline")
     return {}
   } catch (err) {
@@ -96,7 +93,6 @@ export async function deleteJobAction(
       slug,
       summary: `Deleted job ${slug}`,
     })
-    revalidatePath("/jobs")
     revalidatePath("/pipeline")
     return {}
   } catch (err) {

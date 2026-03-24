@@ -18,6 +18,7 @@ export interface KanbanCardData {
   remote?: string | null
   compensation?: string | null
   url?: string | null
+  tags?: string[]
 }
 
 interface KanbanCardProps {

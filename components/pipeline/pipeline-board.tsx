@@ -20,8 +20,9 @@ import {
 } from "@dnd-kit/sortable"
 import { PipelineCard } from "./pipeline-card"
 import type { KanbanCardData } from "@/components/kanban/card"
+import { SearchBar } from "@/components/query/search-bar"
 import { PIPELINE_DISPLAY_STAGES } from "@/lib/types"
-import { STAGE_LABELS, STAGE_HEX } from "@/lib/ui-utils"
+import { STAGE_LABELS, STAGE_HEX, pluralize } from "@/lib/ui-utils"
 import { moveJobToStage } from "@/app/actions"
 
 // ---------------------------------------------------------------------------
@@ -88,9 +89,12 @@ function StagePill({ stage, count, onClick }: PillProps) {
 interface ExpandedColumnProps {
   stage: string
   cards: KanbanCardData[]
+  searchQuery?: string
+  onSearchChange?: (value: string) => void
+  totalCount?: number
 }
 
-function ExpandedColumn({ stage, cards }: ExpandedColumnProps) {
+function ExpandedColumn({ stage, cards, searchQuery, onSearchChange, totalCount }: ExpandedColumnProps) {
   const { setNodeRef, isOver } = useDroppable({ id: stage })
   const cardIds = useMemo(() => cards.map((c) => c.id), [cards])
 
@@ -108,6 +112,21 @@ function ExpandedColumn({ stage, cards }: ExpandedColumnProps) {
         </span>
       </div>
 
+      {onSearchChange && (
+        <div className="mb-4">
+          <SearchBar
+            value={searchQuery ?? ""}
+            onChange={onSearchChange}
+            placeholder="Filter by title, company, or skill..."
+          />
+          {searchQuery && (
+            <p className="text-xs text-text-muted mt-2 text-center">
+              {cards.length} of {pluralize(totalCount ?? 0, "job")}
+            </p>
+          )}
+        </div>
+      )}
+
       {/* Stacked card list */}
       <SortableContext items={cardIds} strategy={verticalListSortingStrategy}>
         {cards.length > 0 ? (
@@ -115,6 +134,11 @@ function ExpandedColumn({ stage, cards }: ExpandedColumnProps) {
             {cards.map((card) => (
               <PipelineCard key={card.id} card={card} />
             ))}
+          </div>
+        ) : searchQuery ? (
+          <div className="flex flex-col items-center justify-center flex-1 text-center py-10">
+            <p className="text-sm text-text-secondary">No jobs match your search.</p>
+            <p className="text-xs text-text-muted mt-1">Try adjusting your search query.</p>
           </div>
         ) : (
           <div className="flex flex-col items-center justify-center flex-1 text-center py-10">
@@ -140,13 +164,25 @@ export function PipelineBoard({ initialData }: PipelineBoardProps) {
   const [columns, setColumns] =
     useState<Record<string, KanbanCardData[]>>(initialData)
   const [activeCard, setActiveCard] = useState<KanbanCardData | null>(null)
+  const [searchQuery, setSearchQuery] = useState("")
   const [expandedStage, setExpandedStage] = useState<string>(() => {
-    // Default to first stage with cards, or "applied"
+    // Default to first stage with cards, or "discovered"
     for (const stage of PIPELINE_DISPLAY_STAGES) {
       if ((initialData[stage] || []).length > 0) return stage
     }
-    return "applied"
+    return "discovered"
   })
+
+  const discovered = columns["discovered"] || []
+  const filteredDiscovered = useMemo(() => {
+    if (!searchQuery) return discovered
+    const q = searchQuery.toLowerCase()
+    return discovered.filter((card) =>
+      card.title.toLowerCase().includes(q) ||
+      (card.company || "").toLowerCase().includes(q) ||
+      (card.tags || []).some((t) => t.toLowerCase().includes(q))
+    )
+  }, [discovered, searchQuery])
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -255,7 +291,10 @@ export function PipelineBoard({ initialData }: PipelineBoardProps) {
             <ExpandedColumn
               key={stage}
               stage={stage}
-              cards={columns[stage] || []}
+              cards={stage === "discovered" ? filteredDiscovered : (columns[stage] || [])}
+              searchQuery={stage === "discovered" ? searchQuery : undefined}
+              onSearchChange={stage === "discovered" ? setSearchQuery : undefined}
+              totalCount={stage === "discovered" ? discovered.length : undefined}
             />
           ) : (
             <StagePill

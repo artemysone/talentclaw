@@ -30,10 +30,6 @@ export default async function WorkspaceLayout({
 
   const jobCount = jobs.length
 
-  const activeCount = jobs.filter((j) =>
-    ["applied", "interviewing", "offer"].includes(j.frontmatter.status)
-  ).length
-
   return (
     <SidebarProvider>
       <ChatProvider displayName={displayName}>
@@ -47,7 +43,6 @@ export default async function WorkspaceLayout({
             <SidebarShell>
               <Sidebar
                 jobCount={jobCount}
-                activeCount={activeCount}
               />
             </SidebarShell>
             <div className="flex-1 flex flex-col min-w-0">

@@ -54,10 +54,10 @@ export function JobDiscovery({ jobs }: JobDiscoveryProps) {
           )}
 
           <Link
-            href="/jobs"
+            href="/pipeline"
             className="block mt-4 text-xs text-accent hover:text-accent-hover transition-colors"
           >
-            Browse jobs &rarr;
+            View pipeline &rarr;
           </Link>
         </>
       ) : (

@@ -74,7 +74,7 @@ export function JobForm() {
       if (result.error) {
         setServerError(result.error)
       } else {
-        router.push("/jobs")
+        router.push("/pipeline")
       }
     })
   }

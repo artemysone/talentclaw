@@ -7,7 +7,6 @@ import { useSidebar } from "./sidebar-wrapper"
 const pageNames: Record<string, string> = {
   "/dashboard": "Career Hub",
   "/pipeline": "Pipeline",
-  "/jobs": "Jobs",
 }
 
 const hiddenTopBarRoutes = new Set([...Object.keys(pageNames), "/profile", "/chat"])

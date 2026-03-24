@@ -15,6 +15,7 @@ import {
 import type { KanbanCardData } from "@/components/kanban/card"
 import { matchScoreClass, isSafeUrl } from "@/lib/ui-utils"
 import { MatchTooltip } from "@/components/jobs/match-tooltip"
+import { DeleteJobButton } from "@/components/jobs/delete-job-button"
 
 interface PipelineCardProps {
   card: KanbanCardData
@@ -48,24 +49,30 @@ export function PipelineCard({ card }: PipelineCardProps) {
       {...listeners}
       className="bg-surface-raised rounded-[10px] p-[18px_20px] border border-border-subtle shadow-sm hover:border-border-default hover:shadow-md cursor-grab active:cursor-grabbing transition-colors group relative"
     >
-      {/* Heart favorite — bottom right */}
-      <button
-        type="button"
-        onClick={(e) => {
-          e.stopPropagation()
-          setFavorited((prev) => !prev)
-        }}
-        className={`absolute bottom-3.5 right-4 transition-all ${
-          favorited
-            ? "text-rose-500"
-            : "text-text-muted hover:text-rose-500 hover:scale-110"
-        }`}
+      {/* Action buttons — bottom right, isolated from drag sensor */}
+      <div
+        className="absolute bottom-3 right-3.5 flex items-center gap-1"
+        onPointerDown={(e) => e.stopPropagation()}
       >
-        <Heart
-          className="w-3.5 h-3.5"
-          fill={favorited ? "currentColor" : "none"}
-        />
-      </button>
+        <DeleteJobButton slug={card.id} jobTitle={card.title} />
+        <button
+          type="button"
+          onClick={(e) => {
+            e.stopPropagation()
+            setFavorited((prev) => !prev)
+          }}
+          className={`p-1.5 rounded-lg transition-all ${
+            favorited
+              ? "text-rose-500"
+              : "text-text-muted hover:text-rose-500 hover:scale-110"
+          }`}
+        >
+          <Heart
+            className="w-3.5 h-3.5"
+            fill={favorited ? "currentColor" : "none"}
+          />
+        </button>
+      </div>
 
       {/* Row 1: Title + match score */}
       <div className="flex items-center gap-2.5 mb-0.5">
