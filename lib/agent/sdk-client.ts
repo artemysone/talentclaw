@@ -6,7 +6,6 @@ import fs from "node:fs/promises"
 import { homedir } from "node:os"
 import path from "node:path"
 import { fileURLToPath } from "node:url"
-import { query } from "@anthropic-ai/claude-agent-sdk"
 import { getAgentConfig } from "./config"
 import { mapSdkMessage } from "./event-mapper"
 import type { SseEvent } from "./types"
@@ -57,6 +56,7 @@ export async function runAgent(
     try {
       const claudePath = process.env.TALENTCLAW_CLAUDE_PATH || undefined
 
+      const { query } = await import("@anthropic-ai/claude-agent-sdk")
       const conversation = query({
         prompt: message,
         options: {
