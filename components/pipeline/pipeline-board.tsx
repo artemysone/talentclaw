@@ -4,14 +4,15 @@ import { useState, useCallback, useMemo, useId } from "react"
 import {
   DndContext,
   DragOverlay,
-  closestCorners,
+  pointerWithin,
+  closestCenter,
   PointerSensor,
   useSensor,
   useSensors,
   useDroppable,
   type DragStartEvent,
   type DragEndEvent,
-  type DragOverEvent,
+  type CollisionDetection,
 } from "@dnd-kit/core"
 import {
   SortableContext,
@@ -19,7 +20,7 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable"
 import Link from "next/link"
-import { Plus } from "lucide-react"
+import { Plus, ChevronDown, ChevronUp } from "lucide-react"
 import { PipelineCard } from "./pipeline-card"
 import type { KanbanCardData } from "@/components/kanban/card"
 import { SearchBar } from "@/components/query/search-bar"
@@ -27,6 +28,18 @@ import { PIPELINE_DISPLAY_STAGES } from "@/lib/types"
 import type { PipelineStage } from "@/lib/types"
 import { STAGE_LABELS, STAGE_HEX, pluralize } from "@/lib/ui-utils"
 import { moveJobToStage } from "@/app/actions"
+
+// ---------------------------------------------------------------------------
+// Collision detection: use pointer position (not dragged rect corners) so
+// wide cards can reach narrow pill columns. Falls back to closestCenter
+// when the pointer is in a gap between droppables.
+// ---------------------------------------------------------------------------
+
+const pointerThenCenter: CollisionDetection = (args) => {
+  const pointerHits = pointerWithin(args)
+  if (pointerHits.length > 0) return pointerHits
+  return closestCenter(args)
+}
 
 // ---------------------------------------------------------------------------
 // Props
@@ -103,10 +116,15 @@ interface ExpandedColumnProps {
   onCardDeleted?: (cardId: string) => void
 }
 
+const VISIBLE_LIMIT = 6
+
 function ExpandedColumn({ stage, cards, searchQuery, onSearchChange, totalCount, onCardDeleted }: ExpandedColumnProps) {
   const { setNodeRef, isOver } = useDroppable({ id: stage })
   const cardIds = useMemo(() => cards.map((c) => c.id), [cards])
   const hex = STAGE_HEX[stage] || "#64748b"
+  const [expanded, setExpanded] = useState(false)
+  const visibleCards = expanded ? cards : cards.slice(0, VISIBLE_LIMIT)
+  const hasMore = cards.length > VISIBLE_LIMIT
 
   return (
     <div
@@ -151,9 +169,22 @@ function ExpandedColumn({ stage, cards, searchQuery, onSearchChange, totalCount,
       <SortableContext items={cardIds} strategy={verticalListSortingStrategy}>
         {cards.length > 0 ? (
           <div className="flex flex-col gap-2">
-            {cards.map((card) => (
+            {visibleCards.map((card) => (
               <PipelineCard key={card.id} card={card} stage={stage} onDeleted={onCardDeleted} />
             ))}
+            {hasMore && (
+              <button
+                type="button"
+                onClick={() => setExpanded((prev) => !prev)}
+                className="flex items-center justify-center gap-1.5 py-2 text-xs text-text-muted hover:text-text-secondary transition-colors cursor-pointer"
+              >
+                {expanded ? (
+                  <>Show less <ChevronUp className="w-3.5 h-3.5" /></>
+                ) : (
+                  <>{cards.length - VISIBLE_LIMIT} more <ChevronDown className="w-3.5 h-3.5" /></>
+                )}
+              </button>
+            )}
           </div>
         ) : searchQuery ? (
           <div className="flex flex-col items-center justify-center flex-1 text-center py-10">
@@ -184,6 +215,7 @@ export function PipelineBoard({ initialData }: PipelineBoardProps) {
   const [columns, setColumns] =
     useState<Record<string, KanbanCardData[]>>(initialData)
   const [activeCard, setActiveCard] = useState<KanbanCardData | null>(null)
+  const [dragOriginStage, setDragOriginStage] = useState<string | null>(null)
   const [searchQuery, setSearchQuery] = useState("")
   const [expandedStage, setExpandedStage] = useState<string>(() => {
     // Default to first stage with cards, or "discovered"
@@ -237,69 +269,43 @@ export function PipelineBoard({ initialData }: PipelineBoardProps) {
     const { active } = event
     const stage = findColumn(active.id as string)
     if (!stage) return
+    setDragOriginStage(stage)
     const card = columns[stage]?.find((c) => c.id === active.id)
     if (card) setActiveCard(card)
   }
 
-  const handleDragOver = (event: DragOverEvent) => {
-    const { active, over } = event
-    if (!over) return
-
-    const activeStage = findColumn(active.id as string)
-    const overStage = findColumn(over.id as string)
-
-    if (!activeStage || !overStage || activeStage === overStage) return
-
-    setColumns((prev) => {
-      const activeCards = [...(prev[activeStage] || [])]
-      const overCards = [...(prev[overStage] || [])]
-      const activeIndex = activeCards.findIndex((c) => c.id === active.id)
-
-      if (activeIndex === -1) return prev
-
-      const [movedCard] = activeCards.splice(activeIndex, 1)
-
-      const overIndex = overCards.findIndex((c) => c.id === over.id)
-      if (overIndex >= 0) {
-        overCards.splice(overIndex, 0, movedCard)
-      } else {
-        overCards.push(movedCard)
-      }
-
-      return {
-        ...prev,
-        [activeStage]: activeCards,
-        [overStage]: overCards,
-      }
-    })
-  }
-
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event
+    const originStage = dragOriginStage
     setActiveCard(null)
+    setDragOriginStage(null)
 
-    if (!over) return
+    if (!over || !originStage) return
 
-    const activeStage = findColumn(active.id as string)
     const overStage = findColumn(over.id as string)
+    if (!overStage) return
 
-    if (!activeStage || !overStage) return
-
-    if (activeStage === overStage) {
+    if (originStage === overStage) {
+      // Reorder within the same column
       setColumns((prev) => {
-        const cards = [...(prev[activeStage] || [])]
+        const cards = [...(prev[originStage] || [])]
         const oldIndex = cards.findIndex((c) => c.id === active.id)
         const newIndex = cards.findIndex((c) => c.id === over.id)
         if (oldIndex === -1 || newIndex === -1) return prev
+        return { ...prev, [originStage]: arrayMove(cards, oldIndex, newIndex) }
+      })
+    } else {
+      // Move card to new column
+      setColumns((prev) => {
+        const sourceCards = (prev[originStage] || []).filter((c) => c.id !== active.id)
+        const card = (prev[originStage] || []).find((c) => c.id === active.id)
+        if (!card) return prev
         return {
           ...prev,
-          [activeStage]: arrayMove(cards, oldIndex, newIndex),
+          [originStage]: sourceCards,
+          [overStage]: [...(prev[overStage] || []), card],
         }
       })
-    }
-
-    // Persist stage change to filesystem
-    if (activeStage !== overStage) {
       moveJobToStage(active.id as string, overStage).catch((err) =>
         console.error("Failed to persist stage change:", err)
       )
@@ -310,9 +316,8 @@ export function PipelineBoard({ initialData }: PipelineBoardProps) {
     <DndContext
       id={dndId}
       sensors={sensors}
-      collisionDetection={closestCorners}
+      collisionDetection={pointerThenCenter}
       onDragStart={handleDragStart}
-      onDragOver={handleDragOver}
       onDragEnd={handleDragEnd}
     >
       <div className="flex gap-7 items-stretch min-h-[600px]">
