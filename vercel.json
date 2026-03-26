@@ -1,3 +1,3 @@
 {
-  "installCommand": "bun install --no-optional"
+  "installCommand": "bun install --no-optional && rm -rf node_modules/electron node_modules/app-builder-bin node_modules/electron-builder node_modules/7zip-bin node_modules/@anthropic-ai/claude-agent-sdk"
 }
