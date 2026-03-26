@@ -1,6 +1,6 @@
 {
   "name": "talentclaw",
-  "version": "0.4.10",
+  "version": "0.4.11",
   "description": "talentclaw — your AI career agent. Local-first career hub + platform-agnostic agent skills.",
   "author": "Jeffrey Blue (https://github.com/artemysone)",
   "license": "MIT",
@@ -56,7 +56,7 @@
     "electron-updater": "^6.6.2",
     "gray-matter": "^4.0.3",
     "lucide-react": "^0.511.0",
-    "next": "^15.3.3",
+    "next": "^16.2.1",
     "postcss": "^8.5.4",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",

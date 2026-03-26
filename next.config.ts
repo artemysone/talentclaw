@@ -3,6 +3,7 @@ import type { NextConfig } from "next"
 const nextConfig: NextConfig = {
   output: "standalone",
   serverExternalPackages: ["electron", "electron-updater", "@electron/notarize", "electron-builder", "mammoth", "pdfkit"],
+  turbopack: {},
   webpack: (config) => {
     // Prevent webpack from trying to bundle/hash Electron native modules
     config.externals = [
