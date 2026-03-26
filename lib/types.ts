@@ -1,5 +1,6 @@
 import { z } from "zod"
-import { AtsPlatformSchema } from "./ats/types"
+
+const AtsPlatformSchema = z.enum(["lever", "greenhouse", "ashby", "unknown"])
 
 // All valid pipeline stages (includes "saved" for backward compat with existing data)
 export const PIPELINE_STAGES = [
@@ -85,7 +86,7 @@ export const ApplicationFrontmatterSchema = z.object({
   tailored_content: z.string().optional(),
   ats_platform: AtsPlatformSchema.optional(),
   ats_application_id: z.string().optional(),
-  submission_method: z.enum(["ats_api", "apply_kit", "manual"]).optional(),
+  submission_method: z.enum(["ats_api", "browser_fill", "manual"]).optional(),
 })
 
 export type ApplicationFrontmatter = z.infer<
