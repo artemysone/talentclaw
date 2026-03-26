@@ -4,7 +4,6 @@
 // ANTHROPIC_API_KEY is optional; the SDK inherits Claude Code's auth.
 
 import type { AgentConfig } from "./types"
-import { which } from "../deps"
 
 const DEFAULT_MODEL = "claude-opus-4-6"
 
@@ -21,7 +20,20 @@ let claudeAvailable: boolean | null = null
 export function isAgentConfigured(): boolean {
   if (claudeAvailable !== null) return claudeAvailable
 
-  claudeAvailable = which("claude")
+  // On Vercel, the agent is never available (requires local Claude Code)
+  if (process.env.VERCEL) {
+    claudeAvailable = false
+    return false
+  }
+
+  // Lazy require to avoid NFT tracing the entire project via child_process
+  try {
+    const { execFileSync } = require("node:child_process")
+    execFileSync("which", ["claude"], { stdio: "ignore" })
+    claudeAvailable = true
+  } catch {
+    claudeAvailable = false
+  }
 
   return claudeAvailable
 }

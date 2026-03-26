@@ -1,0 +1,17 @@
+release/
+desktop/
+dist-electron/
+coverage/
+persona/
+scripts/
+docs/
+*.dmg
+*.app
+*.zip.blockmap
+*.dmg.blockmap
+*.test.ts
+*.test.tsx
+__tests__/
+.claude/
+.github/
+release_bak/
