@@ -2,7 +2,7 @@ import type { NextConfig } from "next"
 
 const nextConfig: NextConfig = {
   output: "standalone",
-  serverExternalPackages: ["electron", "electron-updater", "@electron/notarize", "electron-builder", "mammoth", "pdfkit"],
+  serverExternalPackages: ["electron", "electron-updater", "@electron/notarize", "electron-builder", "mammoth", "pdfkit", "@anthropic-ai/claude-agent-sdk"],
   turbopack: {},
   webpack: (config) => {
     // Prevent webpack from trying to bundle/hash Electron native modules
