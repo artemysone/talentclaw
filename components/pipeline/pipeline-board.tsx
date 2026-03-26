@@ -18,6 +18,8 @@ import {
   arrayMove,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable"
+import Link from "next/link"
+import { Plus } from "lucide-react"
 import { PipelineCard } from "./pipeline-card"
 import type { KanbanCardData } from "@/components/kanban/card"
 import { SearchBar } from "@/components/query/search-bar"
@@ -107,10 +109,19 @@ function ExpandedColumn({ stage, cards, searchQuery, onSearchChange, totalCount 
       }`}
     >
       {/* Centered stage label */}
-      <div className="text-center mb-5 pt-1">
+      <div className="flex items-center justify-center gap-2 mb-5 pt-1">
         <span className="text-[13px] font-bold uppercase tracking-wider text-text-secondary">
           {(STAGE_LABELS[stage] || stage).toUpperCase()}
         </span>
+        {stage === "discovered" && (
+          <Link
+            href="/pipeline/new"
+            className="w-6 h-6 rounded-lg bg-accent/10 text-accent hover:bg-accent hover:text-white flex items-center justify-center transition-colors"
+            title="New Job"
+          >
+            <Plus className="w-3.5 h-3.5" />
+          </Link>
+        )}
       </div>
 
       {onSearchChange && (

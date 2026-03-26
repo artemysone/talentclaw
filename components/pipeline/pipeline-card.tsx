@@ -11,7 +11,6 @@ import {
   DollarSign,
   ExternalLink,
   Heart,
-  Send,
 } from "lucide-react"
 import type { KanbanCardData } from "@/components/kanban/card"
 import { matchScoreClass, isSafeUrl } from "@/lib/ui-utils"
@@ -57,20 +56,6 @@ export function PipelineCard({ card, stage }: PipelineCardProps) {
         className="absolute bottom-3 right-3.5 flex items-center gap-1"
         onPointerDown={(e) => e.stopPropagation()}
       >
-        {(stage === "discovered" || stage === "saved") && card.url && (
-          <button
-            type="button"
-            onClick={(e) => {
-              e.stopPropagation()
-              window.open(card.url!, "_blank")
-            }}
-            className="p-1.5 rounded-lg text-text-muted hover:text-accent hover:scale-110 transition-all cursor-pointer"
-            title="Apply"
-          >
-            <Send className="w-3.5 h-3.5" />
-          </button>
-        )}
-        <DeleteJobButton slug={card.id} jobTitle={card.title} />
         <button
           type="button"
           onClick={(e) => {
@@ -88,6 +73,7 @@ export function PipelineCard({ card, stage }: PipelineCardProps) {
             fill={favorited ? "currentColor" : "none"}
           />
         </button>
+        <DeleteJobButton slug={card.id} jobTitle={card.title} />
       </div>
 
       {/* Row 1: Title + match score */}
@@ -158,7 +144,7 @@ export function PipelineCard({ card, stage }: PipelineCardProps) {
             className="inline-flex items-center gap-1 text-accent hover:text-accent-hover transition-colors"
             onClick={(e) => e.stopPropagation()}
           >
-            View posting
+            Apply
             <ExternalLink className="w-[11px] h-[11px]" />
           </a>
         )}

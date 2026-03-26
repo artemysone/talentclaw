@@ -1,5 +1,3 @@
-import Link from "next/link"
-import { Plus } from "lucide-react"
 import { PipelineBoard } from "@/components/pipeline/pipeline-board"
 import { PIPELINE_DISPLAY_STAGES } from "@/lib/types"
 import { listJobs, getProfile } from "@/lib/fs-data"
@@ -43,22 +41,7 @@ export default async function PipelinePage() {
   }
 
   return (
-    <div className="w-full max-w-[1080px] mx-auto px-8 py-8">
-      <div className="flex items-center justify-between mb-8">
-        <div>
-          <h1 className="font-prose text-2xl text-text-primary">Pipeline</h1>
-          <p className="text-sm text-text-secondary mt-1">
-            Track your opportunities from discovery to offer.
-          </p>
-        </div>
-        <Link
-          href="/pipeline/new"
-          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-accent text-white text-sm font-medium hover:bg-accent-hover transition-colors shrink-0"
-        >
-          <Plus className="w-4 h-4" />
-          New Job
-        </Link>
-      </div>
+    <div className="w-full max-w-[1080px] mx-auto px-8 pt-14 pb-8">
       {jobs.length === 0 ? (
         <div className="text-center py-24">
           <p className="text-text-secondary text-sm">
