@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server"
 import { getConversation, deleteConversation } from "@/lib/fs-data"
+import { requireLocalMutation } from "@/lib/api-auth"
 
 export async function GET(_req: Request, { params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
@@ -9,6 +10,9 @@ export async function GET(_req: Request, { params }: { params: Promise<{ slug: s
 }
 
 export async function DELETE(_req: Request, { params }: { params: Promise<{ slug: string }> }) {
+  const forbidden = requireLocalMutation(_req)
+  if (forbidden) return forbidden
+
   const { slug } = await params
   await deleteConversation(slug)
   return NextResponse.json({ ok: true })

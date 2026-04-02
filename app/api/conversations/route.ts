@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server"
 import { listConversations, saveConversation } from "@/lib/fs-data"
+import { requireLocalMutation } from "@/lib/api-auth"
 
 export async function GET() {
   try {
@@ -12,9 +13,18 @@ export async function GET() {
 }
 
 export async function POST(req: Request) {
-  const body = await req.json()
+  const forbidden = requireLocalMutation(req)
+  if (forbidden) return forbidden
+
+  let body: { slug?: unknown; title?: unknown; messages?: unknown; sessionId?: unknown }
+  try {
+    body = await req.json()
+  } catch {
+    return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 })
+  }
+
   const { slug, title, messages, sessionId } = body
-  if (!slug || !title || !Array.isArray(messages)) {
+  if (typeof slug !== "string" || typeof title !== "string" || !Array.isArray(messages)) {
     return NextResponse.json({ error: "Missing slug, title, or messages" }, { status: 400 })
   }
   await saveConversation(slug, title, messages, sessionId as string | undefined)

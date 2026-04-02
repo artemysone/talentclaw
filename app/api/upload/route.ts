@@ -2,12 +2,16 @@ export const runtime = "nodejs"
 
 import fs from "node:fs/promises"
 import path from "node:path"
+import { requireLocalMutation } from "@/lib/api-auth"
 import { getDataDir, saveBaseResume } from "@/lib/fs-data"
 
 const MAX_SIZE = 10 * 1024 * 1024 // 10 MB
 const ALLOWED_EXTENSIONS = new Set([".pdf", ".docx", ".doc", ".txt"])
 
 export async function POST(request: Request) {
+  const forbidden = requireLocalMutation(request)
+  if (forbidden) return forbidden
+
   try {
     const formData = await request.formData()
     const file = formData.get("file")

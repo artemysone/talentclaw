@@ -8,7 +8,6 @@ import { createServer } from "net";
 import { spawn, type ChildProcess } from "child_process";
 import { join } from "path";
 import { existsSync, readFileSync, writeFileSync } from "fs";
-import { randomBytes } from "crypto";
 import { checkClaudeBinary, downloadClaudeBinary, ensureClaudeAuth } from "./first-run";
 import { initAutoUpdater, checkForUpdatesManual, getUpdateState, quitAndInstall, teardownAutoUpdater } from "./auto-updater";
 import { isServerReady } from "../lib/server-constants";
@@ -92,7 +91,6 @@ function saveWindowState(win: BrowserWindow): void {
 let mainWindow: BrowserWindow | null = null;
 let serverProcess: ChildProcess | null = null;
 let serverPort: number = 0;
-let authToken: string = "";
 let isQuitting = false;
 let splashShownAt = 0;
 let restartAttempt = 0;
@@ -191,7 +189,6 @@ function startBackendServer(): Promise<void> {
       ...process.env as Record<string, string>,
       PORT: String(serverPort),
       HOSTNAME: "127.0.0.1",
-      TALENTCLAW_AUTH_TOKEN: authToken,
     };
     if (!useSystemNode) {
       spawnEnv.ELECTRON_RUN_AS_NODE = "1";
@@ -546,7 +543,6 @@ async function ensureClaudeDeps(): Promise<boolean> {
 
 function registerIpcHandlers(): void {
   ipcMain.handle("get-server-url", () => getAppUrl());
-  ipcMain.handle("get-auth-token", () => authToken);
 
   // Auto-updater IPC
   ipcMain.handle("check-for-updates", () => checkForUpdatesManual());
@@ -718,9 +714,6 @@ app.whenReady().then(async () => {
       storages: ["cachestorage", "serviceworkers"],
     });
   }
-
-  // Generate auth token for server-client isolation
-  authToken = randomBytes(24).toString("hex");
 
   // Build the macOS application menu
   buildAppMenu();

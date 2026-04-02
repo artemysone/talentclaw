@@ -1,6 +1,5 @@
 // Core agent wrapper around the Claude Agent SDK.
-// The SDK spawns a Claude Code process that uses whatever auth is configured —
-// subscription (Pro/Max via `claude login`) or API key (ANTHROPIC_API_KEY).
+// The SDK spawns a Claude Code process that uses whatever auth Claude Code has configured.
 
 import fs from "node:fs/promises"
 import { homedir } from "node:os"
@@ -11,6 +10,18 @@ import { mapSdkMessage } from "./event-mapper"
 import type { SseEvent } from "./types"
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
+
+type ClaudeSdkModule = {
+  query: (input: {
+    prompt: string
+    options: Record<string, unknown>
+  }) => AsyncIterable<ClaudeSdkMessage>
+}
+
+type ClaudeSdkMessage = {
+  session_id?: string
+  [key: string]: unknown
+}
 
 // Cache the system prompt across runs (skip cache in dev for prompt iteration)
 let cachedSystemPrompt: string | null = null
@@ -32,6 +43,20 @@ async function loadSystemPrompt(): Promise<string> {
 
   cachedSystemPrompt = parts.join("\n\n---\n\n")
   return cachedSystemPrompt
+}
+
+async function loadClaudeSdk(): Promise<ClaudeSdkModule> {
+  try {
+    const runtimeImport = new Function("specifier", "return import(specifier)") as (
+      specifier: string,
+    ) => Promise<ClaudeSdkModule>
+    return await runtimeImport("@anthropic-ai/claude-agent-sdk")
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error)
+    throw new Error(
+      `Claude Agent SDK is not installed. Install optional dependencies locally to enable agent chat. (${message})`,
+    )
+  }
 }
 
 /**
@@ -56,8 +81,7 @@ export async function runAgent(
     try {
       const claudePath = process.env.TALENTCLAW_CLAUDE_PATH || undefined
 
-      // @ts-ignore — SDK is an optional dependency, only available locally
-      const { query } = await import("@anthropic-ai/claude-agent-sdk")
+      const { query } = await loadClaudeSdk()
       const conversation = query({
         prompt: message,
         options: {
@@ -83,12 +107,12 @@ export async function runAgent(
         if (abortController.signal.aborted) break
 
         // Capture the SDK session ID from the first message that carries it
-        if (!emittedSdkSession && "session_id" in msg && (msg as { session_id?: string }).session_id) {
-          onEvent({ type: "sdk_session", sdkSessionId: (msg as { session_id: string }).session_id })
+        if (!emittedSdkSession && typeof msg.session_id === "string" && msg.session_id.length > 0) {
+          onEvent({ type: "sdk_session", sdkSessionId: msg.session_id })
           emittedSdkSession = true
         }
 
-        const events = mapSdkMessage(msg)
+        const events = mapSdkMessage(msg as Parameters<typeof mapSdkMessage>[0])
         for (const event of events) {
           if (event.type === "complete" || event.type === "error") {
             gotResult = true

@@ -9,11 +9,12 @@ export default defineConfig({
   },
   test: {
     include: ["**/__tests__/**/*.test.ts", "**/*.test.ts"],
-    exclude: ["**/node_modules/**", "**/.claude/worktrees/**", "**/.claude/skills/**"],
+    exclude: ["**/node_modules/**", "**/.next/**", "**/dist/**", "**/dist-electron/**", "**/.claude/worktrees/**", "**/.claude/skills/**"],
     coverage: {
       provider: "v8",
-      include: ["lib/**", "app/actions/**"],
-      exclude: ["**/__tests__/**", "lib/test-helpers.ts"],
+      reporter: ["text", "html"],
+      include: ["lib/**", "app/actions/**", "app/api/**"],
+      exclude: ["**/*.test.ts", "**/__tests__/**", "**/.next/**", "**/dist/**", "**/dist-electron/**", "lib/test-helpers.ts"],
     },
   },
 })

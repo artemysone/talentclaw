@@ -1,15 +1,11 @@
 // Agent SDK configuration.
 // The Agent SDK spawns a Claude Code process, which uses whatever auth
-// Claude Code has configured — subscription (Pro/Max), API key, or org.
-// ANTHROPIC_API_KEY is optional; the SDK inherits Claude Code's auth.
-
-import type { AgentConfig } from "./types"
+// Claude Code has configured.
 
 const DEFAULT_MODEL = "claude-opus-4-6"
 
-export function getAgentConfig(): AgentConfig {
+export function getAgentConfig(): { model: string } {
   return {
-    apiKey: process.env.ANTHROPIC_API_KEY,
     model: process.env.TALENTCLAW_MODEL ?? DEFAULT_MODEL,
   }
 }

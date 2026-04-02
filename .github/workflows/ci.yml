@@ -11,28 +11,8 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  rust:
-    name: Rust (build + test)
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: dtolnay/rust-toolchain@stable
-
-      - uses: Swatinem/rust-cache@v2
-        with:
-          workspaces: cli -> target
-
-      - name: Run tests
-        working-directory: cli
-        run: cargo test
-
-      - name: Build release binary
-        working-directory: cli
-        run: cargo build --release
-
-  nextjs:
-    name: Next.js (build + test)
+  web:
+    name: Web (test coverage + build)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -40,13 +20,14 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: npm
+
+      - uses: oven-sh/setup-bun@v2
 
       - name: Install dependencies
-        run: npm install
+        run: bun install --frozen-lockfile
+
+      - name: Run tests with coverage
+        run: bun run test --coverage
 
       - name: Build Next.js
-        run: npm run build
-
-      - name: Run tests
-        run: npm test
+        run: bun run build

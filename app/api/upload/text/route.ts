@@ -1,8 +1,12 @@
 import { saveBaseResume } from "@/lib/fs-data"
+import { requireLocalMutation } from "@/lib/api-auth"
 
 export const runtime = "nodejs"
 
 export async function POST(request: Request) {
+  const forbidden = requireLocalMutation(request)
+  if (forbidden) return forbidden
+
   let body: { text?: unknown }
   try {
     body = await request.json()

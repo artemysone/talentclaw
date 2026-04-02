@@ -1,5 +1,5 @@
 export { isAgentConfigured } from "./config"
-export { startRun, getActiveRun, subscribeToRun, DuplicateRunError } from "./active-runs"
+export { startRun, getActiveRun, subscribeToRun, DuplicateRunError, getTrustedResumeSessionId } from "./active-runs"
 export { buildSseResponse } from "./sse-stream"
 export type {
   ChatMessage,
@@ -7,5 +7,4 @@ export type {
   SseEvent,
   RunStatus,
   ActiveRunInfo,
-  AgentConfig,
 } from "./types"

@@ -17,6 +17,7 @@ export class DuplicateRunError extends Error {
 
 const RUN_CLEANUP_DELAY = 15 * 60 * 1000 // 15 minutes after completion
 const MAX_EVENT_BUFFER = 200
+const trustedResumeSessions = new Map<string, string>()
 
 type ActiveRun = {
   sessionId: string
@@ -120,6 +121,9 @@ export async function startRun(sessionId: string, message: string, resumeSession
     subscribers: new Set(),
   }
   runs.set(sessionId, run)
+  if (resumeSessionId) {
+    trustedResumeSessions.set(sessionId, resumeSessionId)
+  }
 
   // Start the agent
   try {
@@ -128,6 +132,10 @@ export async function startRun(sessionId: string, message: string, resumeSession
       { sessionId, resumeSessionId },
       (event: SseEvent) => {
         if (run.status !== "running") return
+
+        if (event.type === "sdk_session") {
+          trustedResumeSessions.set(sessionId, event.sdkSessionId)
+        }
 
         if (event.type === "complete") {
           finishRun(run, "complete")
@@ -169,6 +177,10 @@ export function getActiveRun(sessionId: string): ActiveRunInfo | null {
     eventCount: run.eventBuffer.length,
     error: run.error,
   }
+}
+
+export function getTrustedResumeSessionId(sessionId: string): string | null {
+  return trustedResumeSessions.get(sessionId) ?? null
 }
 
 /**

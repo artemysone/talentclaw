@@ -2,8 +2,13 @@ export const runtime = "nodejs"
 
 import crypto from "node:crypto"
 import { startRun, isAgentConfigured, DuplicateRunError, buildSseResponse } from "@/lib/agent"
+import { requireLocalMutation } from "@/lib/api-auth"
+import { resolveTrustedResumeSession } from "@/lib/agent-security"
 
 export async function POST(req: Request) {
+  const forbidden = requireLocalMutation(req)
+  if (forbidden) return forbidden
+
   let body: { message?: unknown; sessionId?: unknown; resumeSessionId?: unknown }
   try {
     body = await req.json()
@@ -23,14 +28,15 @@ export async function POST(req: Request) {
 
   // Check agent availability before attempting the run
   if (!isAgentConfigured()) {
-    return Response.json({ error: "Agent is not configured (ANTHROPIC_API_KEY missing)" }, { status: 503 })
+    return Response.json({ error: "Agent is not configured" }, { status: 503 })
   }
 
   // Start the agent run
   try {
-    const resume = typeof resumeSessionId === "string" && resumeSessionId.length > 0
-      ? resumeSessionId
-      : undefined
+    const resume = await resolveTrustedResumeSession(sessionId, resumeSessionId)
+    if (typeof resumeSessionId === "string" && resumeSessionId.length > 0 && !resume) {
+      return Response.json({ error: "resumeSessionId must come from a local TalentClaw session" }, { status: 400 })
+    }
     await startRun(sessionId, message.trim(), resume)
   } catch (err) {
     if (err instanceof DuplicateRunError) {

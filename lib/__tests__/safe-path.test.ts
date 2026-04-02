@@ -4,7 +4,7 @@ import {
   cleanupTempDataDir,
   writeMockJob,
 } from "@/lib/test-helpers"
-import { getJob, deleteJob, createJob } from "@/lib/fs-data"
+import { getJob, deleteJob, createJob, getConversation, saveConversation, deleteConversation } from "@/lib/fs-data"
 
 /**
  * Tests for safePath() validation — exercised indirectly through the public
@@ -83,5 +83,19 @@ describe("safePath — path traversal prevention", () => {
 
   it("rejects traversal in deleteJob", async () => {
     await expect(deleteJob("../../../important-file")).rejects.toThrow("Invalid slug")
+  })
+
+  it("rejects traversal in saveConversation", async () => {
+    await expect(
+      saveConversation("../secrets", "Test", [])
+    ).rejects.toThrow("Invalid conversation slug")
+  })
+
+  it("rejects traversal in getConversation", async () => {
+    await expect(getConversation("../../notes")).rejects.toThrow("Invalid conversation slug")
+  })
+
+  it("rejects traversal in deleteConversation", async () => {
+    await expect(deleteConversation("..\\draft")).rejects.toThrow("Invalid conversation slug")
   })
 })

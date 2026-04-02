@@ -206,25 +206,22 @@ describe("config", () => {
     vi.unstubAllEnvs()
   })
 
-  it("isAgentConfigured returns true (SDK uses Claude Code subscription auth)", async () => {
+  it("isAgentConfigured returns true when Claude Code is available", async () => {
     const { isAgentConfigured } = await import("../agent/config")
     expect(isAgentConfigured()).toBe(true)
   })
 
-  it("getAgentConfig returns config with API key when set", async () => {
-    vi.stubEnv("ANTHROPIC_API_KEY", "sk-test-123")
+  it("getAgentConfig returns the default model", async () => {
     const { getAgentConfig } = await import("../agent/config")
     const config = getAgentConfig()
-    expect(config.apiKey).toBe("sk-test-123")
     expect(config.model).toBe("claude-opus-4-6")
   })
 
-  it("getAgentConfig returns config without API key (uses subscription auth)", async () => {
-    vi.stubEnv("ANTHROPIC_API_KEY", "")
+  it("getAgentConfig allows overriding the model", async () => {
+    vi.stubEnv("TALENTCLAW_MODEL", "claude-sonnet-4")
     const { getAgentConfig } = await import("../agent/config")
     const config = getAgentConfig()
-    expect(config.apiKey).toBeFalsy()
-    expect(config.model).toBe("claude-opus-4-6")
+    expect(config.model).toBe("claude-sonnet-4")
   })
 })
 

@@ -40,10 +40,3 @@ export type ActiveRunInfo = {
   error?: string
 }
 
-// --- Agent config ---
-
-export type AgentConfig = {
-  apiKey?: string
-  model: string
-}
-

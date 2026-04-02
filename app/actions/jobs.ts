@@ -7,6 +7,7 @@ import {
   deleteJob,
   appendActivity,
 } from "@/lib/fs-data"
+import { slugify } from "@/lib/slugify"
 import { PipelineStageSchema, JobFrontmatterSchema } from "@/lib/types"
 
 export async function moveJobToStage(
@@ -61,11 +62,7 @@ export async function createJobAction(
     return { error: `Validation failed: ${parsed.error.message}` }
   }
 
-  const slug =
-    `${parsed.data.company}-${parsed.data.title}`
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, "-")
-      .replace(/(^-|-$)/g, "")
+  const slug = slugify(parsed.data.company, parsed.data.title)
 
   try {
     await createJob(slug, parsed.data)

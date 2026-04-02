@@ -21,6 +21,7 @@ import { which } from "../lib/deps";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
+export const SERVER_HOST = "127.0.0.1";
 
 export function dataDir(): string {
   return process.env.TALENTCLAW_DIR || join(homedir(), ".talentclaw");
@@ -195,7 +196,7 @@ function startServer(deps: DepStatus): void {
 
   const child = spawn("node", [serverJs], {
     cwd: dirname(serverJs),
-    env: { ...process.env, PORT: "3100", HOSTNAME: "0.0.0.0" },
+    env: { ...process.env, PORT: "3100", HOSTNAME: SERVER_HOST },
     stdio: ["ignore", "pipe", "pipe"],
   });
 

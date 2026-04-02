@@ -87,11 +87,15 @@ async function ensureDir(dir: string): Promise<void> {
   await fs.mkdir(dir, { recursive: true })
 }
 
-// Validate slug and resolve a safe path within a subdirectory
-function safePath(subdir: string, slug: string): string {
-  if (slug.includes("..") || slug.includes("/") || slug.includes("\\")) {
-    throw new Error(`Invalid slug: ${slug}`)
+function assertSafeSlug(slug: string, label: string = "slug"): void {
+  if (!slug || slug.includes("..") || slug.includes("/") || slug.includes("\\")) {
+    throw new Error(`Invalid ${label}: ${slug}`)
   }
+}
+
+// Validate slug and resolve a safe path within a subdirectory
+function safePath(subdir: string, slug: string, label: string = "slug"): string {
+  assertSafeSlug(slug, label)
   const dir = path.join(getDataDir(), subdir)
   const filePath = path.join(dir, `${slug}.md`)
   const resolved = path.resolve(filePath)
@@ -465,9 +469,7 @@ export async function listThreads(): Promise<ThreadFile[]> {
 }
 
 export async function getThread(threadId: string): Promise<ThreadFile | null> {
-  if (threadId.includes("..") || threadId.includes("/") || threadId.includes("\\")) {
-    throw new Error(`Invalid thread ID: ${threadId}`)
-  }
+  assertSafeSlug(threadId, "thread ID")
   const threadDir = path.join(getDataDir(), "messages", threadId)
   const threadFilePath = path.join(threadDir, "thread.md")
 
@@ -621,10 +623,7 @@ export async function listConversations(): Promise<Omit<ConversationFile, "messa
 }
 
 export async function getConversation(slug: string): Promise<ConversationFile | null> {
-  if (slug.includes("..") || slug.includes("/") || slug.includes("\\")) {
-    throw new Error(`Invalid conversation slug: ${slug}`)
-  }
-  const filePath = path.join(getDataDir(), "conversations", `${slug}.md`)
+  const filePath = safePath("conversations", slug, "conversation slug")
   try {
     const raw = await fs.readFile(filePath, "utf-8")
     const { data, content } = matter(raw)
@@ -650,7 +649,7 @@ export async function saveConversation(
 ): Promise<void> {
   const dir = path.join(getDataDir(), "conversations")
   await ensureDir(dir)
-  const filePath = path.join(dir, `${slug}.md`)
+  const filePath = safePath("conversations", slug, "conversation slug")
 
   const now = new Date().toISOString()
   const created_at = createdAtCache.get(slug) ?? now
@@ -669,11 +668,33 @@ export async function saveConversation(
 }
 
 export async function deleteConversation(slug: string): Promise<void> {
-  if (slug.includes("..") || slug.includes("/") || slug.includes("\\")) {
-    throw new Error(`Invalid conversation slug: ${slug}`)
-  }
-  const filePath = path.join(getDataDir(), "conversations", `${slug}.md`)
+  const filePath = safePath("conversations", slug, "conversation slug")
   await fs.unlink(filePath).catch(() => {})
+}
+
+export async function hasConversationSession(sessionId: string): Promise<boolean> {
+  const dir = path.join(getDataDir(), "conversations")
+
+  try {
+    const files = await fs.readdir(dir)
+    const mdFiles = files.filter((file) => file.endsWith(".md"))
+
+    for (const file of mdFiles) {
+      try {
+        const raw = await fs.readFile(path.join(dir, file), "utf-8")
+        const { data } = matter(raw)
+        if ((data as ConversationFrontmatter).session_id === sessionId) {
+          return true
+        }
+      } catch {
+        // Ignore malformed conversation files while checking trusted sessions.
+      }
+    }
+  } catch {
+    return false
+  }
+
+  return false
 }
 
 // --- Resumes ---
@@ -796,4 +817,3 @@ export async function hasCompletedOnboarding(): Promise<boolean> {
 
   return false
 }
-
